@@ -14,8 +14,8 @@ I've had a long-term love affair with Lisp:
 
 ** Reports From My Explorations
 
-[[-  lisp-systems.org]] -- foundations of Lisp
-[[-  lambda-sugar.rkt]]  -- Lambda and Syntactic Sugar
+[[- lisp-systems.org]] :: foundations of Lisp
+[[- lambda-sugar.rkt]] :: Lambda and Syntactic Sugar
 
 ** Lisps vs. Other Languages
 
