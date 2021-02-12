@@ -83,7 +83,7 @@ Atoms are anything that is not a list, e.g.
     - enumerate discrete values
     - name Lisp values in the /environment/
 - symbols in most Lisps are case insensitive
-  - e.g. ElemCnt $\equiv$ elemcnt $\equiv$ ELEMCNT
+  - e.g. ElemCnt ≡ elemcnt ≡ ELEMCNT
   - Lisp culture would generally prefer: element-count
  
 Lists are sequences of 0 or more Symbolic Expressions 
@@ -179,22 +179,22 @@ the *Lambda Expression* which is the key feature of the *Lambda Calculus*:
 
 (~lambda~ /list-of-symbols/ /symbolic-expression/)
 
-Some modern Lisps allow use of the Greek $\lambda$ character as in the original
+Some modern Lisps allow use of the Greek λ character as in the original
 *Lambda Calculus* instead of the clunky symbol ~lambda~.
 
 Given a *Lisp Environment* containing:
 | symbol   | value                           |
 |----------+---------------------------------|
 | ~*~      | ~procedure:*~   |
-| ~square~ | ($\lambda$ (~x~) (~*~ ~x~ ~x~)) |
+| ~square~ | (λ (~x~) (~*~ ~x~ ~x~)) |
 and the expression: ~(sqr 5)~
-- Evaluate each element: ( ($\lambda$  (~x~) (~*~ ~x~ ~x~)) 5 )
-- $\lambda$ substitute arguments: ~(* 5 5)~
+- Evaluate each element: ( (λ  (~x~) (~*~ ~x~ ~x~)) 5 )
+- λ substitute arguments: ~(* 5 5)~
 - Evaluate each element: ~(procedure:* 5 5)~
 - Apply ~procedure:*~ to arguments: ~25~
 
-Do you see how $\lambda$ substitution works?  Try evaluating
-( ($\lambda$ ~(x y) (+ (* x x) (* y y))) 5 10~ )
+Do you see how λ substitution works?  Try evaluating
+( (λ ~(x y) (+ (* x x) (* y y))) 5 10~ )
 
 *** The *Quote Form* suppresses evaluation
 
@@ -213,8 +213,8 @@ and this environment:
 |--------+--------------------------------|
 | car    | procedure:car                  |
 | cdr    | procedure:cdr                  |
-| cadr   | ($\lambda$ (alist) (car (cdr alist)))  |
-| caddr  | ($\lambda$ (alist) (cadr (cdr alist))) |
+| cadr   | (λ (alist) (car (cdr alist)))  |
+| caddr  | (λ (alist) (cadr (cdr alist))) |
 
 Lisp will evaluate:
 | S-Expression                                     | Value        |
@@ -223,7 +223,7 @@ Lisp will evaluate:
 | (cdr '(red green blue))                          | (green blue) |
 | (cadr '(red green blue))                         | green        |
 | (caddr '(red green blue))                        | blue         |
-| ( ($\lambda$ (x) /what/) '((5 feet 2)(eyes (of blue))) ) | blue         |
+| ( (λ (x) /what/) '((5 feet 2)(eyes (of blue))) ) | blue         |
 
 Do you see what /what/ needs to be?
 
