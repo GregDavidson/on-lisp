@@ -253,7 +253,7 @@ Lisps use different syntaxes. The oldest method is ~set~ but Scheme prefers
 
 Using some advanced Lisp features we won't be explaining, we could say:
 #+begin_src scheme
-(define (sum-sqrs . nums) (reduce + 0 (map (lambda (x) (* x x)) nums)))
+(define (sum-sqrs . nums) (reduce + 0 (map (λ(x)(* x x)) nums)))
 #+end_src
 
 which would give:
@@ -319,8 +319,8 @@ program right away.  For example:
 ; ML is executed by the CPU yielding a value
 ; value is bound to symbol π in the environment
 
-(define (sum-sqrs . nums)(reduce + 0 (map (lambda (x) (* x x)) nums)))
-(lambda nums (reduce + 0 (map (lambda (x) (* x x)) nums))) ; translated to ML
+(define (sum-sqrs . nums)(reduce + 0 (map (λ (x) (* x x)) nums)))
+(λ nums (reduce + 0 (map (λ (x) (* x x)) nums))) ; translated to ML
 ; ML procedure bound to symbol sum-sqrs in the environment
 ; (sum-sqrs 3 5 10) ; translated to call of ML procedure on (3 5 10)
 #+end_src
@@ -384,7 +384,7 @@ and the macro ~define-formula~ would automatically translate that to Lisp notati
 #+begin_src scheme
 (define (quadratic-formula a b c)
   (let ([det (- (* b b) (* 4 a c))]
-        [val (lambda (x) (+ (- b) (/ x (* 2 a))))])
+        [val (λ (x) (+ (- b) (/ x (* 2 a))))])
     (values (val det) (val (- det))) ) )
 #+end_src
 
