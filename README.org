@@ -3,18 +3,19 @@
 ** Aspects of Lisp
 
 I've had a long-term love affair with Lisp:
-- expressing myself in diverse and brilliant Lisp languages and dialects
+- Expressing myself in diverse and brilliant Lisp languages and dialects
   - especially the most elegant, consistent and general Lisps
-- exploring the programming techniques and paradigms that Lisp enables
+- Exploring the programming techniques and paradigms that Lisp enables
   - functional programming, macro programming, metaprogramming
-- using the powerful programming tools available for a homoiconic language
-- studying the fascinating aspects of Lisp implementation:
+- Using the powerful programming tools available for a homoiconic language
+- Studying the fascinating aspects of Lisp implementation:
   - representation, interpretation, compilation and runtime system support
-- and all other aspects of the Lisp
+- and all other aspects of Lisp
 
 ** Reports From My Explorations
-[[- lisp-systems.org]] -- foundations of Lisp
-[[- lambda-sugar.rkt]]  -- Lambda and Syntactic Sugar
+
+[[-  lisp-systems.org]] -- foundations of Lisp
+[[-  lambda-sugar.rkt]]  -- Lambda and Syntactic Sugar
 
 ** Lisps vs. Other Languages
 
