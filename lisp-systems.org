@@ -17,8 +17,13 @@ Calculus in the form of S-Expressions. LISP was the first good language
 supporting *Symbolic* as well as *Numeric* programming and was quickly adopted
 by almost all researchers in the field of *Artificial Intelligence*.
 
-*S-Expressions* consisting of nested *Lists* were the only way to structure
-programs or data in *LISP* and the language provided rich features for
+| Example     | Lambda Calculus | M-Expression         | S-Expression     |
+|-------------+-----------------+----------------------+------------------|
+| Function    | (λx.x×x)        | λ[[x];times[x;x]]    | (λ(x)(* x x))    |
+| Application | ((λx.x×x)5)     | λ[[x];times[x;x]](5) | ((λ(x)(* x x))5) |
+
+*S-Expressions* consisting of nested *Lists* were orginally the only way to
+structure programs or data in *LISP* and the language provided rich features for
 manipulating such expressions, thus the original acronym *LISP = LISt
 Processing*. Although modern Lisps provide data structures other than Lists and
 S-Expressions, Lisp programs are still usually represented as sequences of
