@@ -39,7 +39,7 @@ many complex and incompatible Lisp family languages and dialects. Sharing work
 among institutions became increasingly difficult. In the 1970s several researchers
 began to work on distilling these experiments back into a single unified
 language. Two of these projects succeeded, producing two ISO standard languages
-that are still popular today. *Common Lisp* (1084) was a /design by committee/
+that are still popular today. *Common Lisp* (1984) was a /design by committee/
 production which unified the most popular features of the most influential
 dialects. Its specification was the longest ever submitted to the ISO at that
 time! It was preceded by *Scheme* (1975) which brought Lisp closer to its roots
@@ -88,8 +88,8 @@ Atoms are anything that is not a list, e.g.
  
 Lists are sequences of 0 or more Symbolic Expressions 
 - the empty list has 0 elements: ()
-- a list of three atoms: (-273 celsius "absolute zero" )
-- three elements: ( "absolute zero" (0 kelvin) (-273 celsius centigrade) )
+- a list of 3 atoms: (-273 celsius "absolute zero" )
+- 3 diverse elements: ( "absolute zero" (0 kelvin) (-273 celsius centigrade) )
 
 Items in a list should be separated by one or more whitespace characters
 (spaces, tabs, newlines). Most Lisps do not use commas to separate list items.
@@ -148,10 +148,10 @@ A *Regular Form* is Evaluated in two steps
    - the arguments are not acceptable to that procedure
 
 Given a *Lisp Environment* containing (among other bindings):
-| symbol | value               | comment                          |
-|--------+---------------------+----------------------------------|
-| +      | procedure:+ | returns the sum of its arguments |
-| *      | procedure:* | returns the product of its arguments |
+| symbol | value                     | comment                              |
+|--------+---------------------------+--------------------------------------|
+| +      | an addition procedure     | returns the sum of its arguments     |
+| *      | a multiplcation procedure | returns the product of its arguments |
 - then ~(* (+ 3 5 7) (+ 11 13) 17)~
 - produces ~(procedure:* 15 24 17)~ after *evaluating all elements*
 - which evaluates to ~6120~ after *applying* ~procedure:*~.
@@ -161,6 +161,7 @@ of Symbolic Expressions. We applied the same two rules to evaluate the nested
 lists. And there are no precedence rules to memorize!
 
 So, that's it:  Lisp Semantics is even simpler than Lisp Syntax!
+
 Well, not quite:  *Read on for Special Forms!*
 
 ** Evaluating Special Forms
@@ -235,9 +236,9 @@ Lisps use different syntaxes. The oldest method is ~set~ but Scheme prefers
 
 #+begin_src scheme
 ; add pi to the environment with the usual meaning
-(set 'pi 3.14159) ; not very accurate -- why is quote needed?
+(set 'pi 3.14159) ; inaccurate, and why is quote needed?
 ; Using Scheme reserved word define along with function acos
-(define pi (* 2 (acos 0))) ; prettier and more accurate
+(define π (* 2 (acos 0))) ; prettier and more accurate
 ; one way to define a procedure in Scheme
 (define sum-of-squares
   (lambda (x y)
@@ -313,10 +314,10 @@ environment, the machine program is stored as a procedure to be run later, or
 program right away.  For example:
 
 #+begin_src scheme
- (define pi (* 2 (acos 0)))
+ (define π (* 2 (acos 0)))
  (* 2 (acos 0))) ; is translated to ML (machine language)
 ; ML is executed by the CPU yielding a value
-; value is bound to symbol pi in the environment
+; value is bound to symbol π in the environment
 
 (define (sum-sqrs . nums)(reduce + 0 (map (lambda (x) (* x x)) nums)))
 (lambda nums (reduce + 0 (map (lambda (x) (* x x)) nums))) ; translated to ML
