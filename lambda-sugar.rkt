@@ -1,15 +1,15 @@
 #lang slideshow
 
-;; Lambda hiding under Syntactic Sugar
+;; Lambda is often hiding under Syntactic Sugar!
 
 ;; There are 3 essential special forms in Lisp:
-;;	lambda -- to construct procedures
-;;	if (or cond) -- to make decisions
-;;	quote (or ') -- for metaprogramming
+;;	lambda -- constructs procedures
+;;	if (or cond) -- makes decisions
+;;	quote (or ') -- handy for metaprogramming
 ;; The other special forms are syntactic sugar which make
-;; code more "natural", expressive and convenient for humans.
+;; code more natural, expressive and convenient for humans.
 ;; A good way to understand the other special forms is to see
-;; the equivalent code without that special form.
+;; the equivalent code without using that special form.
 
 ;; This little Racket program:
 
@@ -70,7 +70,7 @@
 ;; Construct the eyes from an eye by horizontally appending two copies of the eye
 ;; Construct an eye by making a circle
 
-;; The most common place Lambda is hiding is in procedure (function) definitions
+;; Lambda is usually hiding is in procedure (function) definitions
 
 ;; This bit of code:
 
