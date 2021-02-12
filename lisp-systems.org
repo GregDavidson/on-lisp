@@ -36,18 +36,20 @@ elegance. But the original LISP was not a perfect embodiment of this foundation
 so researchers in various institutions began to extend and reinvent their Lisp
 systems in interesting and usually ad hoc ways until the LISP was replaced with
 many complex and incompatible Lisp family languages and dialects. Sharing work
-among institutions became increasingly difficult. In the 1970s several researchers
-began to work on distilling these experiments back into a single unified
-language. Two of these projects succeeded, producing two ISO standard languages
-that are still popular today. *Common Lisp* (1984) was a /design by committee/
-production which unified the most popular features of the most influential
-dialects. Its specification was the longest ever submitted to the ISO at that
-time! It was preceded by *Scheme* (1975) which brought Lisp closer to its roots
-in the Lambda Calculus, resulting in the shortest /and most complete/ ISO
-language standard! Common Lisp achieved some popularity in industry whereas
-Scheme became highly popular in academia, especially for teaching programming.
-Despite a strong and evolving standard, Scheme's minimalism has led to a host
-of divergent dialects with many extensions.
+among institutions became increasingly difficult.
+
+In the 1970s several researchers began to work on distilling these experiments
+back into a single unified language. Two of these projects succeeded, producing
+two ISO standard languages that are still popular today. *Common Lisp* (1984)
+was a /design by committee/ production which unified the most popular features
+of the most influential dialects. Its specification was the longest ever
+submitted to the ISO at that time! It was preceded by *Scheme* (1975) which
+brought Lisp closer to its roots in the Lambda Calculus, resulting in the
+shortest /and most complete/ ISO language standard! Common Lisp achieved some
+popularity in industry whereas Scheme became highly popular in academia,
+especially for teaching programming. Despite a strong and evolving standard,
+Scheme's minimalism has led to a host of divergent dialects with many
+extensions.
 
 One of the most flexible of the descendants of Scheme is the Racket System.
 Racket's primary language is close to the Scheme Standard but Racket also allows
