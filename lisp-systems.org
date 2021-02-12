@@ -454,7 +454,7 @@ References:
 * Addendum
 
 As much as I admire and enjoy Lisp, especially its descendants Racket and
-Clojure, I do /not/ consider that the Lisp family of languages are the best
+Clojure, I do /not/ consider that the Lisp family of languages are the only good
 computer programming languages. I consider it essential to learn several good
 and diverse languages and apply them to suitable challenging problems which fit
 their paradigms. Unfortunately, most of the popular programming languages will
@@ -464,4 +464,3 @@ In the meantime, I'll leave you with these two references to explore:
 
 1. [[https://en.wikipedia.org/wiki/Programming_paradigm][Programming Paradigms]]
 2. [[https://www.info.ucl.ac.be/~pvr/book.html][Concepts, Techniques, and Models of Computer Programming]]
-
