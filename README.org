@@ -1,0 +1,62 @@
+* Lisp Systems
+
+** Aspects of Lisp
+
+I've had a long-term love affair with Lisp:
+- expressing myself in diverse and brilliant Lisp languages and dialects
+  - especially the most elegant, consistent and general Lisps
+- exploring the programming techniques and paradigms that Lisp enables
+  - functional programming, macro programming, metaprogramming
+- using the powerful programming tools available for a homoiconic language
+- studying the fascinating aspects of Lisp implementation:
+  - representation, interpretation, compilation and runtime system support
+- and all other aspects of the Lisp
+
+** Reports From My Explorations
+[[- lisp-systems.org]] -- foundations of Lisp
+[[- lambda-sugar.rkt]]  -- Lambda and Syntactic Sugar
+
+** Lisps vs. Other Languages
+
+Lisp was originally inspired by the [[https://en.wikipedia.org/wiki/Lambda_calculus][Lambda Calculus]] introduced by Alonzo Church
+in the 1930s. Lisp systems have always been an attempt to harness the elegance
+of the mathematical theory of computing along with ad hoc features that seemed
+like helpful additions for practical programming. As the understanding of Lisp
+systems has matured, newer Lisp systems have been able to discard a lot of those
+ad hoc additions and much of the complexity of earlier Lisp systems by a better
+realization of its formative principles, yielding an improvement in both
+expressivity and efficiency.
+
+Lisp is /not/ the only family of languages which have this kind of elegance and
+this closeness to mathematics. The pure Functional Programming langauges such as
+Haskell and the rest of the ML family have it. The Logic Programming languages,
+including the Prolog family, Mercury and Curry have it. Mercury and most Prolog
+systems also share Lisp's [[https://en.wikipedia.org/wiki/Homoiconicity][homoiconicity]].
+
+And some of the most wonderful programming languages either do not have quite as
+much expressivity as Lisp or as much mathematical purity yet have great riches
+to teach the explorer. 
+
+Some awesome mathematically-based languages which I do not
+find as generally expressive as Lisp include the Iverson language family of Apl,
+J and K.
+
+Some awesome languages which are perhaps less pures and more ad hoc than modern
+Lisps include the Smalltalk family and the Forth family.
+
+All of these languages are Turing complete, so you should be able to express any
+algorithm in any one of them, but not always elegantly or "naturally". Many
+powerful computational approaches would be more likely to occur to a programmer
+when thinking in one language versus another one. Much (but not all) of this has
+to do with how much a language is tied to specific [[https://en.wikipedia.org/wiki/Programming_paradigm][Programming Paradigms]].
+Languages which introduce you to new ways of thinking about computing increase
+your programming power - which then becomes available to you in all other
+languages, but especially in Lisp.
+
+Lisp especially rewards the explorer because of Lisp's malleability. After
+learning a new way of expressing computation in another language, it will
+invariably be possible to use that new power of expression naturally in Lisp,
+perhaps assisted by some choice macros! [[https://racket-lang.org][Racket]] takes this to an extreme by
+allowing for the definition of new languages which can introduce radically new
+features such as static typing and allowing you to express different parts of a
+program in different languages!
