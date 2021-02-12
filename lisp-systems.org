@@ -240,7 +240,7 @@ Lisps use different syntaxes. The oldest method is ~set~ but Scheme prefers
 ; add pi to the environment with the usual meaning
 (set 'pi 3.14159) ; inaccurate, and why is quote needed?
 ; Using Scheme reserved word define along with function acos
-(define π (* 2 (acos 0))) ; prettier and more accurate
+(define π (* 2 (acos 0)) ; prettier and more accurate
 ; one way to define a procedure in Scheme
 (define sum-of-squares
   (lambda (x y)
