@@ -1,0 +1,461 @@
+# Local Variables:
+# org-latex-inputenc-alist: (("utf8" . "utf8x"))
+# eval: (setq org-latex-default-packages-alist (cons '("mathletters" "ucs" nil) org-latex-default-packages-alist))
+# End:
+#+TITLE: Lisp -> Scheme -> Racket
+
+* Introduction
+
+*Lisp* refers to a /family/ of computer languages based on the *Lambda Calculus*
+developed by Alonzo Church in the 1930s as a universal mathematical model of
+computation. Around 1958 John McCarthy invented a Lambda Calculus inspired
+notation called M-Expressions for describing computer programs. Around 1962
+Steve Russell simplified M-Expressions to *Symbolic Expressions aka
+S-Expressions* and created a computer programming language and system called
+*LISP* which allowed computers to be directly programmed with the Lambda
+Calculus in the form of S-Expressions. LISP was the first good language
+supporting *Symbolic* as well as *Numeric* programming and was quickly adopted
+by almost all researchers in the field of *Artificial Intelligence*.
+
+*S-Expressions* consisting of nested *Lists* were the only way to structure
+programs or data in *LISP* and the language provided rich features for
+manipulating such expressions, thus the original acronym *LISP = LISt
+Processing*. Although modern Lisps provide data structures other than Lists and
+S-Expressions, Lisp programs are still usually represented as sequences of
+S-Expressions, making it easy for Lisp programs to process Lisp programs. This
+makes Lisp *homoiconic* and enables *metaprogramming*.
+
+As the embodiment of a general mathematical model of computing, Lisp systems can
+be very powerful without much complexity - what computer scientists call
+elegance. But the original LISP was not a perfect embodiment of this foundation
+so researchers in various institutions began to extend and reinvent their Lisp
+systems in interesting and usually ad hoc ways until the LISP was replaced with
+many complex and incompatible Lisp family languages and dialects. Sharing work
+among institutions became increasingly difficult. In the 1970s several researchers
+began to work on distilling these experiments back into a single unified
+language. Two of these projects succeeded, producing two ISO standard languages
+that are still popular today. *Common Lisp* (1084) was a /design by committee/
+production which unified the most popular features of the most influential
+dialects. Its specification was the longest ever submitted to the ISO at that
+time! It was preceded by *Scheme* (1975) which brought Lisp closer to its roots
+in the Lambda Calculus, resulting in the shortest /and most complete/ ISO
+language standard! Common Lisp achieved some popularity in industry whereas
+Scheme became highly popular in academia, especially for teaching programming.
+Despite a strong and evolving standard, Scheme's minimalism has led to a host
+of divergent dialects with many extensions.
+
+One of the most flexible of the descendants of Scheme is the Racket System.
+Racket's primary language is close to the Scheme Standard but Racket also allows
+a programmer to create /new languages/ to better address special kinds of
+programming problems. Racket allows complex systems to be built from a
+collection of modules exploiting multiple Racket languages. You can think of
+Racket as the Swiss Army Knife of Lisp systems where the biggest blade is an
+industrial strength dialect of Scheme.
+
+Except where noted, the content of this article applies to nearly any member of
+the Lisp Family. Where we indicate otherwise, we will follow the original Scheme
+dialect for simplicity.
+
+* Lisp Syntax
+
+A Lisp program consists of a sequence of Symbolic Expressions. When Lisp is used
+interactively, a Lisp *REPL*: *Reads* Symbolic Expressions from a User,
+immediately *Evaluates* them and *Prints* their values in a *Loop*.
+
+A Symbolic Expression is either
+- An Atom
+- A List of Symbolic Expressions
+
+Atoms are anything that is not a list, e.g.
+- numbers: 15 -27 3/4 4+5i 3.14159 6.02214076E23
+  - Scheme has a /numeric tower/ of several kinds of numbers
+- strings: ~"Hello World!"~ ~"backslash \\ double quote \""~
+  - strings are primarily used for input/output
+  - double-quotes enclose string literals
+  - Scheme string literals use backslashes for special characters
+- symbols: + - * / hello x y z length counter-culture
+  - symbols serve to
+    - enumerate discrete values
+    - name Lisp values in the /environment/
+- symbols in most Lisps are case insensitive
+  - e.g. ElemCnt $\equiv$ elemcnt $\equiv$ ELEMCNT
+  - Lisp culture would generally prefer: element-count
+ 
+Lists are sequences of 0 or more Symbolic Expressions 
+- the empty list has 0 elements: ()
+- a list of three atoms: (-273 celsius "absolute zero" )
+- three elements: ( "absolute zero" (0 kelvin) (-273 celsius centigrade) )
+
+Items in a list should be separated by one or more whitespace characters
+(spaces, tabs, newlines). Most Lisps do not use commas to separate list items.
+Space around left and right parentheses is optional. Extra whitespace is ignored
+by Lisp but can ease human readability. Most Lisp programmers follow a
+consistent style of laying out large Symbolic Expression over multiple lines
+with indentation consistent with the nesting levels.
+
+Except within a string Lisp ignores any text following a semicolon, allowing for
+comments for human readers.
+
+#+begin_src scheme
+  ; define a function to compute the sum of the squares of two numbers
+  (define (sum-of-squares x y) ; define adds binding to environment
+    (+ (* x x) (* y y)) ) ; a lisp arithmetic expression
+#+end_src
+
+There are two special characters used as prefixes:
+- for any symbolic expression ~x~, '~x~ is shorthand for (quote ~x~)
+- # is used for syntactic extensions
+
+Some Lisps allow the use of *[* square brackets *]* as an alternative to *(*
+parentheses *)* to increase readability (/Racket/ Lisp) and/or to suggest how to
+store the elements (/Clojure/ Lisp).
+
+That's pretty much the whole story on Lisp Syntax!
+
+* Lisp Semantics
+
+Lisp Semantics is defined by how the various kinds of Symbolic Expressions are
+evaluated.
+
+** Evaluating Atoms
+
+*Except for symbols, atoms evaluate to themselves.*
+
+At any given time during evaluation, there is an *environment* consisting of
+*bindings*, i.e. pairs where a *symbol* is /bound to/ a *value*. Mathematically,
+an *environment* is a *mapping* from *symbols* to *values*.
+
+*A Symbol evaluates to its value in the environment.*  An attempt to evaluate a
+symbol lacking a value in the environment /raises an error/.
+
+** Evaluating Regular Forms
+
+A *Form* is a List which can be Evaluated.
+
+A *Regular Form* is Evaluated in two steps
+1. *Evaluate each Element of the Form*
+   - the first value of the form /must/ evaluate to a *procedure*
+   - the rest of the values (if any) are the *arguments*
+2. *Apply the Procedure to the Arguments*
+   - whatever the procedure *returns* becomes the *value* of the form
+3. An error is raised if
+   - the first element doesn't evaluate to a procedure
+   - the arguments are not acceptable to that procedure
+
+Given a *Lisp Environment* containing (among other bindings):
+| symbol | value               | comment                          |
+|--------+---------------------+----------------------------------|
+| +      | procedure:+ | returns the sum of its arguments |
+| *      | procedure:* | returns the product of its arguments |
+- then ~(* (+ 3 5 7) (+ 11 13) 17)~
+- produces ~(procedure:* 15 24 17)~ after *evaluating all elements*
+- which evaluates to ~6120~ after *applying* ~procedure:*~.
+
+Note how the recursive definition of evaluation matches the recursive definition
+of Symbolic Expressions. We applied the same two rules to evaluate the nested
+lists. And there are no precedence rules to memorize!
+
+So, that's it:  Lisp Semantics is even simpler than Lisp Syntax!
+Well, not quite:  *Read on for Special Forms!*
+
+** Evaluating Special Forms
+
+Each dialect of Lisp provides a (relatively small) set of *Special Forms*.
+Special Forms begin with a *Reserved Word*, a symbol which signals to that Lisp
+System that that Form is to be evaluated with a /Special Rule/. Only 2 or 3
+special forms are technically necessary, but others are provided for convenience
+and there's a way to define your own special forms called Macros (discussed
+below).
+
+*** The *Lambda Form* for *Lambda Expressions*
+
+Nearly all Lisps have retained the special *Lambda Form* from LISP to represent
+the *Lambda Expression* which is the key feature of the *Lambda Calculus*:
+
+(~lambda~ /list-of-symbols/ /symbolic-expression/)
+
+Some modern Lisps allow use of the Greek $\lambda$ character as in the original
+*Lambda Calculus* instead of the clunky symbol ~lambda~.
+
+Given a *Lisp Environment* containing:
+| symbol   | value                           |
+|----------+---------------------------------|
+| ~*~      | ~procedure:*~   |
+| ~square~ | ($\lambda$ (~x~) (~*~ ~x~ ~x~)) |
+and the expression: ~(sqr 5)~
+- Evaluate each element: ( ($\lambda$  (~x~) (~*~ ~x~ ~x~)) 5 )
+- $\lambda$ substitute arguments: ~(* 5 5)~
+- Evaluate each element: ~(procedure:* 5 5)~
+- Apply ~procedure:*~ to arguments: ~25~
+
+Do you see how $\lambda$ substitution works?  Try evaluating
+( ($\lambda$ ~(x y) (+ (* x x) (* y y))) 5 10~ )
+
+*** The *Quote Form* suppresses evaluation
+
+Nearly all Lisps have retained the special *Quote Form* from LISP to represent a
+literal *Symbolic Expression* without evaluating it, so that it can be processed
+as data.
+
+Given these procedures:
+| Procedure | Required Arguments | Returns                       |
+|---------------+--------------------+---------------------------------------|
+| procedure:car | a non-empty list   | the first element of the list         |
+| procedure:cdr | a non-empty list   | all but the first element of the list |
+
+and this environment:
+| Symbol | Value                          |
+|--------+--------------------------------|
+| car    | procedure:car                  |
+| cdr    | procedure:cdr                  |
+| cadr   | ($\lambda$ (alist) (car (cdr alist)))  |
+| caddr  | ($\lambda$ (alist) (cadr (cdr alist))) |
+
+Lisp will evaluate:
+| S-Expression                                     | Value        |
+|--------------------------------------------------+--------------|
+| (car '(red green blue))                          | red          |
+| (cdr '(red green blue))                          | (green blue) |
+| (cadr '(red green blue))                         | green        |
+| (caddr '(red green blue))                        | blue         |
+| ( ($\lambda$ (x) /what/) '((5 feet 2)(eyes (of blue))) ) | blue         |
+
+Do you see what /what/ needs to be?
+
+*** Extending the Global Environment
+
+Of course you can add new *bindings* to the *Lisp Environment*, but different
+Lisps use different syntaxes. The oldest method is ~set~ but Scheme prefers
+~define~:
+
+#+begin_src scheme
+; add pi to the environment with the usual meaning
+(set 'pi 3.14159) ; not very accurate -- why is quote needed?
+; Using Scheme reserved word define along with function acos
+(define pi (* 2 (acos 0))) ; prettier and more accurate
+; one way to define a procedure in Scheme
+(define sum-of-squares
+  (lambda (x y)
+    (+ (* x x) (* y y)) ) )
+; Scheme's define has a shortcut for procedures:
+(define (sum-of-squares x y)
+  (+ (* x x) (* y y)) )
+; Maybe even nicer:
+(define (sqr x) (* x x))
+(define (sum-sqrs x y) (+ (sqr x) (sqr y)))
+#+end_src
+
+Using some advanced Lisp features we won't be explaining, we could say:
+#+begin_src scheme
+(define (sum-sqrs . nums) (reduce + 0 (map (lambda (x) (* x x)) nums)))
+#+end_src
+
+which would give:
+| Form  | Value |
+|-------------------+-------|
+| (sum-sqrs)        |     0 |
+| (sum-sqrs 5)      |    25 |
+| (sum-sqrs 5 10)   |   125 |
+| (sum-sqrs 3 5 10) |   134 |
+
+*** Truth, False and Choices
+
+In LISP, the symbol nil, the empty list '() and the Boolean /false/ value were
+considered equivalent. Every other value in LISP was considered to be /true/.
+This traditional arrangement continues in a few places, e.g. Emacs-Lisp, but
+most modern Lisps consider this arrangement to be ugly!
+
+In Scheme, Boolean false is #f and Boolean true is #t.
+
+Most lisps provide these (and other) handy Boolean functions in the environment:
+| Function Symbol | Required Arguments       | Returns                                 |
+|-----------------+--------------------------+-----------------------------------------|
+| not             | a Boolean value          | the logical inverse                     |
+| and             | 0 or more Boolean values | false unless all arguments are true     |
+| or              | 0 or more Boolean values | true unless all arguments are false     |
+| =               | 0 or more numbers        | true iff all numbers are equal          |
+| <               | 0 or more numbers        | true iff numbers are in ascending order |
+
+along with some special forms, generally including
+| special form     | Does What                                                      |
+|------------------+----------------------------------------------------------------|
+| (if /test/ /then/ /else/) | if /test/ is true, evaluate /then/ only, otherwise evaluate /else/ only |
+
+allowing us to say things like
+
+#+begin_src scheme
+(if (and (not (= x 0)) (< x y z)) (/ y x) (+ y z))
+#+end_src
+
+which would hopefully make sense in some application!
+
+** Defining and Evaluating Macros
+
+No presentation of the power of Lisp would be complete without at least
+introducing the concept of macros. A Lisp macro allows the programmers to almost
+create a new language, adding new special forms, special syntax for an
+application domain and much more. Many of the /reserved words/ and /special
+forms/ in dialects of Lisp are actually just macros defined in the standard
+library.
+
+To understand what macros do we have to understand how a modern Lisp system
+works. The program consists of a series of symbolic expressions. The Lisp system
+(1) reads each symbolic expression (2) translates them to a machine
+language program which can perform the desired computation at the maximum
+possible speed, (3a) if it's a procedure being bound to a name in the
+environment, the machine program is stored as a procedure to be run later, or
+(3b) otherwise the Lisp system tells the computer to execute that machine
+program right away.  For example:
+
+#+begin_src scheme
+ (define pi (* 2 (acos 0)))
+ (* 2 (acos 0))) ; is translated to ML (machine language)
+; ML is executed by the CPU yielding a value
+; value is bound to symbol pi in the environment
+
+(define (sum-sqrs . nums)(reduce + 0 (map (lambda (x) (* x x)) nums)))
+(lambda nums (reduce + 0 (map (lambda (x) (* x x)) nums))) ; translated to ML
+; ML procedure bound to symbol sum-sqrs in the environment
+; (sum-sqrs 3 5 10) ; translated to call of ML procedure on (3 5 10)
+#+end_src
+
+Suppose our Lisp doesn't have the modern ~if~ special form? It probably has the
+more general, but somewhat clunky ~cond~ special form from ancient LISP:
+
+#+begin_src lisp
+(cond
+  (/test1/ /expression to evaluate if test1 is true/ ...)
+  (/test2/ /expression to evaluate if test2 is true/ ...)
+  ... )
+#+end_src
+~cond~ allows you to specify a series of clauses, each guarded with a test
+expression. The test expressions are evaluated in order, but nothing else is
+performed unless one of the tests evaluates to true. As soon as one of the tests
+evaluates to true, the rest of its clause is evaluated and the last value in
+that clause becomes the value of the whole ~cond~ form. No more tests are
+evaluated. If none of the tests succeed then the whole ~cond~ form returns
+/false/.
+
+
+Using Scheme syntax, here's how you can implement ~if~ using ~cond~:
+
+#+begin_src scheme
+(define-macro (if test then else)
+  (cond (test then)
+        (#t else) )
+#+end_src
+
+The magic is that when Lisp encounters
+#+begin_src scheme
+(if (= x 0) 'invalid-value (/ total x))
+#+end_src
+it will translate that symbolic expression to
+#+begin_src scheme
+(cond ( (= x 0) 'invalid-value )
+        (#t (/ total x)) )
+#+end_src
+which the Lisp system knows how to translate into efficient machine code.
+
+The translation of macros is done /before/ your program is run, so arbitrarily
+complex macros (which may expand to more macros, etc.) incur no overhead at
+runtime.
+
+Not impressed, I don't blame you. But suppose you are translating lots of
+formulas from a math book into Lisp. Suppose that the book's formulas use
+standard mathematical syntax like
+
+#+begin_example
+(-b±√(b²-4ac))/(2a)
+#+end_example
+
+You can write a Lisp macro (I'm not going to show you how) that will translate
+that kind of formula to Lisp syntax automatically.  So you could simply say
+
+#+begin_src scheme
+(define-formula quadratic-formula (-b±√(b²-4ac))/(2a)
+#+end_src
+and the macro ~define-formula~ would automatically translate that to Lisp notation which you'd never have to see - but would look like this:
+#+begin_src scheme
+(define (quadratic-formula a b c)
+  (let ([det (- (* b b) (* 4 a c))]
+        [val (lambda (x) (+ (- b) (/ x (* 2 a))))])
+    (values (val det) (val (- det))) ) )
+#+end_src
+
+This is an example of using a macro to adapt Lisp to a specific domain, in this
+case mathematical formulas. Other macros could adapt Lisp to music composition,
+3D design or anything else by providing notations that were friendly to those
+domains.
+
+Macros are used a lot in Lisp implementations and in code libraries but only
+sparingly in application code. From time to time a few well chosen macros can
+improve Lisp's friendliness and productivity.
+
+* Metaprogramming and Final Words
+
+The Lisp family of languages are the second oldest still in use, after Fortran.
+Most programming languages are designed by putting together a set of features
+that seem useful at a particular time. More features are added over time until
+eventually the language becomes so complex that newcomers don't want to invest
+the effort to learn it. As an example, the C++ language, despite its huge
+success over many years, is attracting fewer and fewer new programmers. Less and
+less new code is being written in C++ and fewer and fewer programmers understand
+the language well enough to maintain the vast mountains of C++ code left over
+from its heyday.
+
+Lisp never grows old because it's based on mathematics, and mathematics gives us
+the deepest, simplest and most powerful models. Macros hint at Lisp's most
+powerful feature: *metaprogramming*. *Metaprogramming* allows a Lisp program to
+read a /Declarative Specification/ of a problem and write an optimized program
+which implements that specification. The resulting program, no matter how
+complex, will work the first time and every time, correct by construction.
+
+Lisp's *metaprogramming* powers are generally discovered after a programmer has
+significant experience at creating Lisp programs by hand, including selective
+use of macros. Then such a programmer encounters the need to write lots of
+complex programs that are unique but also variations on a theme. The first
+approach in such a situation is generally to write a library of functions that
+make creating the needed programs by hand easier. If the task is still tedious
+the experienced Lisp programmer will sometimes create a few choice macros to
+simplify expressions and clarify the intent. If the programming task is still
+tedious and the problem space is becoming well understood, the expert Lisp
+programmer defines (or borrows if it already exists) a specification language
+for the problem domain, expressed in the syntax of Symbolic Expressions. They
+then write a Lisp Procedure which translates such specifications into the needed
+programs.
+
+Such a metaprogramming procedure can be packaged up as a macro, or if it needs
+special syntax it could be created as a Racket Language or it could place the
+generated code into source code files - in any Language, not just Lisp. A common
+example these days is a specification for a website which turns a specification
+into one or more HTML, CSS, Javascript and/or SQL files.
+
+Learning and using Lisp teaches powerful programming techniques which are much
+harder to learn in most other languages. Once those techniques are learned, they
+can be applied in other languages at need. Many professional programmers prefer
+to use Lisp (and some of the other mathematically elegant languages) whenever
+they can, but often wind up having to use clumsier languages instead. They often
+notice that their ability to solve really hard problems elegantly comes from
+their experience with Lisp.
+
+
+References:
+1. [[http://www.paulgraham.com/avg.html][Paul Graham on Beating the Averages]]
+2. [[https://docs.racket-lang.org/quick/index.html][An Introduction to Racket with Pictures]]
+3. [[https://htdp.org][How to Design Programs]]
+4. [[https://sicpebook.wordpress.com][Structure and Interpretation of Computer Programs]]
+
+* Addendum
+
+As much as I admire and enjoy Lisp, especially its descendants Racket and
+Clojure, I do /not/ consider that the Lisp family of languages are the best
+computer programming languages. I consider it essential to learn several good
+and diverse languages and apply them to suitable challenging problems which fit
+their paradigms. Unfortunately, most of the popular programming languages will
+not teach you much. At a later time I will include some resources to some of the
+best languages for leveraging some of the most powerful programming paradigms.
+In the meantime, I'll leave you with these two references to explore:
+
+1. [[https://en.wikipedia.org/wiki/Programming_paradigm][Programming Paradigms]]
+2. [[https://www.info.ucl.ac.be/~pvr/book.html][Concepts, Techniques, and Models of Computer Programming]]
+
