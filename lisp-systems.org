@@ -34,7 +34,7 @@ As the embodiment of a general mathematical model of computing, Lisp systems can
 be very powerful without much complexity - what computer scientists call
 elegance. But the original LISP was not a perfect embodiment of this foundation
 so researchers in various institutions began to extend and reinvent their Lisp
-systems in interesting and usually ad hoc ways until the LISP was replaced with
+systems in interesting and usually ad hoc ways until LISP was replaced with
 many complex and incompatible Lisp family languages and dialects. Sharing work
 among institutions became increasingly difficult.
 
