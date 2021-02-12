@@ -38,7 +38,7 @@
 ;; This little program:
 
 (define eye (circle 10))
-(define eyes (hc-append 30 eye eye)))
+(define eyes (hc-append 30 eye eye))
 (define figure (vc-append 6 eyes (rectangle 10 20)))
 (hc-append 10 figure figure)
 
