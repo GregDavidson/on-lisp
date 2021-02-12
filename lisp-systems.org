@@ -4,7 +4,7 @@
 # End:
 #+TITLE: Lisp Systems, including Scheme and Racket
 
-* Introduction
+* Lisp Origin Story
 
 *Lisp* refers to a /family/ of computer languages based on the *Lambda Calculus*
 developed by Alonzo Church in the 1930s as a universal mathematical model of
