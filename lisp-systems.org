@@ -2,7 +2,7 @@
 # org-latex-inputenc-alist: (("utf8" . "utf8x"))
 # eval: (setq org-latex-default-packages-alist (cons '("mathletters" "ucs" nil) org-latex-default-packages-alist))
 # End:
-#+TITLE: Lisp -> Scheme -> Racket
+#+TITLE: Lisp Systems, including Scheme and Racket
 
 * Introduction
 
@@ -19,8 +19,8 @@ by almost all researchers in the field of *Artificial Intelligence*.
 
 | Example     | Lambda Calculus | M-Expression         | S-Expression     |
 |-------------+-----------------+----------------------+------------------|
-| Function    | (λx.x×x)        | λ[[x];times[x;x]]    | (λ(x)(* x x))    |
-| Application | ((λx.x×x)5)     | λ[[x];times[x;x]](5) | ((λ(x)(* x x))5) |
+| Function    | (λx.x⋅x)        | λ[[x];times[x;x]]    | (λ(x)(* x x))    |
+| Application | ((λx.x⋅x)5)     | λ[[x];times[x;x]](5) | ((λ(x)(* x x))5) |
 
 *S-Expressions* consisting of nested *Lists* were orginally the only way to
 structure programs or data in *LISP* and the language provided rich features for
