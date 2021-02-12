@@ -74,7 +74,7 @@ A Symbolic Expression is either
 Atoms are anything that is not a list, e.g.
 - numbers: 15 -27 3/4 4+5i 3.14159 6.02214076E23
   - Scheme has a /numeric tower/ of several kinds of numbers
-- strings: ~"Hello World!"~ ~"backslash \\ double quote \""~
+- strings: "Hello World!" "backslash \\ double quote \""
   - strings are primarily used for input/output
   - double-quotes enclose string literals
   - Scheme string literals use backslashes for special characters
