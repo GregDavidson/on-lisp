@@ -70,7 +70,7 @@
 ;; Construct the eyes from an eye by horizontally appending two copies of the eye
 ;; Construct an eye by making a circle
 
-;; Lambda is usually hiding is in procedure (function) definitions
+;; Lambda is usually hiding in procedure (function) definitions
 
 ;; This bit of code:
 
