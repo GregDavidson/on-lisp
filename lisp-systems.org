@@ -189,7 +189,7 @@ Given a *Lisp Environment* containing:
 | symbol   | value                           |
 |----------+---------------------------------|
 | ~*~      | ~procedure:*~   |
-| ~square~ | (λ (~x~) (~*~ ~x~ ~x~)) |
+| ~sqr~ | (λ (~x~) (~*~ ~x~ ~x~)) |
 and the expression: ~(sqr 5)~
 - Evaluate each element: ( (λ  (~x~) (~*~ ~x~ ~x~)) 5 )
 - λ substitute arguments: ~(* 5 5)~
