@@ -186,10 +186,10 @@ Some modern Lisps allow use of the Greek λ character as in the original
 *Lambda Calculus* instead of the clunky symbol ~lambda~.
 
 Given a *Lisp Environment* containing:
-| symbol   | value                           |
-|----------+---------------------------------|
-| ~*~      | ~procedure:*~   |
-| ~sqr~ | (λ (~x~) (~*~ ~x~ ~x~)) |
+| symbol | value                   |
+|--------+-------------------------|
+| ~*~    | ~procedure:*~           |
+| ~sqr~  | (λ (~x~) (~*~ ~x~ ~x~)) |
 and the expression: ~(sqr 5)~
 - Evaluate each element: ( (λ  (~x~) (~*~ ~x~ ~x~)) 5 )
 - λ substitute arguments: ~(* 5 5)~
