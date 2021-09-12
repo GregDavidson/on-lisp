@@ -1,0 +1,174 @@
+#lang racket
+
+;; A meta-circular evaluator defines a language by writing an interpreter
+;; in an identical or similar language.
+
+;; Here we're defining a language called VIS-Scheme aka
+;; aka Virtual Infinity Systems Scheme aka VIS, which
+;; (1) is similar to the original Scheme Language
+;; (2) provides a model for understanding similar languages
+;; (3) allows us to try out experimental extensions
+
+;; We should keep our implementation details cleanly separated from our
+;; semantic functions
+;; - (vis-env . bindings)
+;;   - creates an environment from 0 or more (key . value) pairs
+;; - (vis-eval environment symbolic-expression)
+;;   - evaluates an s-exp in a given env, yielding a value
+;; - (vis-apply closure arguments)
+;;   - applies a VIS Closure to an argument list, yielding a value
+
+;; Compared to the first Scheme Standard, VIS currently lacks
+;; - many Scheme functions - easily fixed by borrowing them from Racket, though!
+;; - a macro defining system - and macro-definable special forms!
+;; - reified continuations
+;; - side effects (except for top-level define)
+;; VIS procedures are FUNCTIONAL, i.e. they compute a single value
+;; from their arguments without any side-effects.
+;; VIS programs are MONOTONIC, i.e. the top level environment will grow as
+;; a side-effect of any top-level (define ...) special forms.
+
+(define (vis-eval s-exp env)
+  (cond [(symbol? s-exp) (env-key->value s-exp)]
+        [(pair? s-exp) (env-form->value env s-exp)]
+        [else s-exp] ) )
+
+(define (vis-apply proc args)
+  (if (procedure? proc)
+      ; apply primitive Racket procedure to arguments
+      (eval proc args)
+      ; apply vis-closure to arguments
+      (vis-apply-closure proc args) ) )
+
+;; vis-env takes 0 or more bindings as (key . value) pairs
+;; whether or not that corresponds to any internal representation.
+(define (vis-env . bindings) bindings)
+
+(define *vis-top-level-environment*
+  (vis-env `(
+             ;; inject any desired pure functional procedures from Racket
+             ;; into the initial VIS-Scheme environment:
+             ;; Numeric Functions
+             (= . ,=) (+ . ,+) (- . ,-) (* . ,*)
+             ;; Pair and List Functions
+             (pair? . ,pair?) (null? . ,null?)
+             (cons . ,cons) (car . ,car) (cdr . ,cdr) (list . ,list)
+             ;; String Functions
+             (string? . ,string?) (string . ,string-append-immutable)
+             (format . ,format)
+             )) )
+
+;; We CURRENTLY represent
+;; - bindings as (key . value) pairs
+;; - environments as (lists of bindings)
+;; These representations MAY CHANGE so do not expose
+;; this implementation design to any semantic-level functions!
+(define (env-key->binding env key) (assoc key env))
+(define (env-key->value env key) (cdr env-key->binding env key))
+(define (env-binding->env env binding) (cons binding env))
+(define (env-key-value->env env key value) (env-binding->env env env (cons key value)))
+(define (env-keys-values->env env keys values)
+  (cond [(symbol? keys) (cons (keys values) env)]
+        [(and (eq? '() keys) (eq? '() values)) env]
+        [(and (pair? keys) (symbol? (car keys) (pair? values)))
+         (cons (cons (car keys) (car values)) (env-keys-values->env env (cdr keys) (cdr values))) ]
+        [else
+         (raise-arguments-error 'env-keys-values->env "bad keys or values"
+          "keys" keys "values" values ) ] ) )
+
+(define (env-form->value env s-exp)
+  (let ( [head (car s-exp)] [tail (cdr s-exp)] )
+    (cond
+      ; special forms
+      [(eq? head 'quote) (cdr tail)]
+      [(eq? head 'if) (apply eval-if tail)]
+      [(eq? head 'define) (eval-define-fancy env (car tail) (cadr tail))]
+      [(eq? head 'begin) (apply eval-begin env tail)]
+      [(or (eq? head 'λ) (eq? head 'lambda))
+       (eval-lambda "" env (car tail) (cdr tail)) ]
+      ; regular forms
+      [else (let ( [values (vis-eval s-exp)] )
+              (vis-apply (car values) (cdr values)) )] ) ) )
+
+(define (check-env env [check-value (lambda (x) #t)])
+  (map (lambda (binding)
+         (let ([name (car binding)] [value (cdr binding)])
+           (when (not (symbol? name))
+             (raise-arguments-error 'check-env "bad key" "key" name) )
+           (when (not (check-value value))
+             (raise-arguments-error 'check-env "bad value" "key" name "value" value) ) ) )) )
+
+(define (eval-if condition if-true if-false)
+  (if condition if-true if-false) )
+
+;; (define ...) forms don't return a regular value.  In our
+;; implementation they return an instance of a modified-environment
+;; structure enclosing the environment which the define form
+;; has extended.  This should not be considered a value in
+;; VIS-Scheme.  Nothing should be printed by a repl.  It
+;; shall be an error if such an object is provided as an
+;; argument to a procedure.
+(struct modified-env (env))
+
+(define (eval-define-fancy env head value)
+  (cond [(symbol? head) (eval-define env head value)]
+        [(and (pair? head) (pair? (car head)))
+         (let ([name (car head)])
+           (eval-define env name (eval-lambda name env (cdr head) value)) ) ] ) )
+        
+(define (eval-define env name value)
+  (modified-env (env-key-value->env name (vis-eval value env))) )
+  
+;; Evaluate a non-empty list of s-exprs in sequence.
+;; Should any of them be define forms,
+;; propagate the new environment into the evaluation
+;; of the subsequent forms within the begin.  Return
+;; the value of the last s-expr.  (A similar algorithm
+;; is used for top-level sequences of s-exprs except
+;; that we allow such defines to shadow earlier bindings.
+;; If and when we become able to distinguish local scope
+;; bindings from earlier bindings we should fix this!!!
+(define (eval-begin env s-expr-list)
+  (when (not (pair? s-expr-list))
+    (raise-arguments-error
+     'eval-begin "improper begin form"
+     "env" env "body" s-expr-list ) )
+  (let* ( [the-env (if (modified-env? env) (modified-env-env env) env)]
+          [first-value (vis-eval (car s-expr-list) the-env)]
+          [tail (cdr s-expr-list)] )
+    (when (and (not (pair? tail)) (modified-env? first-value))
+      (raise-arguments-error 'eval-begin "improper begin form tail") )
+    (if (null? tail)
+        first-value
+        (eval-begin (if (modified-env? first-value) first-value env) tail) ) ) )
+
+;; A vis-closure contains a lambda procedure and the environment
+;; which was current when the lambda procedure was created.
+;; When we apply a closure to some arguments
+;; We extend the embedded environment by
+;; binding the lambda parameters to the provided arguments
+;; and evaluate the lambda expression in that environment.
+(define (vis-apply-closure closure args)
+  (let-values ( [(tag name env params body) closure] )
+    (when (not (eq? tag 'vis-closure))
+      (raise-arguments-error 'vis-apply-closure "not a vis-closure" "object" closure) )
+    (vis-eval (env-keys-values->env env params args) body) ) )
+
+(define (vis-function? x) (or (procedure? x) (and (pair? x) (eq? 'vis-closure (car x)))))
+
+;; Note: VIS Lambda is currently functional
+;; therefore body-list must be a singleton list
+;; containing the Lambda body S-Expression!
+(define (eval-lambda name env parameters body-list)
+  (when (not (= 1 (length body-list)))
+      (raise-arguments-error 'eval-lambda "lambda body not unity!") )
+  `(vis-closure ,name ,env ,@body-list) )
+
+;; TO DO:
+;; - Exclude with errors any modified-env structions used as values
+;; - Create a repl for a nice top level
+;;   - Make sure that it properly handles (define ...) forms
+;; - Create a non-interactive repl without the print for files and input streams
+;; - Create a strategy for handling I/O
+;;   - maybe borrowable but non-copyable Stream objects?
+;; - Keep it simple and clear for newcomers so they can use it ambitiously!
