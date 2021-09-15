@@ -3,7 +3,7 @@
 ;; A meta-circular evaluator defines a language by writing an interpreter
 ;; in an identical or similar language.
 
-;; Here we're defining a language called VIS-Scheme aka
+;; Here we'r(require racket/list)e defining a language called VIS-Scheme aka
 ;; aka Virtual Infinity Systems Scheme aka VIS, which
 ;; (1) is similar to the original Scheme Language
 ;; (2) provides a model for understanding similar languages
@@ -28,20 +28,25 @@
 ;; VIS programs are MONOTONIC, i.e. the top level environment will grow as
 ;; a side-effect of any top-level (define ...) special forms.
 
+;; symbols evaluate to their value in the environment
+;; lists evaluate as forms
+;; everything else evaluates to itself
 (define (vis-eval s-exp env)
-  (cond [(symbol? s-exp) (env-key->value s-exp)]
+  (cond [(symbol? s-exp) (env-key->value env s-exp)]
         [(pair? s-exp) (env-form->value env s-exp)]
         [else s-exp] ) )
 
 (define (vis-apply proc args)
   (if (procedure? proc)
       ; apply primitive Racket procedure to arguments
-      (eval proc args)
+      (apply proc args)
       ; apply vis-closure to arguments
       (vis-apply-closure proc args) ) )
 
-;; vis-env takes 0 or more bindings as (key . value) pairs
-;; whether or not that corresponds to any internal representation.
+;; vis-env takes 0 or more bindings as (key . value) pairs, i.e.
+;; as an association list.  This DOES NOT imply that association
+;; lists are the implementation of bindings and environments -
+;; although it currently IS!
 (define (vis-env . bindings) bindings)
 
 (define *vis-top-level-environment*
@@ -80,14 +85,14 @@
   (let ( [head (car s-exp)] [tail (cdr s-exp)] )
     (cond
       ; special forms
-      [(eq? head 'quote) (cdr tail)]
-      [(eq? head 'if) (apply eval-if tail)]
+      [(eq? head 'quote) (car tail)]
+      [(eq? head 'if) (eval-if env tail)]
       [(eq? head 'define) (eval-define-fancy env (car tail) (cadr tail))]
       [(eq? head 'begin) (apply eval-begin env tail)]
       [(or (eq? head 'λ) (eq? head 'lambda))
        (eval-lambda "" env (car tail) (cdr tail)) ]
       ; regular forms
-      [else (let ( [values (vis-eval s-exp)] )
+      [else (let ( [values (vis-eval s-exp env)] )
               (vis-apply (car values) (cdr values)) )] ) ) )
 
 (define (check-env env [check-value (lambda (x) #t)])
@@ -98,16 +103,24 @@
            (when (not (check-value value))
              (raise-arguments-error 'check-env "bad value" "key" name "value" value) ) ) )) )
 
-(define (eval-if condition if-true if-false)
-  (if condition if-true if-false) )
+;; (if test true-expression false-expression)
+(define (eval-if env args)
+  (if (vis-eval (first args) env)
+      (vis-eval (second args) env)
+      (vis-eval (third args) env) ) )
 
-;; (define ...) forms don't return a regular value.  In our
-;; implementation they return an instance of a modified-environment
-;; structure enclosing the environment which the define form
-;; has extended.  This should not be considered a value in
-;; VIS-Scheme.  Nothing should be printed by a repl.  It
-;; shall be an error if such an object is provided as an
-;; argument to a procedure.
+;; (define ...) forms don't return a regular value.  Since
+;; Racket structures create a new type which is distinct from
+;; all other types, they're perfect for this - otherwise we
+;; would need to use, e.g. a tagged list.  And besides, Racket
+;; (struct ...) writes our constructor, test and selector
+;; functions for us - hurrah for metaprogramming!
+;; So in our implementation define forms return a modified
+;; environment (extended with the new binding) wrapped in a
+;; structure, which is therefore NOT a VIS Scheme value!
+;; Nothing should be printed by a repl.
+;; It shall be an error if such an object is ever used as
+;; a value!
 (struct modified-env (env))
 
 (define (eval-define-fancy env head value)
@@ -118,57 +131,120 @@
         
 (define (eval-define env name value)
   (modified-env (env-key-value->env name (vis-eval value env))) )
-  
+
+;; A closure could be represented as a list or an array of
+;; four values, but let's make it simpler with a structure,
+;; hurrah again for metaprogramming!
+(struct vis-closure (name env params body))
+
+;; A vis-closure contains a lambda procedure and the environment
+;; which was current when the lambda procedure was created.
+;; When we apply a closure to some arguments,
+;; we extend the embedded environment by
+;; binding the lambda parameters to the provided arguments
+;; and evaluate the lambda expression in that environment.
+(define (vis-apply-closure closure args)
+  (when (not (vis-closure? closure))
+    (raise-arguments-error 'vis-apply-closure "not a vis-closure" "object" closure) )
+  (vis-eval
+   (env-keys-values->env (vis-closure-env closure) (vis-closure-params) args)
+   (vis-closure-body closure) ) )
+
+(define (vis-function? x) (or (procedure? x) (and (pair? x) (vis-closure? (car x)))))
+
+;; Note: VIS Lambda is currently functional
+;; therefore body-list must be a singleton list
+;; containing the Lambda body S-Expression!
+;; ==> Rewrite the body as a BEGIN form!
+(define (eval-lambda name env parameters body-list)
+  (when (not (= 1 (length body-list)))
+      (raise-arguments-error 'eval-lambda "lambda body not unity!") )
+  (vis-closure name env parameters body-list) )
+
+;; The above covers the functional semantics
+;; of VIS-Scheme and the code id quite elegant.
+;; Now we deal with the monotonic side-effects
+;; present in blocks and sequences and the code
+;; is a bit messier!
+
 ;; Evaluate a non-empty list of s-exprs in sequence.
 ;; Should any of them be define forms,
 ;; propagate the new environment into the evaluation
 ;; of the subsequent forms within the begin.  Return
 ;; the value of the last s-expr.  (A similar algorithm
 ;; is used for top-level sequences of s-exprs except
-;; that we allow such defines to shadow earlier bindings.
-;; If and when we become able to distinguish local scope
-;; bindings from earlier bindings we should fix this!!!
+;; that we allow such defines to shadow earlier bindings.)
+;; We allow local bindings to shadow existing outside
+;; bindings but NOT earlier local bindings, giving local
+;; monotonicity.  The last form in a (begin ...) must
+;; produce a regular value, i.e. not be a define form.
+;; All but the last form must produce a side-effect,
+;; which currently only define blocks do, otherwise
+;; their evaluation makes no difference!
 (define (eval-begin env s-expr-list)
   (when (not (pair? s-expr-list))
     (raise-arguments-error
      'eval-begin "improper begin form"
      "env" env "body" s-expr-list ) )
-  (let* ( [the-env (if (modified-env? env) (modified-env-env env) env)]
-          [first-value (vis-eval (car s-expr-list) the-env)]
-          [tail (cdr s-expr-list)] )
-    (when (and (not (pair? tail)) (modified-env? first-value))
-      (raise-arguments-error 'eval-begin "improper begin form tail") )
+  (let ( [value (eval-begin-seq env env s-expr-list)] )
+    (if (modified-env? value)
+        (raise-arguments-error 'eval-begin-seq "improper last begin form" "form" (last s-expr-list))
+        value ) ) )
+
+;; Like standard assoc only will only search back as far as env0
+;; which should be a sublist of env, i.e. an earlier point.
+(define (key-env-env0->value key env env0)
+  (cond [(or (null? env) (eq? env0 env)) #f]
+        [(not (pair? env))
+         (raise-arguments-error 'key-env-env0->value "improper list" "env" env "key" key) ]
+        [(not (pair? (car env))) 
+         (raise-arguments-error 'key-env-env0->value "improper binding" "binding" (car env) "key" key) ]
+        [(eq? key (caar env)) (car env)]
+        [else (key-env-env0->value key (cdr env) env0)] ) )
+
+;; Evaluate a single s-exp within a begin form
+;; complaining if it's a local symbol redefinition.
+;; env0 is the environment before evaluating anything
+;; within the begin form.
+;; return the environment and value.
+(define (eval-begin-eval env0 env s-exp)
+  (let ( [value (vis-eval s-exp env)] )
+    (when (and
+           (modified-env? value)
+           (key-env-env0->value (car (modified-env-env value))) )
+      (let* ( [new (modified-env-env value)] [key (car new)] [old (key-env-env0->value key)] )
+        (raise-arguments-error 'key-env-env0->value "rebinding attempt"
+                               "key" "old-value" (cdr old) "new-value" (cdr new)) ) )
+    value ) )
+
+;; Evaluate a sequence of 1 or more s-expressions, aka "a block"
+;; returning the value of the last expression.  Thread any local
+;; non-conflicting defines into extensions of the local environment.
+;; env0 is the environment at the beginning of the block, env is the
+;; environment reflecting any extensions.
+(define (eval-begin-seq env0 env seq)
+  (let ( [value1 (eval-begin-eval env0 env (car seq))] [tail (cdr seq)] )
+    (when (and (not (pair? tail)) (not (null? tail)))
+      (raise-arguments-error 'eval-begin-seq "improper begin form" "tail" tail) )
     (if (null? tail)
-        first-value
-        (eval-begin (if (modified-env? first-value) first-value env) tail) ) ) )
+        value1 ; any modified-env here will be rejected!
+        (eval-begin-seq
+         env0
+         (if (modified-env? value1) (modified-env-env value1) env)
+         tail ) ) ) )
 
-;; A vis-closure contains a lambda procedure and the environment
-;; which was current when the lambda procedure was created.
-;; When we apply a closure to some arguments
-;; We extend the embedded environment by
-;; binding the lambda parameters to the provided arguments
-;; and evaluate the lambda expression in that environment.
-(define (vis-apply-closure closure args)
-  (let-values ( [(tag name env params body) closure] )
-    (when (not (eq? tag 'vis-closure))
-      (raise-arguments-error 'vis-apply-closure "not a vis-closure" "object" closure) )
-    (vis-eval (env-keys-values->env env params args) body) ) )
-
-(define (vis-function? x) (or (procedure? x) (and (pair? x) (eq? 'vis-closure (car x)))))
-
-;; Note: VIS Lambda is currently functional
-;; therefore body-list must be a singleton list
-;; containing the Lambda body S-Expression!
-(define (eval-lambda name env parameters body-list)
-  (when (not (= 1 (length body-list)))
-      (raise-arguments-error 'eval-lambda "lambda body not unity!") )
-  `(vis-closure ,name ,env ,@body-list) )
-
-;; TO DO:
-;; - Exclude with errors any modified-env structions used as values
+;; Question and Exercise Problems:
+;; - What other kinds of side-effects do we wish to allow?
+;; - How might we do I/O?
+;;   - Hint: Look at functional language approaches!
+;; - What is the cost of our implementation of environments?
+;;   - Where could we "compile-away" that cost?
 ;; - Create a repl for a nice top level
 ;;   - Make sure that it properly handles (define ...) forms
-;; - Create a non-interactive repl without the print for files and input streams
-;; - Create a strategy for handling I/O
-;;   - maybe borrowable but non-copyable Stream objects?
-;; - Keep it simple and clear for newcomers so they can use it ambitiously!
+;; - Create an interactive repl
+;; - Create a non-interactive repl for files and input streams
+;;   - Should this be separate from the interative repl?
+;; - Where else should we check for errors?
+;; - Where would it be useful to provide warnings?
+;; - Is your code simple and clear enough that others can build
+;;   their ideas on your work?
