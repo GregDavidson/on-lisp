@@ -234,6 +234,18 @@
          (if (modified-env? value1) (modified-env-env value1) env)
          tail ) ) ) )
 
+;; Some test code
+
+;; yay metaprogramming!
+(define-syntax-rule (vis-expect expected-value exp)
+  (let ( [value (vis-eval exp *vis-top-level-environment*)] )
+    (when (not (eq? value expected-value))
+      (raise-user-error 'vis-eval "Expression ~a yielded ~a not ~a!\n" 'exp value expected-value) ) ) )
+
+(vis-expect 1 (if #t 1 2))
+(vis-expect 2 (if #f 1 2))
+(vis-expect 2 (+ 1 1))
+
 ;; Question and Exercise Problems:
 ;; - What other kinds of side-effects do we wish to allow?
 ;; - How might we do I/O?
