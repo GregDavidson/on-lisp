@@ -1,9 +1,10 @@
 #lang racket
+(require racket/list)
 
 ;; A meta-circular evaluator defines a language by writing an interpreter
 ;; in an identical or similar language.
 
-;; Here we'r(require racket/list)e defining a language called VIS-Scheme aka
+;; Here we're defining a language called VIS-Scheme
 ;; aka Virtual Infinity Systems Scheme aka VIS, which
 ;; (1) is similar to the original Scheme Language
 ;; (2) provides a model for understanding similar languages
@@ -13,16 +14,16 @@
 ;; semantic functions
 ;; - (vis-env . bindings)
 ;;   - creates an environment from 0 or more (key . value) pairs
-;; - (vis-eval environment symbolic-expression)
+;; - (vis-eval symbolic-expression environment)
 ;;   - evaluates an s-exp in a given env, yielding a value
 ;; - (vis-apply closure arguments)
-;;   - applies a VIS Closure to an argument list, yielding a value
+;;   - applies a closure to an argument list, yielding a value
 
 ;; Compared to the first Scheme Standard, VIS currently lacks
-;; - many Scheme functions - easily fixed by borrowing them from Racket, though!
+;; - many Scheme functions - we can just borrow them from Racket!
 ;; - a macro defining system - and macro-definable special forms!
 ;; - reified continuations
-;; - side effects (except for top-level define)
+;; - side effects (except for monotonic define in s-exp sequences)
 ;; VIS procedures are FUNCTIONAL, i.e. they compute a single value
 ;; from their arguments without any side-effects.
 ;; VIS programs are MONOTONIC, i.e. the top level environment will grow as
@@ -46,7 +47,7 @@
 ;; vis-env takes 0 or more bindings as (key . value) pairs, i.e.
 ;; as an association list.  This DOES NOT imply that association
 ;; lists are the implementation of bindings and environments -
-;; although it currently IS!
+;; although it currently IS *wink*
 (define (vis-env . bindings) bindings)
 
 (define *vis-top-level-environment*
