@@ -48,7 +48,7 @@
 ;; as an association list.  This DOES NOT imply that association
 ;; lists are the implementation of bindings and environments -
 ;; although it currently IS *wink*
-(define (vis-env . bindings) bindings)
+(define (vis-env bindings) bindings)
 
 (define *vis-top-level-environment*
   (vis-env `(
