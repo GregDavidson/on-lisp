@@ -1,5 +1,4 @@
 #lang racket
-(require racket/list)
 
 ;; A meta-circular evaluator defines a language by writing an interpreter
 ;; in an identical or similar language.
@@ -78,9 +77,10 @@
 ;; a value!
 (struct modified-env (env))
 
-;; Let's make sure some unwanted Entities don't leak into VIS
-(define (vis-value? x) (not (or (modified-env? x) (void? x))))
+;; evaluating a define form will yield a modified-env structure!
 (define (eval-value? x) (or (modified-env? x) (vis-value? x)))
+;; vis-value? ideally would enumerate all of the allowed types!!
+(define (vis-value? x) (nor (modified-env? x) (void? x)))
 
 ;; It's expensive to test if something is a proper list, so we'll
 ;; just test if it's empty or if it starts with a pair.  Only use
@@ -93,12 +93,13 @@
 ;; These representations MAY CHANGE so do not expose
 ;; this implementation design to any semantic-level functions!
 (define (vis-binding? x) (and (pair? x) (symbol? (car x)) (vis-value? (cdr x))))
-(define (maybe-vis-binding? x) (and x (vis-binding? x))) ;; failed lookup returns #f
+(define (maybe-vis-binding? x) (or (false? x) (vis-binding? x))) ;; failed lookup returns #f
 (define/contract (vis-binding key value)
   (-> symbol? vis-value? vis-binding?)
   (cons key value) )
 (define/contract (vis-binding->key b) (-> vis-binding? symbol?) (car b))
 (define/contract (vis-binding->value b) (-> vis-binding? vis-value?) (cdr b))
+
 ;; We're only checking the first element, if any!
 (define (vis-env? x) (or (null? x) (and (pair? x) (vis-binding? (car x)))))
 (define/contract (env-key->binding env key)
@@ -113,6 +114,7 @@
 (define/contract (env-key-value->env env key value)
   (-> vis-env? symbol? vis-value? vis-env?)
   (env-binding->env env (cons key value)) )
+
 ;; Match parameters with values to extend the environment.
 ;; Parameters can be a symbol, a list of symbols,
 ;; or an "inproper list" of symbols, ending in a symbol.
@@ -132,7 +134,7 @@
       [(eq? head 'quote) (car tail)]
       [(eq? head 'if) (eval-if env tail)]
       [(eq? head 'define) (eval-define-fancy env (car tail) (cadr tail))]
-      [(eq? head 'begin) (apply eval-begin env tail)]
+      [(eq? head 'begin) (eval-begin env tail)]
       [(or (eq? head 'λ) (eq? head 'lambda))
        (eval-lambda "" env (car tail) (cdr tail)) ]
       ; regular forms
@@ -160,7 +162,7 @@
            (eval-define env name (eval-lambda name env (cdr head) value)) ) ] ) )
         
 (define (eval-define env name value)
-  (modified-env (env-key-value->env name (vis-eval value env))) )
+  (modified-env (env-key-value->env env name (vis-eval value env))) )
 
 ;; A closure could be represented as a list or an array of
 ;; four values, but let's make it simpler with a structure,
@@ -210,9 +212,8 @@
 ;; All but the last form must produce a side-effect,
 ;; which currently only define blocks do, otherwise
 ;; their evaluation makes no difference!
-(define (eval-begin env s-expr-list)
-  (when (not (pair? s-expr-list))
-    (raise-argument-error 'eval-begin "non-empty-list?" 2) )
+(define/contract (eval-begin env s-expr-list)
+  (-> vis-env? pair? vis-value?)
   (let ( [value (eval-begin-seq env env s-expr-list)] )
     (if (modified-env? value)
         (raise-result-error 'eval-begin-seq "block yielding a value" 2)
@@ -290,6 +291,8 @@
 (vis-expect-equal? 1 (if #t 1 2))
 (vis-expect-equal? 2 (if #f 1 2))
 (vis-expect-equal? 2 (+ 1 1))
+
+(vis-expect-equal? 2 (begin (define one 1) (+ one one)))
 
 (vis-expect-equal? "Hello world!" (string "Hello" " " "world" "!"))
 
