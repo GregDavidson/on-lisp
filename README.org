@@ -18,6 +18,8 @@ I've had a long-term love affair with Lisp:
 
 [[lambda-sugar.rkt]] -- Lambda and Syntactic Sugar
 
+[[vis-mce.racket]] -- a meta-circular evaluator in Racket
+
 ** Lisps vs. Other Languages
 
 Lisp was originally inspired by the [[https://en.wikipedia.org/wiki/Lambda_calculus][Lambda Calculus]] introduced by Alonzo Church
