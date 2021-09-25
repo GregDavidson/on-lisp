@@ -12,7 +12,7 @@
 ;; We should keep our implementation details cleanly separated from our
 ;; semantic functions
 ;; - (vis-env . bindings)
-;;   - creates an environment from 0 or more (key . value) pairs
+;;   - creates an environment from 0 or more (key . value) pairs/Data1/Greg/WebPages/ngender.net
 ;; - (vis-eval symbolic-expression environment)
 ;;   - evaluates an s-exp in a given env, yielding a value
 ;; - (vis-apply closure arguments)
@@ -22,7 +22,7 @@
 ;; - many Scheme functions - we can just borrow them from Racket!
 ;; - a macro defining system - and macro-definable special forms!
 ;; - reified continuations
-;; - side effects (except for monotonic define in s-exp sequences)
+;; - side effects (except for monotonic define in s-exp sequences)/Data1/Greg/WebPages/ngender.net
 ;; VIS procedures are FUNCTIONAL, i.e. they compute a single value
 ;; from their arguments without any side-effects.
 ;; VIS programs are MONOTONIC, i.e. the top level environment will grow as
@@ -80,11 +80,13 @@
 ;; evaluating a define form will yield a modified-env structure!
 (define (eval-value? x) (or (modified-env? x) (vis-value? x)))
 ;; vis-value? ideally would enumerate all of the allowed types!!
+;; see or? from predicates if desired!
 (define (vis-value? x) (nor (modified-env? x) (void? x)))
 
 ;; It's expensive to test if something is a proper list, so we'll
 ;; just test if it's empty or if it starts with a pair.  Only use
-;; where we expect a proper list, though!
+;; where we expect a proper list, though!  A chaperone contract
+;; could enforce this - but at what cost?
 (define (listy? x) (or (null? x) (pair? x)))
 
 ;; We CURRENTLY represent
