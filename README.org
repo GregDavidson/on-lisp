@@ -64,3 +64,20 @@ perhaps assisted by some choice macros! [[https://racket-lang.org][Racket]] take
 allowing for the definition of new languages which can introduce radically new
 features such as static typing and allowing you to express different parts of a
 program in different languages!
+
+** Lisp Practical Universality
+
+It is often not enough for a language to be highly expressive. If it's going to
+support practical projects and especially the building of new tools it needs to
+be efficient. Lisp has proved itself in this regard better than any other single
+language. While vastly more expressive than C, the poster child for low-level
+efficiency on conventional compuers, there are compilers for Common Lisp and for
+Scheme that are approximately as efficient as C.
+
+[[https://en.wikisource.org/wiki/Lambda_Papers][A famous series of papers]] by the designers of Scheme, one of the simplest Lisps,
+show that Lisp Systems can support all of the data structures and control
+structures of any competing languages, including powerful features which were
+rare or non-existent among other languages of the time. Since then, many popular
+languages have added features in imitation of Scheme, but without the same
+elegance. Those papers are still an excellent read!
+
