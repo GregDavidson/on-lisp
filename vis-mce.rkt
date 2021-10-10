@@ -57,7 +57,8 @@
              (= . ,=) (+ . ,+) (- . ,-) (* . ,*)
              ;; Pair and List Functions
              (pair? . ,pair?) (null? . ,null?)
-             (cons . ,cons) (car . ,car) (cdr . ,cdr) (list . ,list)
+             (cons . ,cons) (car . ,car) (cdr . ,cdr)
+             (list . ,list) (append . ,append)
              ;; String Functions
              (string? . ,string?) (string . ,string-append-immutable)
              (format . ,format)
@@ -148,6 +149,12 @@
       (vis-eval (second args) env)
       (vis-eval (third args) env) ) )
 
+;; A simple define looks like:
+;;   (define name value)
+;; A fancy define is hiding a λ expression, i.e.
+;;   (define (foo a b) ...)
+;; is really
+;;   (define foo (λ a b) ...))
 (define (eval-define-fancy env head value)
   (cond [(symbol? head) (eval-define env head value)]
         [(and (pair? head) (pair? (car head)))
@@ -262,9 +269,16 @@
          (if (modified-env? value1) (modified-env-env value1) env)
          tail ) ) ) )
 
-;; Some test code
+;;; Testing the Evaluator and some of the Pieces
 
-;; yay metaprogramming!
+;; A Unit Testing Framework allows us to run code and compare it with what
+;; we expect.  When the expectation is violated, an exception is generated
+;; along with a good message helping us find the problem.
+
+;; Typically we want to be able to both evaluate the code under test and also
+;; print it if things go wrong.  Macros allow us to use an s-expression in
+;; both of these modes without having to enter the expression twice.  Another
+;; win for metaprogramming!
 
 ;; (expect-equal? expected-value racket-expression)
 (define-syntax-rule (expect-equal? expected-value exp)
@@ -284,6 +298,13 @@
       (let ( [value (vis-eval 'exp *vis-top-level-environment*)] )
         (raise-user-error 'vis-expect-fail "Error: ~a ⟶ ~a should have failed!\n" exp value) ) ) )
 
+;; Here are a few tests.  Ideally we'd expand them to test all features:
+
+;; In addition to testing, these "expectations" help document how things
+;; are supposed to work!
+
+;; What tests do you see that we should add?
+
 (vis-expect-equal? 1 (if #t 1 2))
 (vis-expect-equal? 2 (if #f 1 2))
 (vis-expect-equal? 2 (+ 1 1))
@@ -296,7 +317,7 @@
 (expect-equal? '( (a . 1) (b . 2) (c . 3) ) (env-parameters-values->env '() '(a b c) '(1 2 3)) )
 (expect-equal? '( (a . 1) (b . (2 3)) ) (env-parameters-values->env '() '(a . b) '(1 2 3)) )
 
-;; Question and Exercise Problems:
+;; Questions and Exercises:
 ;; - What other kinds of side-effects do we wish to allow?
 ;; - How might we do I/O?
 ;;   - Hint: Look at functional language approaches!

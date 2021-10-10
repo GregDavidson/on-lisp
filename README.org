@@ -1,4 +1,4 @@
-* Lisp Systems
+* On Lisp
 
 ** Aspects of Lisp
 
