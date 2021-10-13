@@ -1,5 +1,8 @@
 #lang racket
 
+;;; Distinguishing Good Closures which behave like functional procedures
+;;; from Bad Closures which use state in a bad way!
+
 ; given a nice normal function (f x) -> y
 ; return a procedure which takes
 ; - an alist of previous values
@@ -14,7 +17,7 @@
       (define (avg-accum rest sum cnt)
         (if (null? rest)
             (/ sum cnt)
-            (avg-accum (cdr rest) (+ sum (cdr (cdr rest)) (add1 cnt))) ) )
+            (avg-accum (cdr rest) (+ sum (cdr (car rest))) (add1 cnt)) ) )
       (values (avg-accum new-alist 0 0) new-alist) ) ) )
 
 
@@ -39,10 +42,15 @@
 ; - (where state begins as an empty list)
 ; return a closure over (wierding f) and state which
 ; maps x to a value to return and a new state
+; Note: the viewing window is a side effect for demo purposes
+;       imagine trying to understand an arbitrary wierdo procedure
+;       without the viewing window looking only at its mappings!
 (define (wierdo f wierding)
   (let ( [state '()]
          [wierder (wierding f)] )
     (λ (x) (let-values ( [(f-of-x new-state) (wierder state x)] )
+             ; expensive window for your viewing pleasure:
+             (when (not (equal? state new-state)) (printf "~s ~~> new-state ~s\n" x new-state))
              (set! state new-state)
              f-of-x )) ) )
 
