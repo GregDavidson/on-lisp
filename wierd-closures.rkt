@@ -1,9 +1,29 @@
 #lang racket
 
 ;;; Distinguishing Good Closures which behave like functional procedures
-;;; from Bad Closures which use state in a bad way!
+;;; from Bad Closures which retain state in an observable manner.
 
-; given a nice normal function (f x) -> y
+;; * Commentary
+
+;; A "functional procedure" is a procedure which
+;; (1) always returns the same result(s) given the same arguments
+;; (2) doesn't have any "side-effects", i.e.
+;;     no observable effect to the computation other than the value(s) returned
+;;     side-effects include input/output or observable changes to global bindings
+;;     or observable changes to mutable components of persistent data structures
+
+;; A functional procedure can be treated as a black box.  One need only know
+;; its specification and its inputs to understand its role in the system.
+;; Any change in its implementation won't change the behavior of the system
+;; other than timing and efficiency.
+
+;; Loose languages, including almost all Lisps allow us to cheat a little
+;; e.g. we can use an output stream for logging which we don't count as
+;; a side effect.  Any such cheating needs scrutiny and documentation!
+
+;; * The Code
+
+; given a functional procedure (f x) -> y
 ; return a procedure which takes
 ; - an alist of previous values
 ; - an x input for f
@@ -21,7 +41,7 @@
       (values (avg-accum new-alist 0 0) new-alist) ) ) )
 
 
-; given a nice normal function (f x) -> a number y
+; given a functional procedure (f x) -> a number y
 ; return a function which takes
 ; - an alist of previous values
 ; - an x input for f
@@ -37,7 +57,7 @@
             (values f-of-x (cons (cons x f-of-x) alist)) ) ) ) ) )
 
 ; given
-; - a nice normal function (f x) -> a number y
+; - a functional procedure (f x) -> a number y
 ; - a procedure (wierding state x) -> a number y, a ?new? state
 ; - (where state begins as an empty list)
 ; return a closure over (wierding f) and state which
@@ -56,15 +76,42 @@
 
 ;; OK, let's create some examples
 
-; First, a really boring nice normal function
+; First, a really boring functional procedure
 (define (sqr x) (* x x))
 
 (define curly (wierdo sqr avg-val))
 
 (define moe (wierdo sqr memoize))
 
-;; Questions for you, dear reader:
+;; Experimentation
+
+; Experiment with running curly and moe.
+; They take the same argument that sqr
+; would take.
+
+; Call them multiple times, with the same
+; argument and with different arguments.
+
+;; Questions
 
 ; What kind of thing is curly?
 
 ; What kind of thing is moe?
+
+; How could you specify each of them as a
+; black box?
+
+; How could you test that they were behaving
+; according to their specification?
+
+; When might weirdo + memoize be useful?
+; How could you make it more efficient?
+
+; In what situation might something like
+; wierdo + avg-val be useful?
+
+; How might you minimize the complexity impact of
+; non-functional procedures in a system?
+
+; What other questions and insights occur to you
+; from this exploration?
