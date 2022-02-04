@@ -19,7 +19,7 @@
 
 ;; Loose languages, including almost all Lisps allow us to cheat a little
 ;; e.g. we can use an output stream for logging which we don't count as
-;; a side effect.  Any such cheating needs scrutiny and documentation!
+;; a side effect.  Any such cheating needs scset!rutiny and documentation!
 
 ;; * The Code
 
@@ -89,7 +89,34 @@
 ; They take the same argument that sqr
 ; would take.
 
+; Call them multiple times, with the same(wierdo sqr memoize))
+
+;; Experimentation
+
+; Experiment with running curly and moe.
+; They take the same argument that sqr
+; would take.
+
 ; Call them multiple times, with the same
+; argument and with different arguments.
+
+;; Questions
+
+; What kind of thing is curly?
+
+; What kind of thing is moe?
+
+; How could you specify each of them as a
+; black box?
+
+; How could you test that they were behaving
+; according to their specification?
+
+; When might weirdo + memoize be useful?
+; How could you make it more efficient?
+
+; In what situation might something like
+; wierdo + avg-v
 ; argument and with different arguments.
 
 ;; Questions
