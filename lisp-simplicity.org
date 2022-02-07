@@ -17,7 +17,7 @@ language, Lisp allows such libraries to significantly extend Lisp's syntax and
 semantics: For this reason, Lisp is often called /the programmable, programming
 language!/
 
-*** Lisp uses a lot of Nested Lists!
+** Lisp uses a lot of Nested Lists!
    
 A humorous definition of Lisp:
 - Lisp :: Lots of Irritating Silly Parentheses
@@ -37,17 +37,17 @@ Is the Lisp notation more complex? Most programmers say that after a few days of
 experience they find Lisp's simple syntax as clear and pleasant as the
 /algebraic syntaxes/ of most other popular languages. Do you find that credible?
 
-*** Lisp Syntax
+** Lisp Syntax
 
-Syntax defines what a language looks like, not what it does. Syntax is therefore
-relatively superficial. Lisp has the simplest syntax of any popular modern
-language.  Once you learn it, you're unlikely to ever forget it.
+/Syntax/ defines what a language looks like, not what it does. Syntax is
+therefore relatively superficial. Lisp has the simplest syntax of any popular
+modern language. Once you learn it, you're unlikely to ever forget it.
 
-Lisp Programs are made out of *Symbolic Expression* define as follows:
+Lisp Programs are made out of *Symbolic Expression* defined as follows:
 
 - Atom :: Anything /NOT/ a /List/
       - Atoms can be simple, e.g. a character or an integer
-      - Or atoms can be complex, e.g. /string/, /array/, /struct/, etc.
+      - Or complex, e.g. /string/, /array/, /struct/, etc.
 - Symbolic Expression (S-Expr) :: Either
       - An /Atom/
       - A /List/ of /Symbolic Expressions/
@@ -55,131 +55,164 @@ Lisp Programs are made out of *Symbolic Expression* define as follows:
 Parentheses are used to enclose /Lists/.
 
 Each kind of /Atom/ has its own syntax.
-- You can add new atom types
-- e.g. Racket Slideshow adds atoms which are /pictures/.
+- You /can/ add new atom types
+- e.g. /Racket Slideshow/ adds atoms which are /pictures/.
 
-*** Lisp Semantics: Eval, Apply
+** Lisp Semantics: Eval, Apply
 
 Semantics defines what code means and what happens when the computer evaluates
 (i.e. runs or executes) it. The Semantics of a language is the big deal. Lisp
 has the simplest semantics of any popular modern language. Once you learn it,
 you're unlikely to ever forget it.
-   
-Evaluation takes place within an environment
-- Symbol :: Atoms which serve as /identifiers/, i.e. names for things
-- Value :: An /S-Expr/ which can be returned from a /procedure/
-- Binding :: A /symbol/ and a /value/
-- An environment is like a dictionary
 
-- Evaluation :: =eval= maps S-Exprs to Values
-- Symbols :: evaluate to their values in the environment /or error/
-- All other atoms :: Evaluate to themselves
-- Lists :: Evaluable Lists are called Forms
-      - Evaluate each element of the List (recursively)
+Lisp evaluates your S-Exprs using the procedures "eval" and "apply" in the
+context of /an Environment/.
+
+- Symbol :: An Atom which serves as an /identifiers/, i.e. a name for something
+- Value :: An /S-Expr/ which can be /returned/ from a /procedure/
+- Binding :: A /symbol/ "bound to" (paired with) a /value/
+- Environment :: a set of /Bindings/, which works like a dictionary
+
+- =eval= :: =eval= maps S-Exprs to Values
+- Symbols :: =eval= maps symbols to their values in the environment /or error/
+- All other atoms :: Simply evaluate to themselves
+- Lists :: Evaluable Lists are called /Forms/
+      - =eval= each element of the List (recursively)
             - The first element must evaluate to a procedure (or error)
-      - =apply=  the procedure to the other elements as arguments
-            - The other elements must be suitable values for the procedure's parameters
-- Special Forms :: Handled specially by =eval= and =apply=
+      - =apply= the procedure to the other elements as arguments
+            - Those elements must be suitable values for the procedure's parameters
+- Special Forms :: Handled as a special case by =eval= and =apply=
 - quote :: suppresses evaluation of its argument
-- (if /test/ /exp-if-true/ /exp-if-false) :: evaluates only 1 of its arguments
+      - =(quote (+ 1 (* 3 4) 5))= evaluates to =(+ 1 (* 3 4) 5)=
+- =(if /test/ /if-true/ /if-false)= :: evaluates one of /if-true/ or /if-false/
+      - test :: an S-Expr which evaluates to a /Boolean Value/
+      - The atom =#f= is the Boolean Value /false/
+      - all other S-Exprs are considered /true/, including the atom =#t=
 - (lambda parameters bodies) :: creates a procedure
-      - the parameters are paired with the arguments to create new bindings
-      - the bodies are evaluated in the environment extended with those bindings
+      - when the procedure is called ::
+            - each parameter is /bound/ to an argument value
+            - bodies are evaluated in the environment extended with those bindings
       - parameters :: a list of 0 or more =symbols=
             - or a single =symbol= which gets /all parameters/ as a list
       - bodies :: 1 or more S-Exprs to evaluate.
             - The value of the last body is /returned/ as the value of the
               procedure call
 
+A /procedure/ which returns the same value when given the same argument values
+is called a /functional procedure/.  Many people use the terms /procedure/ and
+/function/ interchangeably in computing.
+
+OK, that's it! That's how Lisp works!
+
+Well, basically, but we have a few more features which extend Lisp's power.
+
+** Interactive Lisp uses a (P)REPL
+
 - (P)REPL :: (Prompt) Read Eval Print Loop session
 - You enter :: (+ 1 (* 3 4) 5)
-- =eval= each element :: returns: ({the addition procedure} 1 12 5)
-- =apply= {the addition procedure} to (1 12 5) :: returns: 18
+- =eval= each element returns :: =({the addition procedure} 1 12 5)=
+- =apply= {the addition procedure} to =(1 12 5)= returns :: =18=
 
 (P)REPL Session
-- =(quote (+ 1 (* 3 4) 5))= --> (+ 1 (* 3 4) 5)
-- ='(+ 1 (* 3 4) 5)= --> (+ 1 (* 3 4) 5)
-- =(apply + '(1 2 3 4 5 6))= --> 21
-- =(map eval '(+ 1 (* 3 4) 5))= --> ({the addition procedure} 1 12 5)
+- =(quote (+ 1 (* 3 4) 5))=
+      - =(+ 1 (* 3 4) 5)=
+- =(apply + '(1 2 3 4 5 6))=
+      - =21=
+- =(map eval '(+ 1 (* 3 4) 5))=
+      - =({the addition procedure} 1 12 5)=
 - =( (lambda (x y) (+ (* x x) (* y y)) ) 3 4 )=
       - evaluates =(+ (* x x) (* y y))=
       - in the environment extended with =(x 3) (y 4)=
       - which =eval= turns into =({the addition procedure} 9 16)=
       - and =apply= turns into =25=
 
-OK, that's it! Well, almost - we have syntactic sugar and handy builtin
-procedures.
+Most Lisps allow programs to be broken up into files which can be /compiled/
+into /native code/ and then mixed with /Interactive Lisp/ at the REPL as part of
+an incremental development process. Lisp development platforms like /DrRacket/
+and /Emacs/ also support this style of development.
 
-*** Syntactic Sugar: Form Macros
+** Syntactic Sugar: Form Macros
 
-Like everything to do with syntax, Syntactic Sugar is superficial. It might make
-a Lisp program prettier, but it doesn't effect what it does.
+Like everything to do with syntax, /Syntactic Sugar is superficial/. It might
+make a Lisp program prettier, but it doesn't effect what it /does/.
 
 Because Lisp code consists of S-Exprs and Lisp is good at manipulating S-Exprs,
-you can write Lisp /macros/ which will translate certain forms into other forms.
-This translation happens when your program is being /compiled/ (translated to
-your computer's native code). Compilation allows your program runs as fast as
-your computer can go, typically 10 to 50 times faster than, e.g. a similar
-/Python/ program. Because macros are translated out before your program runs,
-they do not slow your program down.
+you can write Lisp /Form Macros/ (usually just called Macros) which will
+translate fancy forms into compositions of simpler forms. This translation
+happens when your program is being /compiled/, i.e. when it's being translated
+to your computer's native code.
+
+Compilation to native code allows your program to run as fast as your computer
+can go, typically 10 to 50 times faster than a similar uncompiled program can
+run, e.g. a similar /Python/ program. Because macros are translated out before
+your program runs, they do not slow your program down.
 
 Some examples of what macros can do:
 
-When I want to do multiple things where the syntax only allows one thing, I can
-use the =begin= macro: =(begin s-expr1 s-expr2 ... s-exprN)= which will evaluate
-each s-expr in turn and return the value of the last one. This is just syntactic
-sugar for =( (lambda () s-expr1 s-expr2 ... s-exprN) )=. In fact, a lot of Lisp
-syntactic sugar is just disguised /lambdas/. See [[lambda-sugar.rkt][Lambda Sugar]] for more examples.
+I might want to do multiple things where the syntax only allows one thing, I can
+use the =begin= macro:
+- =(begin s-expr1 s-expr2 ... s-exprN)=
+to evaluate each s-expr in turn and return the value of the last one. This is
+just syntactic sugar for
+- =( (lambda () s-expr1 s-expr2 ... s-exprN) )=
+In fact, a lot of Lisp syntactic sugar is just disguised /lambdas/.
+- See [[lambda-sugar.rkt][Lambda Sugar]] for more examples.
 Lambda is the /most/ important Lisp feature!
 
-Really, go read [[lambda-sugar.rkt][Lambda Sugar]] before reading any further!
+Really, go read [[lambda-sugar.rkt][Lambda Sugar]] right now before reading any further!
 
 Macros can build on macros, so if I want to do several things, but only when
-some condition is true, I use the =when= macro: =(when some-condition s-expr1
-s-expr2 ... s-exprN)= just translates into =(if some-condition (begin s-expr1
-s-expr2 ... s-exprN) #f)= where #f is just the Lisp atom for /false/.
+some condition is true, I use the =when= macro:
+- =(when some-condition s-expr1 s-expr2 ... s-exprN)=
+- translates into =(if some-condition (begin s-expr1 s-expr2 ... s-exprN) #f)=
+- where again, =#f= is the Lisp atom for /false/.
 
 Lisp purists suggest that programmers use macros /sparingly/. Although macros
 don't slow programs down and can make programs prettier, they put a burden on
 anyone reading the program later, since they have to understand what the macro
 does in order to understand what the program is doing.
 
-*** Syntactic Sugar: Reader Macros
+** Syntactic Sugar: Reader Macros
 
-Lisp reads your Lisp code using the Lisp function =read=.  Now you understand
-why the interactive Lisp REPL is called that.  It literally calls =(print (eval (read)))= in a loop.  Here's how you can
-create a simple one in Scheme:
+Lisp reads your Lisp code using the Lisp function =read=. You can arbitrarily
+change Lisp's syntax by redefining or extending the =read= function! The Lisp
+=print= function prints Lisp values in a form that makes sense for humans to
+read /and/ a form which can be read back into your Lisp session with =read=. If
+you change =read= or =print= you should change both of them so that this
+symmetry is maintained.
 
-#+begin_src schemme
-(define (prepl)
-  (print "> ") ; prompt the user for an S-Expr
-  (print (eval (read)))
-  (prepl) ; do it all again!
-#+end_src
-
-Real PREPLs (usually called REPLs, forgetting about the prompt part) usually
-have a number of other features for programming convenience, e.g. handling
-errors. But this little example shows just how simple it can be!
-
-One of the key features of =print= being part of the programmer-accessible
-language is that the programmer can extend how =print= works in order to add
-syntactic sugar that is /not/ based on S-Exprs! The most common is the reader
-macro for quote ('). The input 's-expr is read as (quote s-expr) so we can quote
-S-Exprs more compactly.
+=read= and =print= can extend the syntax of Lisp beyond S-Exprs.
+An example is the reader macro for quote (').
+- =read= reads ='s-expr=
+- as =(quote s-expr)=
+so we can quote S-Exprs more compactly.
 
 Many Lisps provide a version of =print= which can read algebraic syntax, e.g.
-reading =a+b+c= as =(+ a b c)= making Lisp look more like other languages.
-Interestingly, after playing with making Lisp look more /normal/, nearly all
-Lisp programmers discover after awhile that they prefer Lisp's simpler and more
-consistent syntax!
+reading =a+b+c= as =(+ a b c)= making Lisp look more like other languages. After
+using an alternate =read= and =print= which make Lisp look more like the
+languages they used before Lisp, nearly all Lisp programmers discover that they
+now prefer Lisp's simpler and more consistent syntax!
 
-*** Built-In atom types and procedures
+** Built-In and library-provided atom types and procedures
 
 The last two practical barriers to understanding a Lisp program is that you have
-to understand any special kinds of atoms and any provided procedures.
+to understand the atoms and procedures which your Lisp provides in its standard
+profile and which you import from libraries. When you're studying code written
+by others you may have a lot of things to track down in order to understand how
+that code works.
 
-Each atom type has a syntax which will be read by the =read= procedure.
-/character Strings/ are enclosed in double quotes. The various kinds of numbers
+Each atom type has a syntax which will be read by the =read= procedure. For
+example, /character Strings/ are enclosed in double quotes, with a special
+/escape syntax/ for embedded special characters. The various kinds of numbers
 generally have the same syntax as other languages, except that many Lisps
 include more kinds of numbers, e.g. rationals and complex numbers. The =print=
-procedure also has to know that syntax so that it can print them properly.
+procedure also has to know that syntax so that it can print them properly. In
+Racket's /Slideshow Language/ =print= knows how to print pictures.
+
+In addition to (usually) building in a lot of powerful atom types and procedures
+which might be useful in your programs, your Lisp will come with lots of
+libraries which bring in new atom types and powerful procedures. You will need
+to study the documentation for any built-in features or libraries you use. Your
+development environment, e.g. DrRacket or Emacs will usually provide a handy
+mechanism for going from any unfamiliar entity in your source code to the place
+in your Lisp's documentation which defines that construct or procedure.
