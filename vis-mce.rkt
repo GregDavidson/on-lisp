@@ -160,7 +160,7 @@
         [(and (pair? head) (pair? (car head)))
          (let ([name (car head)])
            (eval-define env name (eval-lambda name env (cdr head) value)) ) ] ) )
-        
+
 (define (eval-define env name value)
   (modified-env (env-key-value->env env name (vis-eval value env))) )
 

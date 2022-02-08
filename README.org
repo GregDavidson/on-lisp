@@ -19,6 +19,8 @@ suggest improvements!/
 
 ** Reports From My Explorations
 
+[[lisp-simplicity.org]] -- List is Really Simple!
+
 [[lisp-systems.org]] -- foundations of Lisp
 
 [[lambda-sugar.rkt]] -- Lambda and Syntactic Sugar

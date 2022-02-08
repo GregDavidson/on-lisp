@@ -216,3 +216,13 @@ to study the documentation for any built-in features or libraries you use. Your
 development environment, e.g. DrRacket or Emacs will usually provide a handy
 mechanism for going from any unfamiliar entity in your source code to the place
 in your Lisp's documentation which defines that construct or procedure.
+
+** Would you like to learn more?
+ 
+Read [[lisp-systems.org][Lisp Systems]]
+
+Study the [[vis-mce.rkt][Meta-Circular Interpreter]] which defines Lisp in Lisp!
+
+Join a [[https://github.com/GregDavidson/computing-magic][Computing Magic]] study group?
+
+Ask questions!
