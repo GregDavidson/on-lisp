@@ -19,13 +19,13 @@ suggest improvements!/
 
 ** Reports From My Explorations
 
-[[lisp-simplicity.org]] -- List is Really Simple!
+[[lisp-simplicity.org]] -- Lisp is Really Simple!
 
-[[lisp-systems.org]] -- foundations of Lisp
+[[lisp-systems.org]] -- Foundations of Lisp
 
 [[lambda-sugar.rkt]] -- Lambda and Syntactic Sugar
 
-[[vis-mce.rkt]] -- a meta-circular evaluator in Racket
+[[vis-mce.rkt]] -- a Meta-Circular Evaluator in Racket
 
 ** Lisps vs. Other Languages
 
