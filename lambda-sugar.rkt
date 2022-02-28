@@ -1,9 +1,9 @@
 #lang slideshow
 
-;; Lambda is often hiding under Syntactic Sugar!
+;; λ aka lambda is often hiding under Syntactic Sugar!
 
 ;; There are 3 essential special forms in Lisp:
-;;	lambda -- constructs procedures
+;;	λ -- constructs procedures
 ;;	if (or cond) -- makes decisions
 ;;	quote (or ') -- handy for metaprogramming
 ;; The other special forms are syntactic sugar which make
@@ -25,13 +25,13 @@
 
 ;; Note: In Racket [ square brackets ] have the same meaning
 ;; as ( parentheses ) but must match their own kind.  More
-;; syntactic sugar!
+;; syntactic sugar!  Racket allows you to use λ or lambda
 
 ;; Which is equivalent to this program:
 
-( (lambda (head body) (hc-append head body)) (circle 10) (rectangle 10 20) )
+( (λ (head body) (hc-append head body)) (circle 10) (rectangle 10 20) )
 
-;; which shows that define and let aren't needed, you only need lambda!
+;; which shows that define and let aren't needed, you only need λ!
 
 ;; What about when definitions use earlier definitions?
 
@@ -57,11 +57,11 @@
       (hc-append 10 figure figure) ) ) )
 
 ;; let* forms can be decomposed into nested let forms
-;; let forms can be expressed using lambda:
+;; let forms can be expressed using λ:
 
-( (lambda (figure) (hc-append 10 figure figure))
-  ( (lambda (eyes) (vc-append eyes (rectangle 10 20)))
-    ( (lambda (eye) (hc-append 10 eye eye))
+( (λ (figure) (hc-append 10 figure figure))
+  ( (λ (eyes) (vc-append eyes (rectangle 10 20)))
+    ( (λ (eye) (hc-append 10 eye eye))
       (circle 10) ) ) )
 
 ;; In English:
@@ -70,7 +70,7 @@
 ;; Construct the eyes from an eye by horizontally appending two copies of the eye
 ;; Construct an eye by making a circle
 
-;; Lambda is usually hiding in procedure (function) definitions
+;; λ is usually hiding in procedure (function) definitions
 
 ;; This bit of code:
 
@@ -78,7 +78,7 @@
 
 ;; is syntactic sugar for
 
-(define sqr (lambda (x) (* x x)))
+(define sqr2 (λ (x) (* x x)))
 
 ;; Syntactic sugar can only be implemented with regular procedures if all of the
 ;; arguments are evaluated normally, which is NOT the case in the examples
