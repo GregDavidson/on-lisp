@@ -80,13 +80,13 @@ context of /an Environment/.
 *Evaluable Lists are called Forms*
 
 *Evaluating* /Regular Forms/:
-- All Elements of Regular Forms are evaluated
-      - recursively if nested
-- The first element must evaluate to a procedure (or an error is signaled)
+- /All Elements/ of /Regular Forms/ are /evaluated/
+      - /recursively when nested/
+- The /first element/ must evaluate to a procedure /or an error is signaled/
 - Then =apply= calls the procedure with the other elements as /arguments/
-      - Those elements must be suitable values for the procedure's parameters
+      - Arguments must be suitable values for the corresponding parameters
  
-*Special Forms evaluate their arguments selectively
+*Special Forms evaluate their arguments selectively*
 - Each is a special case, known to =eval= by /symbol/
 - Only 3 are needed, but see /Form Macros/ below
 
