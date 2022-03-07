@@ -112,11 +112,13 @@ context of /an Environment/.
       - *BODIES:* 1 or more S-Exprs to evaluate.
             - The value of the last body is /returned/ as the value of the
               procedure call
+              
+Many people in computing use the terms /procedure/ and /function/
+interchangeably, but a /functional procedure/ is something special.
 
-A /procedure/ which returns the same value when given the same argument values
-and which does not directly or indirectly modify anything outside of itself is
-called a /functional procedure/. Many people in computing use the terms
-/procedure/ and /function/ interchangeably.
+*/functional procedure/:* A /procedure/ which
+- returns the same value when given the same argument values
+- does not directly or indirectly modify anything outside of itself
 
 OK, that's it! That's how Lisp works!
 
