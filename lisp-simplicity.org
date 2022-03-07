@@ -116,7 +116,7 @@ context of /an Environment/.
 Many people in computing use the terms /procedure/ and /function/
 interchangeably, but a /functional procedure/ is something special.
 
-*/functional procedure/:* A /procedure/ which
+*functional procedure:* A /procedure/ which
 - returns the same value when given the same argument values
 - does not directly or indirectly modify anything outside of itself
 
