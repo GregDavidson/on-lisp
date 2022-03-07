@@ -15,13 +15,13 @@
 
 (define head (circle 10))
 (define body (rectangle 10 20))
-(hc-append head body)
+(vc-append head body)
 
 ;; Is equivalent to this program:
 
 (let [ (head (circle 10))
        (body (rectangle 10 20)) ]
-  (hc-append head body) )
+  (vc-append head body) )
 
 ;; Note: In Racket [ square brackets ] have the same meaning
 ;; as ( parentheses ) but must match their own kind.  More
@@ -29,7 +29,7 @@
 
 ;; Which is equivalent to this program:
 
-( (λ (head body) (hc-append head body)) (circle 10) (rectangle 10 20) )
+( (λ (head body) (vc-append head body)) (circle 10) (rectangle 10 20) )
 
 ;; which shows that define and let aren't needed, you only need λ!
 
