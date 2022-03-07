@@ -71,21 +71,21 @@ context of /an Environment/.
 - *Binding:* A /symbol/ "bound to" (paired with) a /value/
 - *Environment:* a set of /Bindings/, which works like a /dictionary/
 
-*Evaluation:* =eval= maps /S-Exprs/ to /Values/*
+*Evaluation:* =eval= evaluates an /S-Expr/ returning a /Value/
 
 *Evaluating* /Atoms/:
-- *Symbols:* =eval= returns value in from environment /or signals error if none/
+- *Symbols:* =eval= returns value from environment /or signals error if none/
 - *All other atoms:* Simply evaluate to themselves
 
 *Evaluable Lists are called Forms*
 
 *Evaluating* /Regular Forms/:
 - All Elements of Regular Forms are evaluated
-      - recursively if nested*
+      - recursively if nested
 - The first element must evaluate to a procedure (or an error is signaled)
 - Then =apply= calls the procedure with the other elements as /arguments/
       - Those elements must be suitable values for the procedure's parameters
-        
+ 
 *Special Forms evaluate their arguments selectively
 - Each is a special case, known to =eval= by /symbol/
 - Only 3 are needed, but see /Form Macros/ below
@@ -114,8 +114,9 @@ context of /an Environment/.
               procedure call
 
 A /procedure/ which returns the same value when given the same argument values
-is called a /functional procedure/. Many people use the terms /procedure/ and
-/function/ interchangeably in computing.
+and which does not directly or indirectly modify anything outside of itself is
+called a /functional procedure/. Many people in computing use the terms
+/procedure/ and /function/ interchangeably.
 
 OK, that's it! That's how Lisp works!
 
@@ -125,8 +126,10 @@ Well, basically, but we have a few more features which extend Lisp's power.
 
 - (P)REPL:* (Prompt) Read Eval Print Loop session
 - *You enter:* (+ 1 (* 3 4) 5)
-- *=eval= each element returns:* =(#<procedure:+> 1 12 5)=
-- =apply= #<procedure:+> to =(1 12 5)= returns :: =18=
+- =eval= calls itself recursively to obtain =(#<procedure:+> 1 12 5)=
+- =eval= calls =apply= with #<procedure:+> and =(1 12 5)=
+- *The final result is printed:* =18=
+- How did =(* 3 4)= become =12=?
 
 (P)REPL Session
 - =(quote (+ 1 (* 3 4) 5))=
@@ -142,8 +145,8 @@ Well, basically, but we have a few more features which extend Lisp's power.
       - and =apply= turns into =25=
 
 Calls on built-in atomic procedures such as the atoms =#<procedure:+>= and
-=#<procedure:*>= will be compiled to inline machine code instructions
-where possible and to machine code procedure calls when necessary.
+=#<procedure:*>= will be compiled to inline machine code instructions where
+possible and to machine code procedure calls when necessary.
 
 Like everything else in Lisp. /procedures/ are /first class values/, i.e.
 - they can be bound to a symbol
