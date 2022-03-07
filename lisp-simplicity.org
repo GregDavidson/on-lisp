@@ -55,10 +55,10 @@ Lisp Programs are made out of *Symbolic Expression* defined as follows:
 Parentheses are used to enclose /Lists/.
 
 Each kind of /Atom/ has its own syntax.
-- You /can/ add new atom types
+- You can add new atom types!
 - e.g. /Racket Slideshow/ adds atoms which are /pictures/.
 
-** Lisp Semantics: Eval, Apply
+** Lisp Semantics: =eval=, =apply=
 
 Semantics defines what code means and what happens when the computer evaluates
 (i.e. runs or executes) it. The Semantics of a language is the big deal. Lisp
@@ -82,7 +82,7 @@ context of /an Environment/.
       - =apply= the procedure to the other elements as arguments
             - Those elements must be suitable values for the procedure's parameters
 - Special Forms :: Handled as a special case by =eval= and =apply=
-- quote :: suppresses evaluation of its argument
+- =quote= :: suppresses evaluation of its argument
       - =(quote ANY-SEXPR)= evaluates to =ANY-SEXPR=
       - e.g. =(quote (+ 1 2 3))= evaluates to the list =(+ 1 2 3)= /not/ to =6=!
 - =(if TEST IF-TRUE IF-FALSE)= :: evaluates =TEST=, then either =IF-TRUE= or =IF-FALSE=
@@ -117,8 +117,8 @@ Well, basically, but we have a few more features which extend Lisp's power.
 
 - (P)REPL :: (Prompt) Read Eval Print Loop session
 - You enter :: (+ 1 (* 3 4) 5)
-- =eval= each element returns :: =({the addition procedure} 1 12 5)=
-- =apply= {the addition procedure} to =(1 12 5)= returns :: =18=
+- =eval= each element returns :: =(#<procedure:+> 1 12 5)=
+- =apply= #<procedure:+> to =(1 12 5)= returns :: =18=
 
 (P)REPL Session
 - =(quote (+ 1 (* 3 4) 5))=
@@ -126,17 +126,26 @@ Well, basically, but we have a few more features which extend Lisp's power.
 - =(apply + '(1 2 3 4 5 6))=
       - =21=
 - =(map eval '(+ 1 (* 3 4) 5))=
-      - =({the addition procedure} 1 12 5)=
+      - =(#<procedure:+> 1 12 5)=
 - =( (lambda (x y) (+ (* x x) (* y y)) ) 3 4 )=
       - evaluates =(+ (* x x) (* y y))=
       - in the environment extended with =(x 3) (y 4)=
-      - which =eval= turns into =({the addition procedure} 9 16)=
+      - which =eval= turns into =(#<procedure:+> 9 16)=
       - and =apply= turns into =25=
 
-Most Lisps allow programs to be broken up into files which can be /compiled/
-into /native code/ and then mixed with /Interactive Lisp/ at the REPL as part of
-an incremental development process. Lisp development platforms like /DrRacket/
-and /Emacs/ also support this style of development.
+Calls on built-in atomic procedures such as the atoms =#<procedure:+>= and
+=#<procedure:*>= will be compiled to inline machine code instructions
+where possible and to machine code procedure calls when necessary.
+
+Like everything else in Lisp. /procedures/ are /first class values/, i.e.
+- they can be bound to a symbol
+- they can be passed to a procedure as an argument
+- they can be returned from a procedure as the procedure's computed value
+
+Most Lisps allow programs to be broken up into files which can be separately
+/compiled/ into /native code/ and then mixed with /Interactive Lisp/ at the REPL
+as part of an /incremental development process/. Lisp development platforms like
+/DrRacket/ and /Emacs/ also support this style of development.
 
 ** Syntactic Sugar: Form Macros
 
@@ -158,11 +167,11 @@ Some examples of what macros can do:
 
 I might want to do multiple things where the syntax only allows one thing, I can
 use the =begin= macro:
-- =(begin s-expr1 s-expr2 ... s-exprN)=
-to evaluate each s-expr in turn and return the value of the last one. This is
+- =(begin S-EXPR-1 S-EXPR-2 ... S-EXPR-N)=
+to evaluate each S-EXPR- in turn and return the value of the last one. This is
 just syntactic sugar for
-- =( (lambda () s-expr1 s-expr2 ... s-exprN) )=
-In fact, a lot of Lisp syntactic sugar is just disguised /lambdas/.
+- =( (lambda () S-EXPR-1 S-EXPR-2 ... S-EXPR-N) )=
+A lot of Lisp syntactic sugar is just disguised /lambdas/!
 - See [[lambda-sugar.rkt][Lambda Sugar]] for more examples.
 Lambda is the /most/ important Lisp feature!
 
@@ -170,8 +179,8 @@ Really, go read [[lambda-sugar.rkt][Lambda Sugar]] right now before reading any 
 
 Macros can build on macros, so if I want to do several things, but only when
 some condition is true, I use the =when= macro:
-- =(when some-condition s-expr1 s-expr2 ... s-exprN)=
-- translates into =(if some-condition (begin s-expr1 s-expr2 ... s-exprN) #f)=
+- =(when some-condition S-EXPR-1 S-EXPR-2 ... S-EXPR-N)=
+- translates into =(if some-condition (begin S-EXPR-1 S-EXPR-2 ... S-EXPR-N) #f)=
 - where again, =#f= is the Lisp atom for /false/.
 
 Lisp purists suggest that programmers use macros /sparingly/. Although macros
@@ -188,11 +197,11 @@ read /and/ a form which can be read back into your Lisp session with =read=. If
 you change =read= or =print= you should change both of them so that this
 symmetry is maintained.
 
-=read= and =print= can extend the syntax of Lisp beyond S-Exprs.
+=read= and =print= can extend the syntax of Lisp beyond /s-exprs/.
 An example is the reader macro for quote (').
-- =read= reads ='s-expr=
-- as =(quote s-expr)=
-so we can quote S-Exprs more compactly.
+- =read= reads ='S-EXPR=
+- as =(quote S-EXPR)=
+so we can quote /s-exprs/ more compactly.
 
 Many Lisps provide a version of =print= which can read algebraic syntax, e.g.
 reading =a+b+c= as =(+ a b c)= making Lisp look more like other languages. After
