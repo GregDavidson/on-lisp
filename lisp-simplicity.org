@@ -25,11 +25,11 @@ A humorous definition of Lisp:
 Let's compare Lisp with popular languages using /algebraic syntax/
 - e.g. Java, JavaScript, C, Python, Rust, etc.
 
-- Instead of :: - =a + b + c + d=
-- Lisp says :: =(+ a b c d)=
+- Instead of =a + b + c + d=
+- Lisp says =(+ a b c d)=
 
-- Instead of :: =f(a,b,c)= and =f(a,g(b,c),d)=
-- Lisp says :: =(f a b c)= and =(f a (g b c) d)=
+- Instead of =f(a,b,c)= and =f(a,g(b,c),d)=
+- Lisp says =(f a b c)= and =(f a (g b c) d)=
 
 Is the Lisp notation more complex? Most programmers say that after a few days of
 experience they find Lisp's simple syntax as clear and pleasant as the
