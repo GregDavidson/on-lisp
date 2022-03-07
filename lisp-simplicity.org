@@ -71,43 +71,45 @@ context of /an Environment/.
 - *Binding:* A /symbol/ "bound to" (paired with) a /value/
 - *Environment:* a set of /Bindings/, which works like a /dictionary/
 
-*=eval= maps /S-Exprs/ to /Values/*
+*Evaluation:* =eval= maps /S-Exprs/ to /Values/*
 
-*Atoms*
-- *Symbols:* =eval= returns value in the environment /or signals an error if none/
+*Evaluating* /Atoms/:
+- *Symbols:* =eval= returns value in from environment /or signals error if none/
 - *All other atoms:* Simply evaluate to themselves
 
-*Evaluable /Lists/ are called /Forms/*
+*Evaluable Lists are called Forms*
 
-*All Elements of Regular Forms are evaluated - recursively if nested* 
-
+*Evaluating* /Regular Forms/:
+- All Elements of Regular Forms are evaluated
+      - recursively if nested*
 - The first element must evaluate to a procedure (or an error is signaled)
-- =apply= the procedure to the other elements as arguments
+- Then =apply= calls the procedure with the other elements as /arguments/
       - Those elements must be suitable values for the procedure's parameters
         
-*Special Forms are handled as a special case by =eval=*
+*Special Forms evaluate their arguments selectively
+- Each is a special case, known to =eval= by /symbol/
 - Only 3 are needed, but see /Form Macros/ below
 
-=quote=: suppresses evaluation of its argument
+=quote=: suppresses evaluation of its single argument
       - =(quote ANY-SEXPR)= evaluates to =ANY-SEXPR=
       - e.g. =(quote (+ 1 2 3))= evaluates to the list =(+ 1 2 3)= /not/ to =6=!
-=(if TEST IF-TRUE IF-FALSE)= :: evaluates =TEST=, then either =IF-TRUE= or =IF-FALSE=
+=(if TEST IF-TRUE IF-FALSE)= evaluates =TEST=, then either =IF-TRUE= or =IF-FALSE=
       - =TEST=: an S-Expr which evaluates to a /Boolean/ aka /truth/ Value
-      - *The atom =#f= is the /Boolean Value/ for /false/
+      - The atom =#f= is the /Boolean Value/ for /false/
             - all other S-Exprs are considered /true/
             - the atom =#t= is the /canonical/ Boolean Value for /true/
       - thus =(if TEST IF-TRUE IF-FALSE)=
             - evaluates =TEST=
             - evaluates =IF-TRUE= if =TEST= is /true/, i.e. anything other than =#f=
             - evaluates =IF-FALSE= if =TEST= is /false/, i.e. is =#f=
-=(lambda PARAMETERS BODIES)=:* creates a procedure
+=(lambda PARAMETERS BODIES)= creates a procedure
       - when the procedure is called ::
             - an /argument value/ must be supplied for each of the /PARAMETERS/
             - each of the /PARAMETERS/ will be /bound/ to the corresponding /argument/
             - BODIES are evaluated in the /environment/ extended with those /bindings/
-      - PARAMETERS :: a list of 0 or more =symbols=
+      - *PARAMETERS:* a list of 0 or more =symbols=
             - *or a single =symbol= which gets /all PARAMETERS/ as a /list/
-      - BODIES:* 1 or more S-Exprs to evaluate.
+      - *BODIES:* 1 or more S-Exprs to evaluate.
             - *The value of the last body is /returned/ as the value of the
               procedure call
 
