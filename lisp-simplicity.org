@@ -68,41 +68,41 @@ you're unlikely to ever forget it.
 Lisp evaluates your S-Exprs using the procedures =eval= and =apply= in the
 context of /an Environment/.
 
-- Symbol :: An Atom which serves as an /identifier/, i.e. a name for a value
-- Value :: An /S-Expr/ which can be /returned/ from a /procedure/
-- Binding :: A /symbol/ "bound to" (paired with) a /value/
-- Environment :: a set of /Bindings/, which works like a /dictionary/
+- *Symbol:* An Atom which serves as an /identifier/, i.e. a name for a value
+- *Value:* An /S-Expr/ which can be /returned/ from a /procedure/
+- *Binding:* A /symbol/ "bound to" (paired with) a /value/
+- *Environment:* a set of /Bindings/, which works like a /dictionary/
 
-- =eval= :: =eval= maps S-Exprs to Values
-- Symbols :: =eval= maps symbols to their values in the environment /or error/
-- All other atoms :: Simply evaluate to themselves
-- Lists :: Evaluable Lists are called /Forms/
+- =eval=: =eval= maps S-Exprs to Values
+- *Symbols:* =eval= maps symbols to their values in the environment /or error/
+- *All other atoms:* Simply evaluate to themselves
+- *Lists:* Evaluable Lists are called /Forms/
       - =eval= each element of the List (recursively)
             - The first element must evaluate to a procedure (or error)
       - =apply= the procedure to the other elements as arguments
             - Those elements must be suitable values for the procedure's parameters
-- Special Forms :: Handled as a special case by =eval= and =apply=
-- =quote= :: suppresses evaluation of its argument
+- Special Forms:* Handled as a special case by =eval= and =apply=
+- =quote=: suppresses evaluation of its argument
       - =(quote ANY-SEXPR)= evaluates to =ANY-SEXPR=
       - e.g. =(quote (+ 1 2 3))= evaluates to the list =(+ 1 2 3)= /not/ to =6=!
 - =(if TEST IF-TRUE IF-FALSE)= :: evaluates =TEST=, then either =IF-TRUE= or =IF-FALSE=
-      - =TEST= :: an S-Expr which evaluates to a /Boolean/ aka /truth/ Value
-      - The atom =#f= is the /Boolean Value/ for /false/
+      - =TEST=: an S-Expr which evaluates to a /Boolean/ aka /truth/ Value
+      - *The atom =#f= is the /Boolean Value/ for /false/
             - all other S-Exprs are considered /true/
             - the atom =#t= is the /canonical/ Boolean Value for /true/
       - thus =(if TEST IF-TRUE IF-FALSE)=
             - evaluates =TEST=
             - evaluates =IF-TRUE= if =TEST= is /true/, i.e. anything other than =#f=
             - evaluates =IF-FALSE= if =TEST= is /false/, i.e. is =#f=
-- =(lambda PARAMETERS BODIES)= :: creates a procedure
+- =(lambda PARAMETERS BODIES)=:* creates a procedure
       - when the procedure is called ::
             - an /argument value/ must be supplied for each of the /PARAMETERS/
             - each of the /PARAMETERS/ will be /bound/ to the corresponding /argument/
             - BODIES are evaluated in the /environment/ extended with those /bindings/
       - PARAMETERS :: a list of 0 or more =symbols=
-            - or a single =symbol= which gets /all PARAMETERS/ as a /list/
-      - BODIES :: 1 or more S-Exprs to evaluate.
-            - The value of the last body is /returned/ as the value of the
+            - *or a single =symbol= which gets /all PARAMETERS/ as a /list/
+      - BODIES:* 1 or more S-Exprs to evaluate.
+            - *The value of the last body is /returned/ as the value of the
               procedure call
 
 A /procedure/ which returns the same value when given the same argument values
@@ -115,9 +115,9 @@ Well, basically, but we have a few more features which extend Lisp's power.
 
 ** Interactive Lisp uses a (P)REPL
 
-- (P)REPL :: (Prompt) Read Eval Print Loop session
-- You enter :: (+ 1 (* 3 4) 5)
-- =eval= each element returns :: =(#<procedure:+> 1 12 5)=
+- (P)REPL:* (Prompt) Read Eval Print Loop session
+- *You enter:* (+ 1 (* 3 4) 5)
+- *=eval= each element returns:* =(#<procedure:+> 1 12 5)=
 - =apply= #<procedure:+> to =(1 12 5)= returns :: =18=
 
 (P)REPL Session
