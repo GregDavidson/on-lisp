@@ -84,14 +84,14 @@ context of /an Environment/.
 - Special Forms :: Handled as a special case by =eval= and =apply=
 - quote :: suppresses evaluation of its argument
       - =(quote (+ 1 (* 3 4) 5))= evaluates to =(+ 1 (* 3 4) 5)=
-- =(if= _test_ _if-true_ _if-false_ =)= :: evaluates _if-true_ or _if-false_
-      - _test_: an S-Expr which evaluates to a /Boolean Value/
+- =(if TEST IF-TRUE IF-FALSE)= :: evaluates IF-TRUE or IF-FALSE
+      - TEST :: an S-Expr which evaluates to a /Boolean/ aka /truth/ Value
       - The atom =#f= is the Boolean Value for /false/
             - all other S-Exprs are considered /true/
             - the atom =#t= is the /canonical/ Boolean Value for /true/
-      - thus =(if= _test_ _if-true_ _if-false_ =)=
-            - evaluates _if-true_ if _test_ is _true_, i.e. not =#f=
-            - evaluates _if-false_ if _test_ is _false_, i.e. is =#f=
+      - thus =(if TEST IF-TRUE IF-FALSE)=
+            - evaluates IF-TRUE if TEST is true, i.e. not =#f=
+            - evaluates IF-FALSE if TEST is false, i.e. is =#f=
 - (lambda parameters bodies) :: creates a procedure
       - when the procedure is called ::
             - each parameter is /bound/ to an argument value
