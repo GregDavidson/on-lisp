@@ -65,13 +65,13 @@ Semantics defines what code means and what happens when the computer evaluates
 has the simplest semantics of any popular modern language. Once you learn it,
 you're unlikely to ever forget it.
 
-Lisp evaluates your S-Exprs using the procedures "eval" and "apply" in the
+Lisp evaluates your S-Exprs using the procedures =eval= and =apply= in the
 context of /an Environment/.
 
-- Symbol :: An Atom which serves as an /identifiers/, i.e. a name for something
+- Symbol :: An Atom which serves as an /identifier/, i.e. a name for a value
 - Value :: An /S-Expr/ which can be /returned/ from a /procedure/
 - Binding :: A /symbol/ "bound to" (paired with) a /value/
-- Environment :: a set of /Bindings/, which works like a dictionary
+- Environment :: a set of /Bindings/, which works like a /dictionary/
 
 - =eval= :: =eval= maps S-Exprs to Values
 - Symbols :: =eval= maps symbols to their values in the environment /or error/
