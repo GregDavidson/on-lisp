@@ -83,27 +83,30 @@ context of /an Environment/.
             - Those elements must be suitable values for the procedure's parameters
 - Special Forms :: Handled as a special case by =eval= and =apply=
 - quote :: suppresses evaluation of its argument
-      - =(quote (+ 1 (* 3 4) 5))= evaluates to =(+ 1 (* 3 4) 5)=
-- =(if TEST IF-TRUE IF-FALSE)= :: evaluates IF-TRUE or IF-FALSE
-      - TEST :: an S-Expr which evaluates to a /Boolean/ aka /truth/ Value
-      - The atom =#f= is the Boolean Value for /false/
+      - =(quote ANY-SEXPR)= evaluates to =ANY-SEXPR=
+      - e.g. =(quote (+ 1 2 3))= evaluates to the list =(+ 1 2 3)= /not/ to =6=!
+- =(if TEST IF-TRUE IF-FALSE)= :: evaluates =TEST=, then either =IF-TRUE= or =IF-FALSE=
+      - =TEST= :: an S-Expr which evaluates to a /Boolean/ aka /truth/ Value
+      - The atom =#f= is the /Boolean Value/ for /false/
             - all other S-Exprs are considered /true/
             - the atom =#t= is the /canonical/ Boolean Value for /true/
       - thus =(if TEST IF-TRUE IF-FALSE)=
-            - evaluates IF-TRUE if TEST is true, i.e. not =#f=
-            - evaluates IF-FALSE if TEST is false, i.e. is =#f=
-- (lambda parameters bodies) :: creates a procedure
+            - evaluates =TEST=
+            - evaluates =IF-TRUE= if =TEST= is /true/, i.e. anything other than =#f=
+            - evaluates =IF-FALSE= if =TEST= is /false/, i.e. is =#f=
+- =(lambda PARAMETERS BODIES)= :: creates a procedure
       - when the procedure is called ::
-            - each parameter is /bound/ to an argument value
-            - bodies are evaluated in the environment extended with those bindings
-      - parameters :: a list of 0 or more =symbols=
-            - or a single =symbol= which gets /all parameters/ as a list
-      - bodies :: 1 or more S-Exprs to evaluate.
+            - an /argument value/ must be supplied for each of the /PARAMETERS/
+            - each of the /PARAMETERS/ will be /bound/ to the corresponding /argument/
+            - BODIES are evaluated in the /environment/ extended with those /bindings/
+      - PARAMETERS :: a list of 0 or more =symbols=
+            - or a single =symbol= which gets /all PARAMETERS/ as a /list/
+      - BODIES :: 1 or more S-Exprs to evaluate.
             - The value of the last body is /returned/ as the value of the
               procedure call
 
 A /procedure/ which returns the same value when given the same argument values
-is called a /functional procedure/.  Many people use the terms /procedure/ and
+is called a /functional procedure/. Many people use the terms /procedure/ and
 /function/ interchangeably in computing.
 
 OK, that's it! That's how Lisp works!
