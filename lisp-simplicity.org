@@ -20,7 +20,7 @@ language!/
 ** Lisp uses a lot of Nested Lists!
    
 A humorous definition of Lisp:
-- Lisp :: Lots of Irritating Silly Parentheses
+- *Lisp:* Lots of Irritating Silly Parentheses
 
 Let's compare Lisp with most typical popular languages
 - e.g. Java, JavaScript, C, Python, Rust, etc.
@@ -45,12 +45,12 @@ modern language. Once you learn it, you're unlikely to ever forget it.
 
 Lisp Programs are made out of *Symbolic Expression* defined as follows:
 
-- Atom :: Anything /NOT/ a /List/
-      - Atoms can be simple, e.g. a character or an integer
-      - Or complex, e.g. /string/, /array/, /struct/, etc.
-- Symbolic Expression (S-Expr) :: Either
-      - An /Atom/
-      - A /List/ of /Symbolic Expressions/
+*Atom:* Anything /NOT/ a /List/
+- Atoms can be simple, e.g. a character or an integer
+- Or complex, e.g. /string/, /array/, /struct/, etc.
+*Symbolic Expression aka S-Expr:* Either
+- An /Atom/
+- A /List/ of /Symbolic Expressions/
 
 Parentheses are used to enclose /Lists/.
 
