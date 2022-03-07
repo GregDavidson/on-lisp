@@ -107,10 +107,10 @@ context of /an Environment/.
             - an /argument value/ must be supplied for each of the /PARAMETERS/
             - each of the /PARAMETERS/ will be /bound/ to the corresponding /argument/
             - BODIES are evaluated in the /environment/ extended with those /bindings/
-      - *PARAMETERS:* a list of 0 or more =symbols=
-            - *or a single =symbol= which gets /all PARAMETERS/ as a /list/
+      - *PARAMETERS:* a list of 0 or more /symbols/
+            - or a single /symbol/ which gets /all PARAMETERS/ as a /list/
       - *BODIES:* 1 or more S-Exprs to evaluate.
-            - *The value of the last body is /returned/ as the value of the
+            - The value of the last body is /returned/ as the value of the
               procedure call
 
 A /procedure/ which returns the same value when given the same argument values
