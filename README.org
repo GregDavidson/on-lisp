@@ -20,8 +20,8 @@ suggest improvements!/
 ** Learning Lisp
 
 I recommend learning Lisp using
-- the [[https://github.com/GregDavidson/computing-magic/tree/main/Modules][first Modules
--]] of the [[https://github.com/GregDavidson/computing-magic][Computing Magic Curriculum]]!
+- the [[https://github.com/GregDavidson/computing-magic/tree/main/Modules][first Modules]]
+- of the [[https://github.com/GregDavidson/computing-magic][Computing Magic Curriculum]]!
 
 ** Further Reports From My Explorations of Lisp
 
