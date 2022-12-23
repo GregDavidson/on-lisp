@@ -17,7 +17,13 @@ linked by the documents here. If you explore these materials, please share your
 experience, through direct communication, by posting Issues, or etc. Please
 suggest improvements!/
 
-** Reports From My Explorations
+** Learning Lisp
+
+I recommend learning Lisp using
+- the [[https://github.com/GregDavidson/computing-magic/tree/main/Modules][first Modules
+-]] of the [[https://github.com/GregDavidson/computing-magic][Computing Magic Curriculum]]!
+
+** Further Reports From My Explorations of Lisp
 
 [[lisp-simplicity.org]] -- Lisp is Really Simple!
 
@@ -72,7 +78,7 @@ allowing for the definition of new languages which can introduce radically new
 features such as static typing and allowing you to express different parts of a
 program in different languages!
 
-** Lisp Practical Universality
+** Lisp Provides Practical Universality
 
 It is often not enough for a language to be highly expressive. If it's going to
 support practical projects and especially the building of new tools it needs to
@@ -87,4 +93,3 @@ structures of any competing languages, including powerful features which were
 rare or non-existent among other languages of the time. Since then, many popular
 languages have added features in imitation of Scheme, but without the same
 elegance. Those papers are still an excellent read!
-
