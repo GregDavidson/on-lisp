@@ -25,13 +25,13 @@ I recommend learning Lisp using
 
 ** Further Reports From My Explorations of Lisp
 
-[[lisp-simplicity.org]] -- Lisp is Really Simple!
+[[file:lisp-simplicity.org][lisp-simplicity.org]] -- Lisp is Really Simple!
 
-[[lisp-systems.org]] -- Foundations of Lisp
+[[file:lisp-systems.org][lisp-systems.org]] -- Foundations of Lisp
 
-[[lambda-sugar.rkt]] -- Lambda and Syntactic Sugar
+[[file:lambda-sugar.rkt][lambda-sugar.rkt]] -- Lambda and Syntactic Sugar
 
-[[vis-mce.rkt]] -- a Meta-Circular Evaluator in Racket
+[[file:vis-mce.rkt][vis-mce.rkt]] -- a Meta-Circular Evaluator in Racket
 
 ** Lisps vs. Other Languages
 
