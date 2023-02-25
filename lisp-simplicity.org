@@ -32,7 +32,7 @@ Let's compare Lisp with some popular languages which use /algebraic syntax/
 
 - Algebraic function calls: =f(a,b,c)= and =f(a,g(b,c),d)=
 - Lisp: =(f a b c)= and =(f a (g b c) d)=
-- Function =g= is nested inside function =f= in both notations.
+- /Function =g= is nested inside function =f= in both notations./
 
 Is the Lisp notation more complex?
 - Lisp Programmers claim that after a few days of experience Lisp's syntax
@@ -65,7 +65,7 @@ Lisp Programs are made out of *Symbolic Expression* defined as follows:
       - A list of three numbers: =(1 3/4 3.14159 -10+5i)=
       - Another list of 3 elements: =(1 "two" (buckle my shoe))=
             - An integer number, a string and a list of symbols
-            - Note how we can freely nest lists inside of lists!
+            - /Note how we can freely nest lists inside of lists/
 
 Each kind of /Atom/ has its own syntax.
 - You can add new atom types!
@@ -91,14 +91,14 @@ learn it, you're unlikely to ever forget it.
 Note: Code can either be directly evaluated by an /interpreter program/
 (software) or it can be translated into /machine code/ by a /compiler/ and then
 interpreted directly by your CPU (hardware). Lisp systems can use either
-approach and typically do.
+approach and typically use both.
 
 *** Environments Supply Context For Evaluation
 
 Lisp evaluates your S-Exprs using the procedures =eval= and =apply= in the
 context of /an Environment/
 
-- *Symbol:* An Atom which serves as an /identifier/, i.e. a name for a value
+- *Symbol:* An Atom which can serve as a name
 - *Value:* An /S-Expr/ which can be /returned/ from a /procedure/
 - *Binding:* A /symbol/ "bound to" (associated with) a /value/
 - *Environment:* a set of /Bindings/, like a /dictionary/
@@ -109,19 +109,29 @@ Here's an example:
   ; Lisp comments follow a ; and are ignored
   ; This is a Racket Program
   #lang racket
-  ; Which adds two bindings to the current Environment
+  ; Which adds three bindings to the current Environment
   (define advice "Don't Panic!")
   (define answer 42)
+  (define shopping '(bread milk))
   ; and then prints those values on separate lines
   (println advice)
   (println answer)
+  (println shopping)
 #+end_src
+
+The symbols =advice=, =answer= and =shopping= are being used as identifiers.
+
+The symbols =bread= and =milk= are being used as values.
 
 When you run that program, it will print
 #+begin_example
 Don't Panic!
 42
+(bread milk)
 #+end_example
+
+There are a few other things going on in this example which we'll explain
+shortly!
 
 *** How Evaluation Works
 
@@ -218,7 +228,7 @@ creating what we call /scopes/. This idea was invented by Lisp and is now used
 by nearly all modern languages. It allows any expression to use any symbol in
 any of the enclosing environments as long as the symbol names don't conflict.
 
-For convenience is using procedures as black boxes, you can
+For convenience is using procedures as black boxes
 - You can lookup library procedures in the [[https://docs.racket-lang.org/reference][Racket Reference Manual]]
 - And if you're using the [[https://docs.racket-lang.org/drracket][DrRacket Programming Environment]]
       - put the cursor on the symbol you want to look up and press =F1=
@@ -351,7 +361,12 @@ Modern Lisp programmers prefer using Functional Procedures
 
 That's it! That's how Lisp works!
 
-But how do you use it?
+But how do you go about developing Lisp Programs? Most Lisp Programmers prefer
+to develop their Lisp Programs interactively, using a /REPL/. /DrRacket/
+provides a /REPL/ in the /Interaction Window/ along with additional windows in
+which you can save your results to a file. Most Lisp Development Environments,
+such as those based on the /Emacs Platform/ (written in Emacs Lisp) provide
+similar functionality.
 
 ** Interactive Lisp uses a (P)REPL
 
@@ -384,12 +399,15 @@ Like everything else in Lisp. /procedures/ are /first class values/, i.e.
 - they can be passed to a procedure as an argument
 - they can be returned from a procedure as the procedure's computed value
 
-Most Lisps allow programs to be broken up into files which can be separately
-/compiled/ into /native code/ and then mixed with /Interactive Lisp/ at the REPL
-as part of an /incremental development process/. Lisp development platforms like
-/DrRacket/ and /Emacs/ also support this style of development.
+As you work at the REPL, you save the functions you like in files which evolve
+into structured modules. Development sessions typically begin with loading the
+modules you've built so far into the REPL and then you work interactively and
+incrementally at creating new modules as well as improving the existing modules.
+A good /Lisp Development Environment/ will typically provide many features which
+extend the REPL to assist you with this kind of /incremental development
+process/.  This is all something to grow into gradually!
 
-** Built-In and library-provided atom types and procedures
+** Built-In and Library-Provided Atom Types and Procedures
 
 The last two practical barriers to understanding a Lisp program is that you have
 to understand the atoms and procedures which your Lisp provides in its standard
@@ -412,6 +430,52 @@ to study the documentation for any built-in features or libraries you use. Your
 development environment, e.g. DrRacket or Emacs will usually provide a handy
 mechanism for going from any unfamiliar entity in your source code to the place
 in your Lisp's documentation which defines that construct or procedure.
+
+*** Racket vs. Scheme
+
+[[https://racket-lang.org][Racket]] began as an implementation of the [[https://en.wikipedia.org/wiki/Scheme_(programming_language)][Scheme Programming Language]], the
+simplest of the two standardized dialects of Lisp. Over the years Racket added
+many additional features but maintained compatibility with Standard Scheme. Most
+Lisps allow the programmer to break a program down into modules which can be
+developed separately and then combined to produce complete programs. The Racket
+developers added a feature, =#lang= to specify which language a given Racket
+Module was written in, along with creating several interesting languages which
+are /not/ compatible extensions of Standard Scheme. Racket provides the ability
+to combine Racket Modules written in different Racket languages into a single
+program. The =#lang= declaration at the top of a Racket Module tells Racket
+which of the Racket Languages you're meaning to use in the current module so
+that Racket can understand you properly.
+
+** An Interactive Example Program
+
+Here's an example which you can study and run.
+
+This example contains some library functions that begin adding a capability to
+interact with a user.
+
+It also uses a few gratuitous but popular special forms you may want to use in
+your own programs.
+
+You can guess how it works, run it and experiment with variations.
+
+When you want to fully understand it, you can look up any of the functions or
+special forms in the reference manual as explained above.
+
+#+begin_src racket
+    #lang racket
+    (define (assess n)
+      (printf (if (eq? n 42)
+                  "Yes, but why is ~s the answer?\n"
+                  "No, ~s is not the answer!\n" ) n ) )
+    (define (play)
+      (printf "What is the answer? [q to quit] ")
+      (let ( [response (read)] )
+        (if (eq? response 'q)
+            (printf "Thanks for playing, goodbye!\n")
+            (begin (assess response)
+                   (when (not (eq? response 42)) (play)) ) ) ) )
+    (play)
+#+end_src
 
 ** Would you like to learn more?
 
