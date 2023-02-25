@@ -1,13 +1,15 @@
 * Understanding Lisp in Very Little Time
 
 ** Caveats: Read this first
-  
-Lisp is so simple that many people have created their own dialects, each with a
-few special features. Fortunately, the various dialects of Lisp are more alike
-than they are different. If you have experience with one Lisp it's generally
-fast and easy to learn any of the others. The examples we're giving here
-are based on the influential and especially elegant (simple yet powerful) Lisp
-dialect /Scheme/.
+
+It's much easier to implement Lisp than most other programming languages. This
+has led to the Lisp Curse: Many individuals and institutions have created their
+own dialects of Lisp, each a bit deviant from the others or either of the two
+major standards. Fortunately, most dialects of Lisp are more alike than they are
+different. If you have experience with one Lisp it's generally easy to learn any
+other Lisp. The examples we're giving here are based on the influential and
+especially elegant (simple yet powerful) Lisp dialect /Scheme/ as implemented in
+the /Racket System/.
 
 NOTE: This claim to simplicity applies only to /the language itself/. In
 practice, you'll be using various libraries which extend the base language with
@@ -17,23 +19,31 @@ language, Lisp allows such libraries to significantly extend Lisp's syntax and
 semantics: For this reason, Lisp is often called /the programmable, programming
 language!/
 
-** Lisp uses a lot of Nested Lists!
-   
+** Lisp expressions use Nested Lists!
+
 A humorous definition of Lisp:
 - *Lisp:* Lots of Irritating Silly Parentheses
 
-Let's compare Lisp with popular languages using /algebraic syntax/
+Let's compare Lisp with some popular languages which use /algebraic syntax/
 - e.g. Java, JavaScript, C, Python, Rust, etc.
 
-- Instead of =a + b + c + d=
-- Lisp says =(+ a b c d)=
+- Algebraic operator syntax: =a + b + c + d=
+- Lisp: =(+ a b c d)=
 
-- Instead of =f(a,b,c)= and =f(a,g(b,c),d)=
-- Lisp says =(f a b c)= and =(f a (g b c) d)=
+- Algebraic function calls: =f(a,b,c)= and =f(a,g(b,c),d)=
+- Lisp: =(f a b c)= and =(f a (g b c) d)=
+- Function =g= is nested inside function =f= in both notations.
 
-Is the Lisp notation more complex? Most programmers say that after a few days of
-experience they find Lisp's simple syntax as clear and pleasant as the
-/algebraic syntaxes/ of most other popular languages. Do you find that credible?
+Is the Lisp notation more complex?
+- Lisp Programmers claim that after a few days of experience Lisp's syntax
+  becomes as clear and pleasant as /algebraic syntax/
+- Do you think that claim is possible?
+
+A key feature to Lisp syntax is that all Lisp expressions can serve as /both
+code and data/, e.g. the Lisp expressions
+- =(+ a b c d)=, =(f a b c)= and =(f a (g b c) d)=
+can be executed as part of a program or manipulated as data.
+- This feature is sometimes a great advantage!
 
 ** Lisp Syntax
 
@@ -44,77 +54,283 @@ modern language. Once you learn it, you're unlikely to ever forget it.
 Lisp Programs are made out of *Symbolic Expression* defined as follows:
 
 *Atom:* Anything /NOT/ a /List/
-- Atoms can be simple, e.g. a character or an integer
-- Or complex, e.g. /string/, /array/, /struct/, etc.
+- Atoms can be simple, e.g. a character or a number
+- Or complex, e.g. /string/, /record/, etc.
+*List:* A flexible, extensible sequence of arbitrary elements
+- Lisp syntax uses parentheses
 *Symbolic Expression aka S-Expr:* Either
 - An /Atom/
 - A /List/ of /Symbolic Expressions/
-
-Parentheses are used to enclose /Lists/.
+      - The empty list: =()=
+      - A list of three numbers: =(1 3/4 3.14159 -10+5i)=
+      - Another list of 3 elements: =(1 "two" (buckle my shoe))=
+            - An integer number, a string and a list of symbols
+            - Note how we can freely nest lists inside of lists!
 
 Each kind of /Atom/ has its own syntax.
 - You can add new atom types!
-- e.g. /Racket Slideshow/ adds atoms which are /pictures/.
+- e.g. [[https://docs.racket-lang.org/quick][Racket Slideshow]] adds atoms which are [[https://docs.racket-lang.org/pict][pictures]].
+- You can design the syntax and semantics for a new atom type!
+
+Symbols are atoms which can be used to identify values or which can be used as
+values themselves.
+- Symbols can be short or long sequences of printable characters
+      - except for the special characters ( ) [ ] { } " , ' ` ; # | \
+      - or anything which would look like a number.
+- Here are seven short symbols: x y n + - * /
+- Here are two longer symbols: greet person-name-as-string
+- Your symbol spelling should be meaningful to you, Lisp doesn't care!
 
 ** Lisp Semantics: =eval=, =apply=
 
-Semantics defines what code means and what happens when the computer evaluates
-(i.e. runs or executes) it. The Semantics of a language is the big deal. Lisp
-has the simplest semantics of any popular modern language. Once you learn it,
-you're unlikely to ever forget it.
+Semantics defines what a /symbolic-expression/ means as /code/, i.e. what
+happens when the computer /evaluates/ it. The Semantics of a language is the big
+deal. Lisp has the simplest semantics of any popular modern language. Once you
+learn it, you're unlikely to ever forget it.
+
+Note: Code can either be directly evaluated by an /interpreter program/
+(software) or it can be translated into /machine code/ by a /compiler/ and then
+interpreted directly by your CPU (hardware). Lisp systems can use either
+approach and typically do.
+
+*** Environments Supply Context For Evaluation
 
 Lisp evaluates your S-Exprs using the procedures =eval= and =apply= in the
-context of /an Environment/.
+context of /an Environment/
 
 - *Symbol:* An Atom which serves as an /identifier/, i.e. a name for a value
 - *Value:* An /S-Expr/ which can be /returned/ from a /procedure/
-- *Binding:* A /symbol/ "bound to" (paired with) a /value/
-- *Environment:* a set of /Bindings/, which works like a /dictionary/
+- *Binding:* A /symbol/ "bound to" (associated with) a /value/
+- *Environment:* a set of /Bindings/, like a /dictionary/
 
-*Evaluation:* =eval= evaluates an /S-Expr/ returning a /Value/
+Here's an example:
 
-*Evaluating* /Atoms/:
-- *Symbols:* =eval= returns value from environment /or signals error if none/
-- *All other atoms:* Simply evaluate to themselves
+#+begin_src racket
+  ; Lisp comments follow a ; and are ignored
+  ; This is a Racket Program
+  #lang racket
+  ; Which adds two bindings to the current Environment
+  (define advice "Don't Panic!")
+  (define answer 42)
+  ; and then prints those values on separate lines
+  (println advice)
+  (println answer)
+#+end_src
 
-*Evaluable Lists are called Forms*
+When you run that program, it will print
+#+begin_example
+Don't Panic!
+42
+#+end_example
 
-*Evaluating* /Regular Forms/:
-- /All Elements/ of /Regular Forms/ are /evaluated/
-      - /recursively when nested/
-- The /first element/ must evaluate to a procedure /or an error is signaled/
-- Then =apply= calls the procedure with the other elements as /arguments/
-      - Arguments must be suitable values for the corresponding parameters
- 
-*Special Forms evaluate their arguments selectively*
-- Each is a special case, known to =eval= by /symbol/
-- Only 3 are needed, but see /Form Macros/ below
+*** How Evaluation Works
+
+The built-in procedures =eval= and =apply= do the work.
+
+The Lisp procedure =eval= takes an /S-Expr/ and returns its /Value/.
+
+There are two rules for atoms (non-lists):
+
+*Symbols:* =eval= returns value from environment /or signals error if none/
+
+*All other atoms:* =eval= returns the atom unchanged
+
+*Evaluable Lists* are called *Forms*
+
+*Evaluating Regular Forms*:
+
+1. /All Elements/ of /Regular Forms/ are /evaluated/
+       - /recursively when nested/
+       - The /first element/ must evaluate to a procedure (or an error is
+         signaled)
+2. =apply= calls the procedure, /applying it/ to the other values
+       - the other values from the form serve as /arguments/
+       - Arguments must be suitable values for the procedure's corresponding
+         /parameters/
+
+*Procedure:* An expression providing /instructions/ a computer can perform,
+  often referencing /parameters/ which must be provided with values (arguments)
+  when the procedure is executed. Procedures are often called /functions/, but
+  more on that later.
+
+That's Lisp Semantics in a Nutshell!
+
+*** An Example Lisp Evaluation
+
+#+begin_src racket
+  ; In this Racket Program
+  #lang racket
+  ; With this procedure
+  (define (greet s)
+    (string-append "Hello " s ", how are you?") )
+  ; The expression
+  (greet "Dana")
+  ; Evaluates to
+  "Hello Dana, how are you?"
+#+end_src
+
+Let's explain this example, feature by feature:
+       - =(define (greet s) (string-append "Hello " s ", how are you?"))=
+             - Creates a procedure bound to the symbol =greet=
+             - in the current (/global/ or /top-level/) environment.
+             - The symbol =s= will be bound in a local environment when the procedure
+               is evaluated.
+             - Instead of a short name like =s= you could use something more
+               explanatory, like =person-name-as-string=.
+                   - Lisp doesn't care what you call things.
+                   - There's an art to choosing names which are clear to humans
+                     without being annoyingly verbose!
+             - Elements in a list are generally separated by /whitespace/
+                   - One or more /spaces/, /tabs/ or /newlines/
+                   - /whitespace/ around (parentheses) and some other /special
+                     characters/ is optional
+             - /Pretty-Printing/ makes s-expressions easy to read (with experience)
+                   - Using some extra /whitespace/
+                   - Complex nested lists broken up over multiple lines
+                   - with spaces or tabs showing the nesting level.
+       - =(greet "Dana")= 
+             1. Each element is evaluated
+                    - =greet= evaluates to the procedure we defined
+                    - ="Dana"= evaluates to itself
+             2. We =apply= the procedure to the argument(s)
+                    1. =apply= creates a temporary nested /local/ environment
+                           - =s= is locally bound to ="Dana"=
+                    2. We evaluate =(string-append "hello " s ", how are you?")=
+                           1. Each element is evaluated
+                                  - string-append= evaluates to a procedure in the string library
+                                  - =s= evaluates to ="Dana"=
+                                  - The "string literals" evaluate to themselves
+                           2. The library procedure is applied to its three arguments
+                                  - "Hello Dana, how are you?" is returned
+
+*** Don't Worry, Just Trust!
+
+Although evaluation proceeds in a nested (recursive) fashion, we don't try to
+follow that. When we're reading or writing Lisp code, we follow the principle of
+/induction/:
+- We consider only one procedure at a time
+- We treat any nested procedure calls as /black boxes/
+- We trust that the nested calls act according to their documentation
+We can open up those /black boxes/ at a later time
+
+Local environments are nested inside of the environments which enclose them,
+creating what we call /scopes/. This idea was invented by Lisp and is now used
+by nearly all modern languages. It allows any expression to use any symbol in
+any of the enclosing environments as long as the symbol names don't conflict.
+
+For convenience is using procedures as black boxes, you can
+- You can lookup library procedures in the [[https://docs.racket-lang.org/reference][Racket Reference Manual]]
+- And if you're using the [[https://docs.racket-lang.org/drracket][DrRacket Programming Environment]]
+      - put the cursor on the symbol you want to look up and press =F1=
+
+** Special Semantics for Special Forms
+
+Okaaaay, it's not quite that simple - there are exceptions!
+
+/Special Forms/ are Lists beginning with the name of a symbol that looks like it
+could be the name of a /procedure/, but instead, it's a marker for special
+treatment.
+
+- =eval= has a special rule for each /Special Form/
+- Every Lisp has a small number of built-in /Special Forms/
+- /Scheme/ has 5 which you need to learn - how about now?
 
 =quote=: suppresses evaluation of its single argument
-      - =(quote ANY-SEXPR)= evaluates to =ANY-SEXPR=
-      - e.g. =(quote (+ 1 2 3))= evaluates to the list =(+ 1 2 3)= /not/ to =6=!
-=(if TEST IF-TRUE IF-FALSE)= evaluates =TEST=, then either =IF-TRUE= or =IF-FALSE=
-      - =TEST=: an S-Expr which evaluates to a /Boolean/ aka /truth/ Value
-      - The atom =#f= is the /Boolean Value/ for /false/
-            - all other S-Exprs are considered /true/
-            - the atom =#t= is the /canonical/ Boolean Value for /true/
-      - thus =(if TEST IF-TRUE IF-FALSE)=
-            - evaluates =TEST=
-            - evaluates =IF-TRUE= if =TEST= is /true/, i.e. anything other than =#f=
-            - evaluates =IF-FALSE= if =TEST= is /false/, i.e. is =#f=
-=(lambda PARAMETERS BODIES)= creates a procedure
-      - when the procedure is called ::
-            - an /argument value/ must be supplied for each of the /PARAMETERS/
-            - each of the /PARAMETERS/ will be /bound/ to the corresponding /argument/
-            - BODIES are evaluated in the /environment/ extended with those /bindings/
-      - *PARAMETERS:* a list of 0 or more /symbols/
-            - or a single /symbol/ which gets /all PARAMETERS/ as a /list/
-      - *BODIES:* 1 or more S-Exprs to evaluate.
-            - The value of the last body is /returned/ as the value of the
-              procedure call
+- =(quote ANY-SEXPR)= evaluates to =ANY-SEXPR=
+- e.g. =(quote (+ 1 2 3))= evaluates to =(+ 1 2 3)= /not/ =6=!
+- Lisp has a special shorthand syntax for =quote=
+- ='X= is a shorthand for =(quote X)= for any X
+- so ='(1 2 3)= is a shorthand for =(quote (1 2 3))=
 
-*** A note about Functional Programming
-      
+=(if TEST IF-TRUE IF-FALSE)= evaluates =TEST=, then either =IF-TRUE= or =IF-FALSE=
+- =TEST=: an S-Expr which evaluates to a /Boolean truth value/
+- The atom =#f= is the /Boolean Value/ for /false/
+      - all other S-Exprs are considered /true/
+      - the atom =#t= is the /canonical/ Boolean Value for /true/
+- thus =(if TEST IF-TRUE IF-FALSE)=
+      - evaluates =TEST=
+      - evaluates =IF-TRUE= if =TEST= is true, i.e. not =#f=
+      - evaluates =IF-FALSE= if =TEST= is false, i.e. =#f=
+- so =if= only evaluates two of its three arguments!
+
+=(define SYMBOL VALUE)= binds =SYMBOL= to the given /VALUE/
+- in the current /environment/
+- Special features of =define=
+      - it does NOT evaluate its first argument
+            - the SYMBOL is implicitly quoted
+      - it does NOT return a normal value
+            - you can't use a nested define as an argument
+      - modifying an existing object is called a /side-effect/
+            - here the existing object is the environment
+      - In Racket, the modification must be /monotonic/
+            - the symbol must not already have a value
+
+=(set! symbol value)= /changes/ the binding of =symbol= to a new value
+- Special features of =set!=
+      - it does NOT evaluate its first argument
+            - the symbol is implicitly quoted
+      - it does NOT return a normal value
+            - you can't use a nested define as an argument
+      - In Racket, the modification must be /non-monotonic/
+            - the symbol must already exist and already have a value
+      - Lisp programmers try to avoid /non-monotonic side-effects/!
+            - Names of Scheme non-monotonic functions often end with =!=
+            - This is intended as a warning!
+
+=(lambda PARAMETERS BODIES)= creates a procedure
+- *PARAMETERS:* a list of 0 or more /symbols/
+      - or a single /symbol/ which gets /all PARAMETERS/ as a /list/
+- *BODIES:* 1 or more S-Exprs to evaluate.
+      - The value of the last body is /returned/ as the value of the
+        procedure call
+- *when the procedure is called*
+      - each of the /PARAMETERS/ will require a suitable /argument value/
+      - a new nested environment will be created in which
+      - the /PARAMETERS/ will be /bound/ to the corresponding /arguments/
+      - the BODIES will then be evaluated in that extended environment
+
+** Syntactic Sugar helps in digesting complex code
+
+With apologies to the [[https://www.youtube.com/watch?v=_L4qauTiCY4][musical Mary Poppins]] programming languages often provide
+special syntax that isn't strictly necessary but which makes code easier to
+read or write.  This is often called /Syntactic Sugar/.
+
+The most obvious piece of /Syntactic Sugar/ you'll see in /Scheme/ programs is
+the use of =define= to create procedures.  When you see
+
+#+begin_src racket
+  #lang racket
+  (define (greet s)
+    (string-append "Hello " s ", how are you?") )
+#+end_src
+
+is using syntacatic sugar.  What's really going on is
+
+#+begin_src racket
+  #lang racket
+  (define greet (lambda (s)
+    (string-append "Hello " s ", how are you?") ))
+#+end_src
+
+Properly
+- =define= creates a binding in the /current environment/
+- =lambda= creates a procedure which is a first-class Lisp value
+
+Lisp is based on the mathematical model of computation called the /Lambda
+Calculus/. The most powerful operator in that model is =λ= or =lambda=.
+
+The /Lambda Special Form/ is one of the most powerful features of Lisp. As you
+begin to master Lisp you will make more and more use of /Lambda/ and you will
+find more instances of [[file:lambda-sugar.rkt][Lambda Sugar]] in Lisp.
+
+One of the most touted features of Lisp is a feature called /Macros/. /Macros/
+allow programmers to define new /Special Forms/. This feature should be used
+sparingly. Macros can sometimes help abbreviate complex syntax, but they can
+also confuse someone trying to understand your program since they alter the
+normal Lisp execution mechanism.
+
+** Functions and Functional Programming
+
 Many people in computing use the terms /procedure/ and /function/
 interchangeably, but a /functional procedure/ is something special.
 
@@ -122,20 +338,20 @@ interchangeably, but a /functional procedure/ is something special.
 - returns the same value when given the same argument values
 - does not directly or indirectly modify anything outside of itself
 - Functional Procedures are simpler, leading to fewer errors
-  
+
 /Functional Programming/ is programming using only /Functional Procedures/
 - Functional Programming is /possible/ in Lisp
 - Functional Programming is /not at all required/ in Lisp
 
-Modern Lisp programmers prefer using Functional Procedures 
+Modern Lisp programmers prefer using Functional Procedures
 - Except where it's significantly inconvenient
 - Don't worry, you'll catch on!
 
 *** We're done!
-    
+
 That's it! That's how Lisp works!
 
-Well, basically, but we have a few more features which extend Lisp's power.
+But how do you use it?
 
 ** Interactive Lisp uses a (P)REPL
 
@@ -173,68 +389,6 @@ Most Lisps allow programs to be broken up into files which can be separately
 as part of an /incremental development process/. Lisp development platforms like
 /DrRacket/ and /Emacs/ also support this style of development.
 
-** Syntactic Sugar: Form Macros
-
-Like everything to do with syntax, /Syntactic Sugar is superficial/. It might
-make a Lisp program prettier, but it doesn't effect what it /does/.
-
-Because Lisp code consists of S-Exprs and Lisp is good at manipulating S-Exprs,
-you can write Lisp /Form Macros/ (usually just called Macros) which will
-translate fancy forms into compositions of simpler forms. This translation
-happens when your program is being /compiled/, i.e. when it's being translated
-to your computer's native code.
-
-Compilation to native code allows your program to run as fast as your computer
-can go, typically 10 to 50 times faster than a similar uncompiled program can
-run, e.g. a similar /Python/ program. Because macros are translated out before
-your program runs, they do not slow your program down.
-
-Some examples of what macros can do:
-
-I might want to do multiple things where the syntax only allows one thing, I can
-use the =begin= macro:
-- =(begin S-EXPR-1 S-EXPR-2 ... S-EXPR-N)=
-to evaluate each S-EXPR- in turn and return the value of the last one. This is
-just syntactic sugar for
-- =( (lambda () S-EXPR-1 S-EXPR-2 ... S-EXPR-N) )=
-A lot of Lisp syntactic sugar is just disguised /lambdas/!
-- See [[lambda-sugar.rkt][Lambda Sugar]] for more examples.
-Lambda is the /most/ important Lisp feature!
-
-Really, go read [[lambda-sugar.rkt][Lambda Sugar]] right now before reading any further!
-
-Macros can build on macros, so if I want to do several things, but only when
-some condition is true, I use the =when= macro:
-- =(when some-condition S-EXPR-1 S-EXPR-2 ... S-EXPR-N)=
-- translates into =(if some-condition (begin S-EXPR-1 S-EXPR-2 ... S-EXPR-N) #f)=
-- where again, =#f= is the Lisp atom for /false/.
-
-Lisp purists suggest that programmers use macros /sparingly/. Although macros
-don't slow programs down and can make programs prettier, they put a burden on
-anyone reading the program later, since they have to understand what the macro
-does in order to understand what the program is doing.
-
-** Syntactic Sugar: Reader Macros
-
-Lisp reads your Lisp code using the Lisp function =read=. You can arbitrarily
-change Lisp's syntax by redefining or extending the =read= function! The Lisp
-=print= function prints Lisp values in a form that makes sense for humans to
-read /and/ a form which can be read back into your Lisp session with =read=. If
-you change =read= or =print= you should change both of them so that this
-symmetry is maintained.
-
-=read= and =print= can extend the syntax of Lisp beyond /s-exprs/.
-An example is the reader macro for quote (').
-- =read= reads ='S-EXPR=
-- as =(quote S-EXPR)=
-so we can quote /s-exprs/ more compactly.
-
-Many Lisps provide a version of =print= which can read algebraic syntax, e.g.
-reading =a+b+c= as =(+ a b c)= making Lisp look more like other languages. After
-using an alternate =read= and =print= which make Lisp look more like the
-languages they used before Lisp, nearly all Lisp programmers discover that they
-now prefer Lisp's simpler and more consistent syntax!
-
 ** Built-In and library-provided atom types and procedures
 
 The last two practical barriers to understanding a Lisp program is that you have
@@ -260,7 +414,10 @@ mechanism for going from any unfamiliar entity in your source code to the place
 in your Lisp's documentation which defines that construct or procedure.
 
 ** Would you like to learn more?
- 
+
+In order to present the elegant simplicity at the heart of Lisp, this document
+skipped over some [[file:lisp-complications.org][Lisp Complications]] which you might want to learn about soon.
+
 Read [[lisp-systems.org][Lisp Systems]]
 
 Study the [[vis-mce.rkt][Meta-Circular Interpreter]] which defines Lisp in Lisp!
@@ -268,3 +425,9 @@ Study the [[vis-mce.rkt][Meta-Circular Interpreter]] which defines Lisp in Lisp!
 Join a [[https://github.com/GregDavidson/computing-magic][Computing Magic]] study group?
 
 Ask questions!
+- Post issues on GitHub
+
+Help improve these materials!
+- Fork this repository
+- Improve your copy of it
+- Send us a /pull request/ with your improvements!
