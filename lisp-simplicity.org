@@ -37,7 +37,7 @@ Let's compare Lisp with some popular languages which use /algebraic syntax/
 Is the Lisp notation more complex?
 - Lisp Programmers claim that after a few days of experience Lisp's syntax
   becomes as clear and pleasant as /algebraic syntax/
-- /Do you think that claim is possible?/
+- /Do you find that claim credible?/
 
 A key feature to Lisp syntax is that all Lisp expressions can serve as /both
 code and data/, e.g. the Lisp expressions
