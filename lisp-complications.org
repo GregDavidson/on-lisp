@@ -1,0 +1,311 @@
+* Typical Lisps Have Some Complications
+
+** Prerequisites
+
+Before reading this, you should
+- Learn to think in Lisp a bit
+      - You might study the [[https://github.com/GregDavidson/computing-magic/blob/main/Modules/Module-1/module-1.org][First module of Computing Magic]]
+      - based on the excellent [[https://docs.racket-lang.org/quick/index.html][Quick Introduction to Racket]]
+- Read [[file:lisp-simplicity.org][lisp-simplicity.org]]
+
+You should understand and appreciate the use of
+- Symbolic Expressions as Lisp Values and Lisp Code
+
+** The Key Functions Defining Lisp
+
+*** Lisp Syntax: =read= and =write=
+
+The Syntax which Lisp presents to developers is traditionally implemented by the
+two functions =read= and =write=.
+
+If you wanted to add new syntactic features to Lisp
+- Determine what Symbolic Expression they should correspond to
+      - Adding new =atom types= if necessary - see /Lisp Semantics/
+- Add code to =read= to translate from the new syntax on input
+- Add code to =write= to translate to the new syntax on output
+
+In many Lisp systems this can be done with an /Advice/ system, i.e. a system for
+attaching a new function to an existing function to handle a special case
+without the code of the existing function needing to be changed. As an example,
+see the [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Advising-Functions.html][Advice System in Emacs Lisp]].
+
+** Lisp Semantics: =eval=, =apply=
+
+There are multiple strategies for evaluating Lisp code. Generally the most
+efficient overall method is a combination of these strategies.
+
+*** Dynamic Evaluation of Symbolic Expressions
+
+The /Semantics/ of a Lisp is traditionally defined by the two functions =eval=
+and =apply=.
+
+- eval :: evaluate a /Symbolic Expression/ representing /Lisp Code/ in a
+given Environment and return the resulting value
+- apply :: call a procedure, passing it arguments for its parameters and
+  returns the result of evaluating its body
+
+#+begin_src racket
+  (eval '(+ 1 2 3))
+  ; returns 6
+  (apply + '(1 2 3))
+  ; returns 6
+#+end_src
+
+A great way to understand Lisp Semantics is to study a simple [[file:Lisp-In-Lisp/lisp-in-lisp.rkt][Meta Circular
+Evaluator]] - an implementation of Lisp in Lisp!
+
+- Dynamic Evaluation of Symbolic Expressions
+- Compilation
+      - Translating Lisp Code to a lower level language
+      - Execution of the transformed code
+- A mixture of these approaches
+
+Compilation can be done
+- Ahead of time, before any code is executed
+- During execution of a Program (collection of code within a process)
+
+Lower level languages can be
+- Machine code, which can be directly executed
+      - by a Processing Unit, e.g. a CPU or GPU
+- An intermediate code for a special interpreter
+      - e.g. a byte code or threaded code
+
+It's often assumed that compiling an entire Lisp Program to machine code is the
+most efficient evaluation method, this is not always the case.
+
+Some alternatives:
+*** Staged Compilation
+In Staged
+
+*** A note about Functional Programming
+      
+Many people in computing use the terms /procedure/ and /function/
+interchangeably, but a /functional procedure/ is something special.
+
+*functional procedure:* A /procedure/ which
+- returns the same value when given the same argument values
+- does not directly or indirectly modify anything outside of itself
+- Functional Procedures are simpler, leading to fewer errors
+  
+/Functional Programming/ is programming using only /Functional Procedures/
+- Functional Programming is /possible/ in Lisp
+- Functional Programming is /not at all required/ in Lisp
+
+Modern Lisp programmers prefer using Functional Procedures 
+- Except where it's significantly inconvenient
+- Don't worry, you'll catch on!
+
+*** We're done!
+    
+That's it! That's how Lisp works!
+
+Well, basically, but we have a few more features which extend Lisp's power.
+
+** Interactive Lisp uses a (P)REPL
+
+- (P)REPL:* (Prompt) Read Eval Print Loop session
+- *You enter:* (+ 1 (* 3 4) 5)
+- =eval= calls itself recursively to obtain =(#<procedure:+> 1 12 5)=
+- =eval= calls =apply= with #<procedure:+> and =(1 12 5)=
+- *The final result is printed:* =18=
+- How did =(* 3 4)= become =12=?
+
+(P)REPL Session
+- =(quote (+ 1 (* 3 4) 5))=
+      - =(+ 1 (* 3 4) 5)=
+- =(apply + '(1 2 3 4 5 6))=
+      - =21=
+- =(map eval '(+ 1 (* 3 4) 5))=
+      - =(#<procedure:+> 1 12 5)=
+- =( (lambda (x y) (+ (* x x) (* y y)) ) 3 4 )=
+      - evaluates =(+ (* x x) (* y y))=
+      - in the environment extended with =(x 3) (y 4)=
+      - which =eval= turns into =(#<procedure:+> 9 16)=
+      - and =apply= turns into =25=
+
+Calls on built-in atomic procedures such as the atoms =#<procedure:+>= and
+=#<procedure:*>= will be compiled to inline machine code instructions where
+possible and to machine code procedure calls when necessary.
+
+Like everything else in Lisp. /procedures/ are /first class values/, i.e.
+- they can be bound to a symbol
+- they can be passed to a procedure as an argument
+- they can be returned from a procedure as the procedure's computed value
+
+Most Lisps allow programs to be broken up into files which can be separately
+/compiled/ into /native code/ and then mixed with /Interactive Lisp/ at the REPL
+as part of an /incremental development process/. Lisp development platforms like
+/DrRacket/ and /Emacs/ also support this style of development.
+
+** Syntactic Sugar: Form Macros
+
+Like everything to do with syntax, /Syntactic Sugar is superficial/. It might
+make a Lisp program prettier, but it doesn't effect what it /does/.
+
+Because Lisp code consists of S-Exprs and Lisp is good at manipulating S-Exprs,
+you can write Lisp /Form Macros/ (usually just called Macros) which will
+translate fancy forms into compositions of simpler forms. This translation
+happens when your program is being /compiled/, i.e. when it's being translated
+to your computer's native code.
+
+Compilation to native code allows your program to run as fast as your computer
+can go, typically 10 to 50 times faster than a similar uncompiled program can
+run, e.g. a similar /Python/ program. Because macros are translated out before
+your program runs, they do not slow your program down.
+
+Some examples of what macros can do:
+
+I might want to do multiple things where the syntax only allows one thing, I can
+use the =begin= macro:
+- =(begin S-EXPR-1 S-EXPR-2 ... S-EXPR-N)=
+to evaluate each S-EXPR- in turn and return the value of the last one. This is
+just syntactic sugar for
+- =( (lambda () S-EXPR-1 S-EXPR-2 ... S-EXPR-N) )=
+A lot of Lisp syntactic sugar is just disguised /lambdas/!
+- See [[lambda-sugar.rkt][Lambda Sugar]] for more examples.
+Lambda is the /most/ important Lisp feature!
+
+Really, go read [[lambda-sugar.rkt][Lambda Sugar]] right now before reading any further!
+
+Macros can build on macros, so if I want to do several things, but only when
+some condition is true, I use the =when= macro:
+- =(when some-condition S-EXPR-1 S-EXPR-2 ... S-EXPR-N)=
+- translates into =(if some-condition (begin S-EXPR-1 S-EXPR-2 ... S-EXPR-N) #f)=
+- where again, =#f= is the Lisp atom for /false/.
+
+Lisp purists suggest that programmers use macros /sparingly/. Although macros
+don't slow programs down and can make programs prettier, they put a burden on
+anyone reading the program later, since they have to understand what the macro
+does in order to understand what the program is doing.
+
+** Syntactic Sugar: Reader Macros
+
+Lisp reads your Lisp code using the Lisp function =read=. You can arbitrarily
+change Lisp's syntax by redefining or extending the =read= function! The Lisp
+=print= function prints Lisp values in a form that makes sense for humans to
+read /and/ a form which can be read back into your Lisp session with =read=. If
+you change =read= or =print= you should change both of them so that this
+symmetry is maintained.
+
+=read= and =print= can extend the syntax of Lisp beyond /s-exprs/.
+An example is the reader macro for quote (').
+- =read= reads ='S-EXPR=
+- as =(quote S-EXPR)=
+so we can quote /s-exprs/ more compactly.
+
+Many Lisps provide a version of =print= which can read algebraic syntax, e.g.
+reading =a+b+c= as =(+ a b c)= making Lisp look more like other languages. After
+using an alternate =read= and =print= which make Lisp look more like the
+languages they used before Lisp, nearly all Lisp programmers discover that they
+now prefer Lisp's simpler and more consistent syntax!
+
+** Built-In and library-provided atom types and procedures
+
+The last two practical barriers to understanding a Lisp program is that you have
+to understand the atoms and procedures which your Lisp provides in its standard
+profile and which you import from libraries. When you're studying code written
+by others you may have a lot of things to track down in order to understand how
+that code works.
+
+Each atom type has a syntax which will be read by the =read= procedure. For
+example, /character Strings/ are enclosed in double quotes, with a special
+/escape syntax/ for embedded special characters. The various kinds of numbers
+generally have the same syntax as other languages, except that many Lisps
+include more kinds of numbers, e.g. rationals and complex numbers. The =print=
+procedure also has to know that syntax so that it can print them properly. In
+Racket's /Slideshow Language/ =print= knows how to print pictures.
+
+In addition to (usually) building in a lot of powerful atom types and procedures
+which might be useful in your programs, your Lisp will come with lots of
+libraries which bring in new atom types and powerful procedures. You will need
+to study the documentation for any built-in features or libraries you use. Your
+development environment, e.g. DrRacket or Emacs will usually provide a handy
+mechanism for going from any unfamiliar entity in your source code to the place
+in your Lisp's documentation which defines that construct or procedure.
+
+** Lisp Sequence Types
+
+Originally Lisp only had two kinds of atoms
+- Symbols and Numbers
+and only one way to put things together
+- Pairs
+Lisp still has Pairs, and in fact:
+- Lisp Lists are made of Pairs!
+
+*** What Are Pairs?  How do they make Lists?
+
+A Pair is any two values.  For historical reasons
+- the first value in the Pair is called the =car=
+- the second value in the Pair is called the =cdr=
+You'll also hear Pairs called /cons cells/ because
+- The lisp function =cons= (for construct) makes Pairs
+
+Pairs are written as
+- two values in parentheses
+- separated by " . "
+      - a dot (aka period aka full-stop) with a space on both sides
+- =(cons "yes" "no")= evaluates to the Pair of Strings
+      - ("yes" . "no")
+- =(cons 'hello 'bonjour)= evaluates to the Pair of Symbols
+      - (hello . bonjour)
+- Not that you need to be consistent:
+      - (cons 3.14159 'pi) evaluates to (3.14159 . pi)
+      - (cons (cons 'green 'orange) 'complementary-colors) evaluates to
+            - ((green . orange) . complementary-colors)
+            - The =car= is another Pair
+            - The =cdr= is a just a symbol
+
+Pairs are very handy, and you can nest them any way you like:
+- =(cons (cons 'yes 'no) 'maybe)= evaluates to
+      - (yes no . maybe)
+- Wait!  Why didn't that evaluate to
+      - ((yes . no) . maybe)
+- There's some syntactic sugar when the =cdr= of a Pair is a Pair
+      - '((yes . no) . maybe) is valid input, but Lisp will reply
+      - ((yes . no) . maybe)
+- And when the last =cdr= of the last Pair is the empty list:
+      - (cons 'red (cons 'green (cons 'blue '()))) the result is written
+      - (red green blue)
+- There's another handy function =list=
+      - (list 'red 'green 'blue) which will return
+      - (red green blue)
+- =list= is just calling =cons= for each element to make a list!
+
+So a List is either
+- The Empty List, a special value written as ()
+- A Pair where
+  - The =car= of the Pair is the first element of the List
+  - The =cdr= of the Pair is the rest of the List as Nested Pairs!
+
+So why do we do this?
+- The full story is complicated, but here are two cool things
+
+*** Pairs are fast to store in memory
+
+In the Computer's Memory, a Pair is just two adjacent Words
+- see 
+  
+*** Pairs (and Lists) can Share Storage
+
+=(define fruit '(apples bananas peaches))=
+- allocates three pairs, or 6 words of memory
+- the value of the symbol =fruit= in the machine
+- is the /memory address/ of the first /Cons-Cell/ of the list
+=(define with-savory (cons 'avocado fruit))=
+- allocates 2 more words of memory
+- the =cdr= of =with-savory= is a Pointer to the first =cons-cell= of =fruit=
+=(define with-smelly (cons 'durian fruit))=
+- allocates 2 more words of memory
+
+The list named =fruit= is still (apples bananas peaches
+- the =cdr= is the address of the of =with-savory= is =fruit=
+
+** Would you like to learn more about Lisp?
+ 
+Read [[lisp-systems.org][Lisp Systems]]
+
+Study the [[vis-mce.rkt][Meta-Circular Interpreter]] which defines Lisp in Lisp!
+
+Join a [[https://github.com/GregDavidson/computing-magic][Computing Magic]] study group?
+
+Ask questions!
