@@ -1,9 +1,9 @@
 * Understanding Lisp in Very Little Time
 
-** Caveats: Read this first
+** Read This First
 
 It's much easier to implement Lisp than most other programming languages. This
-has led to the Lisp Curse: Many individuals and institutions have created their
+has led to the /Lisp Curse/: Many individuals and institutions have created their
 own dialects of Lisp, each a bit deviant from the others or either of the two
 major standards. Fortunately, most dialects of Lisp are more alike than they are
 different. If you have experience with one Lisp it's generally easy to learn any
