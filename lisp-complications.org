@@ -1,15 +1,15 @@
-* Typical Lisps Have Some Complications
+* Lisp Language Complications
 
 ** Prerequisites
 
 Before reading this, you should
-- Learn to think in Lisp a bit
+- Be able to think in Lisp a bit
       - You might study the [[https://github.com/GregDavidson/computing-magic/blob/main/Modules/Module-1/module-1.org][First module of Computing Magic]]
       - based on the excellent [[https://docs.racket-lang.org/quick/index.html][Quick Introduction to Racket]]
 - Read [[file:lisp-simplicity.org][lisp-simplicity.org]]
 
 You should understand and appreciate the use of
-- Symbolic Expressions as Lisp Values and Lisp Code
+- Symbolic Expressions as both /Lisp Values/ and /Lisp Code/
 
 ** The Key Functions Defining Lisp
 
@@ -19,30 +19,31 @@ The Syntax which Lisp presents to developers is traditionally implemented by the
 two functions =read= and =write=.
 
 If you wanted to add new syntactic features to Lisp
-- Determine what Symbolic Expression they should correspond to
-      - Adding new =atom types= if necessary - see /Lisp Semantics/
+- Determine what /Symbolic Expression/ they should correspond to
+      - This is the /Representation Problem/
+      - You might even add new =atom types= - see /Lisp Semantics/ below
 - Add code to =read= to translate from the new syntax on input
 - Add code to =write= to translate to the new syntax on output
 
-In many Lisp systems this can be done with an /Advice/ system, i.e. a system for
-attaching a new function to an existing function to handle a special case
-without the code of the existing function needing to be changed. As an example,
+In many Lisp Systems you can add code to a Procedure with an /Advice/ system
+which attaches new code to the existing Procedure to handle a special case
+without the code of the existing Procedure needing to be changed. As an example,
 see the [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Advising-Functions.html][Advice System in Emacs Lisp]].
 
 ** Lisp Semantics: =eval=, =apply=
 
-There are multiple strategies for evaluating Lisp code. Generally the most
-efficient overall method is a combination of these strategies.
+There are many strategies for evaluating Lisp code. Mature Lisp Systems often
+use a combination of multiple strategies.
 
 *** Dynamic Evaluation of Symbolic Expressions
 
 The /Semantics/ of a Lisp is traditionally defined by the two functions =eval=
 and =apply=.
 
-- eval :: evaluate a /Symbolic Expression/ representing /Lisp Code/ in a
-given Environment and return the resulting value
-- apply :: call a procedure, passing it arguments for its parameters and
-  returns the result of evaluating its body
+- *eval* evaluates a /Symbolic Expression/ representing /Lisp Code/ in a
+given Environment and returns the resulting value
+- *apply* calls a Procedure with Arguments for its Parameters and Returns the
+  Result Value of Evaluating its Body
 
 #+begin_src racket
   (eval '(+ 1 2 3))
@@ -54,52 +55,49 @@ given Environment and return the resulting value
 A great way to understand Lisp Semantics is to study a simple [[file:Lisp-In-Lisp/lisp-in-lisp.rkt][Meta Circular
 Evaluator]] - an implementation of Lisp in Lisp!
 
-- Dynamic Evaluation of Symbolic Expressions
-- Compilation
-      - Translating Lisp Code to a lower level language
-      - Execution of the transformed code
-- A mixture of these approaches
+** Compilation: Translate Lisp Code to a Lower Level Language
 
-Compilation can be done
-- Ahead of time, before any code is executed
-- During execution of a Program (collection of code within a process)
+TL;DR: Other than execution speed you should observe no difference at all in the
+/behavior/ of your program due to which strategies your Lisp System uses for
+interpreting your code. All you should be able to notice (and it might not be
+obvious) is the impact of using more computational resources, e.g. processor
+time (CPU and GPU), Memory and Input/Output.
 
-Lower level languages can be
-- Machine code, which can be directly executed
-      - by a Processing Unit, e.g. a CPU or GPU
-- An intermediate code for a special interpreter
-      - e.g. a byte code or threaded code
+Most electronic computer processors have been designed to run imperative code
+(typically written in C, Fortran or Assembly Language) efficiently and it's
+difficult to get them to efficiently process higher level languages, e.g. Lisps,
+Python, Prolog, Smalltalk, JavaScript, etc. Yet some Lisp systems allow the
+performance of Lisp code to get fairly close to the performance of C code.
+Technologies to make Lisp code fast typically involving translating your
+code into lower-level languages (including Machine Language) before running it.
+Some of these strategies are explained in [[https://github.com/GregDavidson/on-computing/blob/main/Writings/2023/running-code.org][Running Code]].
 
-It's often assumed that compiling an entire Lisp Program to machine code is the
-most efficient evaluation method, this is not always the case.
+Typically more than 90% of the code in a large software application has little
+impact on the overall performance of the program. Optimizing the wrong parts of a
+program are a waste of effort and can add complexity which will impede the
+maintenance and evolution of the system. It's often difficult to know in
+advance which parts of a program are worth optimizing or how.
 
-Some alternatives:
-*** Staged Compilation
-In Staged
+/Profilers/ monitor your program as it performs its tasks, helping you find its
+/Hot Spots/, i.e. those small parts of the code which consume the most critical
+resources at the most critical times. You can use profiling data to show you
+where to put your efforts at optimizing your program's performance.
 
-*** A note about Functional Programming
-      
-Many people in computing use the terms /procedure/ and /function/
-interchangeably, but a /functional procedure/ is something special.
+The only way to profoundly improve your program is through redesigning the
+inefficient parts to use better
+- Computational Strategies
+- Data Flow
+- Algorithms
+- Data Structures
+- Heuristics
+These are all big topics worth studying over the long term!
 
-*functional procedure:* A /procedure/ which
-- returns the same value when given the same argument values
-- does not directly or indirectly modify anything outside of itself
-- Functional Procedures are simpler, leading to fewer errors
-  
-/Functional Programming/ is programming using only /Functional Procedures/
-- Functional Programming is /possible/ in Lisp
-- Functional Programming is /not at all required/ in Lisp
-
-Modern Lisp programmers prefer using Functional Procedures 
-- Except where it's significantly inconvenient
-- Don't worry, you'll catch on!
-
-*** We're done!
-    
-That's it! That's how Lisp works!
-
-Well, basically, but we have a few more features which extend Lisp's power.
+When it's difficult to improve your program's design, you may want to check and
+see how the Lisp System you're using compares to others in implementation
+efficiency. You can find some interesting benchmarks at [[https://benchmarksgame-team.pages.debian.net/benchmarksgame][The Computer Language
+Benchmarks Game]]. Be sure to read the caveats [[https://benchmarksgame-team.pages.debian.net/benchmarksgame/why-measure-toy-benchmark-programs.html][about Toy Benchmark Programs]] and
+[[https://benchmarksgame-team.pages.debian.net/benchmarksgame/sometimes-people-just-make-up-stuff.html][some experience from history]]. Good benchmarks are difficult to obtain and to
+interpret!
 
 ** Interactive Lisp uses a (P)REPL
 
@@ -199,31 +197,7 @@ using an alternate =read= and =print= which make Lisp look more like the
 languages they used before Lisp, nearly all Lisp programmers discover that they
 now prefer Lisp's simpler and more consistent syntax!
 
-** Built-In and library-provided atom types and procedures
-
-The last two practical barriers to understanding a Lisp program is that you have
-to understand the atoms and procedures which your Lisp provides in its standard
-profile and which you import from libraries. When you're studying code written
-by others you may have a lot of things to track down in order to understand how
-that code works.
-
-Each atom type has a syntax which will be read by the =read= procedure. For
-example, /character Strings/ are enclosed in double quotes, with a special
-/escape syntax/ for embedded special characters. The various kinds of numbers
-generally have the same syntax as other languages, except that many Lisps
-include more kinds of numbers, e.g. rationals and complex numbers. The =print=
-procedure also has to know that syntax so that it can print them properly. In
-Racket's /Slideshow Language/ =print= knows how to print pictures.
-
-In addition to (usually) building in a lot of powerful atom types and procedures
-which might be useful in your programs, your Lisp will come with lots of
-libraries which bring in new atom types and powerful procedures. You will need
-to study the documentation for any built-in features or libraries you use. Your
-development environment, e.g. DrRacket or Emacs will usually provide a handy
-mechanism for going from any unfamiliar entity in your source code to the place
-in your Lisp's documentation which defines that construct or procedure.
-
-** Lisp Sequence Types
+** Lisp Lists and Pairs
 
 Originally Lisp only had two kinds of atoms
 - Symbols and Numbers
@@ -299,6 +273,38 @@ In the Computer's Memory, a Pair is just two adjacent Words
 
 The list named =fruit= is still (apples bananas peaches
 - the =cdr= is the address of the of =with-savory= is =fruit=
+
+  
+** Other Lisp Data Structures
+*** Lisp Arrays
+*** Other Sequence Types
+*** Lisp Sequence Abstractions
+*** Lisp Trees and Graphs
+*** Lisp Hash Tables
+
+** Built-In and library-provided atom types and procedures
+
+The last two practical barriers to understanding a Lisp program is that you have
+to understand the atoms and procedures which your Lisp provides in its standard
+profile and which you import from libraries. When you're studying code written
+by others you may have a lot of things to track down in order to understand how
+that code works.
+
+Each atom type has a syntax which will be read by the =read= procedure. For
+example, /character Strings/ are enclosed in double quotes, with a special
+/escape syntax/ for embedded special characters. The various kinds of numbers
+generally have the same syntax as other languages, except that many Lisps
+include more kinds of numbers, e.g. rationals and complex numbers. The =print=
+procedure also has to know that syntax so that it can print them properly. In
+Racket's /Slideshow Language/ =print= knows how to print pictures.
+
+In addition to (usually) building in a lot of powerful atom types and procedures
+which might be useful in your programs, your Lisp will come with lots of
+libraries which bring in new atom types and powerful procedures. You will need
+to study the documentation for any built-in features or libraries you use. Your
+development environment, e.g. DrRacket or Emacs will usually provide a handy
+mechanism for going from any unfamiliar entity in your source code to the place
+in your Lisp's documentation which defines that construct or procedure.
 
 ** Would you like to learn more about Lisp?
  
