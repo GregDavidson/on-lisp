@@ -389,7 +389,7 @@ It's easy for Lists to grow /and to share storage/:
   of the file using the button to the upper-right. Github incorrectly handles
   OrgMode literal blocks.*
 
-##+begin_quote
+##+begin_example
              +-------------+-------------+                                     \\
 sequence0--->|      0      |     cdr     |                                     \\
              +-------------+.-----v------+                                     \\
@@ -408,7 +408,7 @@ sequence2--->|     10      |     cdr     |                                     \
 
 (assert (eq? sequence1 (cdr sequence0)))
 (assert (eq? sequence1 (cdr sequence2)))
-#+end_quote
+#+end_example
 
 *** Pairs (and Lists) can Share Storage
 
