@@ -353,30 +353,28 @@ So why do we do this?
 *** Pairs are fast to store in memory
 
 In the Computer's Memory, a Pair is just two adjacent Words
-#+begin_verse
+
 A Lisp Pair aka Cons-Cell:
-
-    +-------------+-------------+
-    |     car     |     cdr     |
-    +-------------+.------------+
-    <-- 2 machine words wide  -->
-
-The car and the cdr can each hold any 1-word value,
-typically a number, the value '() or the address of
-a larger object stored elsewhere in memory.
+#+begin_verse
+:   +-------------+-------------+
+:   |     car     |     cdr     |
+:   +-------------+.------------+
+:   <-- 2 machine words wide  -->
 +end_verse
+The car and the cdr can each hold any 1-word value
+- such as a number or the value '() aka nil
+or the address of a larger object
+- stored elsewhere in memory.
 
+A Lisp List is made of Pairs:
 ##+begin_verse
-A Lisp List is made of Pairs
-
-    +-------------+-------------+      +-------------+-------------+
-    |  element-1  |     cdr----------->|  element-2  |   cdr=()    |
-    +-------------+.------------+      +-------------+.------------+
-
-Each car holds or points to 1 list element.
-Each car either points to (holds the address of)
-another Pair or has the value () aka nil.
+:   +-------------+-------------+      +-------------+-------------+
+:   |  element-1  |     cdr----------->|  element-2  |   cdr=()    |
+:   +-------------+.------------+      +-------------+.------------+
 #+end_verse
+- Each car holds (or points to) 1 list element.
+- Each car either points to (holds the address of)
+- another Pair or has the value () aka nil.
 
 It's easy for Lists to grow /and to share storage/:
 #+begin_src racket
@@ -407,7 +405,6 @@ It's easy for Lists to grow /and to share storage/:
 :              +-------------+------^------+                                     \\
 : sequence2--->|     10      |     cdr     |                                     \\
 :              +-------------+.------------+                                     \\
-:
 #+end_quote
 
 *** Pairs (and Lists) can Share Storage
