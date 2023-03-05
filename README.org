@@ -52,14 +52,17 @@ systems also share Lisp's [[https://en.wikipedia.org/wiki/Homoiconicity][homoico
 
 And some of the most wonderful programming languages either do not have quite as
 much expressivity as Lisp or as much mathematical purity yet have great riches
-to teach the explorer. 
+to teach the explorer.
 
-Some awesome mathematically-based languages which I do not
-find as generally expressive as Lisp include the Iverson language family of Apl,
-J and K.
+Some other awesome mathematically-based languages are the Array Processing
+Languages including of Apl, J and K.  They are the most powerful tools for
+certain kinds of problems and the way of thinking you learn by using them
+is invaluable.
 
-Some awesome languages which are perhaps less pures and more ad hoc than modern
-Lisps include the Smalltalk family and the Forth family.
+Some more awesome languages which are less mathematically inspired yet have
+similar power-to-weight ratios include the Smalltalk family and the Forth
+family. Object-Oriented Programming has gotten some bad press lately. Smalltalk
+will show you how wonderful it can be!
 
 All of these languages are Turing complete, so you should be able to express any
 algorithm in any one of them, but not always elegantly or "naturally". Many
