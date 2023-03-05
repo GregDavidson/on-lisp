@@ -33,7 +33,7 @@
 
 ;; an atomic expression is anything which is not a list
 ;; a list is a sequence of pairs
-;; for evaluation semantics, this will meet our needs
+;; for evaluation semantics, this will meet our needs:
 (define (atomic? x) (not (pair? x)))
 
 ; evaluate a symbolic expression representing Lisp Code
