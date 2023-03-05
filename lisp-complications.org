@@ -270,7 +270,7 @@ symmetry is maintained.
 
 =read= and =print= can extend the syntax of Lisp beyond /s-exprs/.
 An example is the reader macro for quote (').
-- =read= reads ='S-EXPR=
+- =read= reads 'S-EXPR
 - as =(quote S-EXPR)=
 so we can quote /s-exprs/ more compactly.
 
@@ -305,7 +305,7 @@ A Pair is just any two values joined together into one combined value.
 
 Syntactically, Pair Literals are written as =(X . Y)=
 - two values in parentheses separated by " . "
-      - At least one space is required on each sides of the "."
+      - At least one space is required on each side of the "."
 
 #+begin_src racket
   > (cons "yes" "no")
@@ -361,10 +361,12 @@ A Lisp Pair aka Cons-Cell:
 :   +-------------+.------------+                            \\
 :   <-- 2 machine words wide  -->                            \\
 #+end_quote
-The car and the cdr can each hold any 1-word value
+The =car= and the =cdr= can each hold any 1-word value
 - such as a number or the value '() aka nil
-or the address of a larger object
-- stored elsewhere in memory.
+- or the address of a larger object
+      - aka a "link" or "pointer"
+      - linked structures are non-contiguous
+      - they can consist of chunks scattered all over memory!
 
 A Lisp List is made of Pairs:
 #+begin_quote
