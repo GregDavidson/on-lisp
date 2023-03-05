@@ -21,14 +21,23 @@ two functions =read= and =write=.
 If you wanted to add new syntactic features to Lisp
 - Determine what /Symbolic Expression/ they should correspond to
       - This is the /Representation Problem/
-      - You might even add new =atom types= - see /Lisp Semantics/ below
+      - You might even add new /atom types/
 - Add code to =read= to translate from the new syntax on input
 - Add code to =write= to translate to the new syntax on output
 
-In many Lisp Systems you can add code to a Procedure with an /Advice/ system
-which attaches new code to the existing Procedure to handle a special case
-without the code of the existing Procedure needing to be changed. As an example,
-see the [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Advising-Functions.html][Advice System in Emacs Lisp]].
+Adding new /atom type/ may require
+- writing new procedures to implement new behaviors of your type
+- adding new behaviors to existing "generic" procedures
+      - i.e. procedures which can handle multiple types
+            - =read= and =write= generics for syntax
+            - + - * / et al generics for arithmetic on numeric types
+                  - integers, floating point, rational, complex, etc.
+            - etc.
+
+Many Lisp Systems let you add code to a Procedure as /Advice/
+- attach new code to existing Procedure to handle a special cases
+- without changing the code of the existing Procedure!
+- Fancy Example: [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Advising-Functions.html][Advice System in Emacs Lisp]]
 
 ** Lisp Semantics: =eval=, =apply=
 
@@ -37,8 +46,8 @@ use a combination of multiple strategies.
 
 *** Dynamic Evaluation of Symbolic Expressions
 
-The /Semantics/ of a Lisp is traditionally defined by the two functions =eval=
-and =apply=.
+The /Semantics/ of a Lisp is traditionally /defined/ by the two functions =eval=
+and =apply= even if fancier implementation strategies are employed.
 
 - *eval* evaluates a /Symbolic Expression/ representing /Lisp Code/ in a
 given Environment and returns the resulting value
@@ -52,10 +61,11 @@ given Environment and returns the resulting value
   ; returns 6
 #+end_src
 
-A great way to understand Lisp Semantics is to study a simple [[file:Lisp-In-Lisp/lisp-in-lisp.rkt][Meta Circular
-Evaluator]] - an implementation of Lisp in Lisp!
+A great way to understand Lisp Semantics is to study
+- a simple [[file:Lisp-In-Lisp/lisp-in-lisp.rkt][Meta Circular Evaluator]]
+- an implementation of Lisp in Lisp!
 
-** Compilation: Translate Lisp Code to a Lower Level Language
+** Making Lisp Run Faster And More Efficiently
 
 TL;DR: Other than execution speed you should observe no difference at all in the
 /behavior/ of your program due to which strategies your Lisp System uses for
@@ -66,20 +76,20 @@ time (CPU and GPU), Memory and Input/Output.
 Most electronic computer processors have been designed to run imperative code
 (typically written in C, Fortran or Assembly Language) efficiently and it's
 difficult to get them to efficiently process higher level languages, e.g. Lisps,
-Python, Prolog, Smalltalk, JavaScript, etc. Yet some Lisp systems allow the
-performance of Lisp code to get fairly close to the performance of C code.
-Technologies to make Lisp code fast typically involving translating your
-code into lower-level languages (including Machine Language) before running it.
-Some of these strategies are explained in [[https://github.com/GregDavidson/on-computing/blob/main/Writings/2023/running-code.org][Running Code]].
+Python, Prolog, Smalltalk, JavaScript, Haskell, etc. Yet some Lisp systems allow
+the performance of Lisp code to get fairly close to the performance of C code.
+Technologies to make Lisp code run fast typically involving translating it into
+a lower-level language (including Machine Language) before running it. These
+strategies are explained further in [[https://github.com/GregDavidson/on-computing/blob/main/Writings/2023/running-code.org][Running Code]].
 
 Typically more than 90% of the code in a large software application has little
-impact on the overall performance of the program. Optimizing the wrong parts of a
-program are a waste of effort and can add complexity which will impede the
-maintenance and evolution of the system. It's often difficult to know in
-advance which parts of a program are worth optimizing or how.
+impact on the overall performance of the program. Optimizing the wrong parts of
+a program are a waste of effort and can add complexity which is the enemy of the
+evolution (and maintenance) of the system. Yet it's often difficult to determine
+which parts of a program are worth optimizing or how.
 
 /Profilers/ monitor your program as it performs its tasks, helping you find its
-/Hot Spots/, i.e. those small parts of the code which consume the most critical
+/Hot Spots/, i.e. those small parts of your code which consume the most critical
 resources at the most critical times. You can use profiling data to show you
 where to put your efforts at optimizing your program's performance.
 
@@ -90,66 +100,139 @@ inefficient parts to use better
 - Algorithms
 - Data Structures
 - Heuristics
-These are all big topics worth studying over the long term!
+- Libraries
+These topics are at least as important to study as languages!
 
-When it's difficult to improve your program's design, you may want to check and
-see how the Lisp System you're using compares to others in implementation
-efficiency. You can find some interesting benchmarks at [[https://benchmarksgame-team.pages.debian.net/benchmarksgame][The Computer Language
-Benchmarks Game]]. Be sure to read the caveats [[https://benchmarksgame-team.pages.debian.net/benchmarksgame/why-measure-toy-benchmark-programs.html][about Toy Benchmark Programs]] and
-[[https://benchmarksgame-team.pages.debian.net/benchmarksgame/sometimes-people-just-make-up-stuff.html][some experience from history]]. Good benchmarks are difficult to obtain and to
-interpret!
+When it's difficult to improve your program's design, you may want to assess how
+different language implementations compare in efficiency for your kind of code.
+You can find some interesting benchmarks at [[https://benchmarksgame-team.pages.debian.net/benchmarksgame][The Computer Language Benchmarks
+Game]]. Be sure to read the caveats [[https://benchmarksgame-team.pages.debian.net/benchmarksgame/why-measure-toy-benchmark-programs.html][about Toy Benchmark Programs]] and [[https://benchmarksgame-team.pages.debian.net/benchmarksgame/sometimes-people-just-make-up-stuff.html][some
+experience from history]]. Small differences in performance probably don't matter
+as benchmark programs are not usually directly comparable but differences of
+more than a factor of 10 are worth paying attention to.
 
 ** Interactive Lisp uses a (P)REPL
 
-- (P)REPL:* (Prompt) Read Eval Print Loop session
-- *You enter:* (+ 1 (* 3 4) 5)
-- =eval= calls itself recursively to obtain =(#<procedure:+> 1 12 5)=
-- =eval= calls =apply= with #<procedure:+> and =(1 12 5)=
-- *The final result is printed:* =18=
-- How did =(* 3 4)= become =12=?
+Batch development style
+1. Edit your code as a text file with a text editor
+2. Run a compiler to translate the whole file to a machine language program
+3. Run the machine language program
+4. Observe its deficiencies
+5. Go to Step 1
 
-(P)REPL Session
-- =(quote (+ 1 (* 3 4) 5))=
-      - =(+ 1 (* 3 4) 5)=
-- =(apply + '(1 2 3 4 5 6))=
-      - =21=
-- =(map eval '(+ 1 (* 3 4) 5))=
-      - =(#<procedure:+> 1 12 5)=
-- =( (lambda (x y) (+ (* x x) (* y y)) ) 3 4 )=
-      - evaluates =(+ (* x x) (* y y))=
-      - in the environment extended with =(x 3) (y 4)=
-      - which =eval= turns into =(#<procedure:+> 9 16)=
-      - and =apply= turns into =25=
+Lisp allows for a more interactive style
+- with a (P)REPL
+- (Prompt) Read Eval Print Loop session
+- The (Prompt) is usually not mentioned, so =REPL=
 
-Calls on built-in atomic procedures such as the atoms =#<procedure:+>= and
-=#<procedure:*>= will be compiled to inline machine code instructions where
-possible and to machine code procedure calls when necessary.
+#+begin_src racket
+  >                                   ; Prompt for expression
+  > (+ 1 (* 3 4) 5)                   ; Read expression
+  ;; Eval of symbols gets their values from the environment
+  ;; '+ to procedure for addition
+  ;; '* to procedure for multiplcation
+  ;; Eval of other atoms simply returns them as themselves
+  ;; '1 to 1, '3 to 3, '4 to 4, '5 to 5
+  ;; Eval calls apply to run procedures
+  ;; apply multiplication procedure to arguments
+  ;; apply addition procedure to arguments
+  18                                  ; Print result
+  >                                   ; Prompt (loop for next expression)
+#+end_src
+- =eval= calls itself recursively on nested expressions
+- such as =(* 3 4)= in this example
+
+** =eval= and =apply= Call Each Other Recursively
+
+#+begin_src racket
+  > (quote (+ 1 (* 3 4) 5))           ; quote returns its argument unevaluated
+  (+ 1 (* 3 4) 5)
+  > (apply + '(1 2 3 4 5 6))
+  21
+  > (map eval '(+ 1 (* 3 4) 5))
+  (#<procedure:+> 1 12 5)
+  > ( (lambda (x y) (+ (* x x) (* y y)) ) 3 4 )
+  25
+#+end_src
+Details of the last piece:
+- =eval= of =( (lambda (x y) (+ (* x x) (* y y)) ) 3 4 )=
+- This is a Form (an executable List) of 3 elements
+- =eval= will recursively evaluate each element
+- =(lambda (x y) (+ (* x x) (* y y)) )= evaluates to a procedure
+      - a procedure which expects 2 arguments
+      - to supply values for parameters =x= and =y=
+      - in the evaluation of =(+ (* x x) (* y y))=
+- =3= and =4= evaluate to themselves
+- =eval= calls =apply= to apply the procedure to the arguments
+- =apply= creates a (nested local) environment with
+      - =x= bound to 3
+      - =y= bound to 4
+- =apply= calls =eval= on =(+ (* x x) (* y y))= in that environment
+- that's a new form, so =eval= evaluates each element
+- ...
+- do you see the whole process now?
+
+** Procedures, Procedures, Procedures!
+
+The reason something like
+- =(hc-append 10 (circle 30) (rectangle 10 30))=
+seems simple is because you can treat the procedures
+- =hc=append= =circle= =rectangle= as /black boxes/
+In reality
+- All Procedures are Lambdas!
+- It's recursive =eval= and =apply= until you reach
+- primitive procedures written in machine language
 
 Like everything else in Lisp. /procedures/ are /first class values/, i.e.
 - they can be bound to a symbol
 - they can be passed to a procedure as an argument
-- they can be returned from a procedure as the procedure's computed value
+- they can be returned from a procedure as its computed value
 
-Most Lisps allow programs to be broken up into files which can be separately
-/compiled/ into /native code/ and then mixed with /Interactive Lisp/ at the REPL
-as part of an /incremental development process/. Lisp development platforms like
-/DrRacket/ and /Emacs/ also support this style of development.
+Most Lisps allow /programs/ to be composed of multiple /modules/
+- /modules/ consist of /procedure/ definitions
+      - usually contained in separate files
+- /source modules/ can be /compiled/ (translated) into /binary modules/
+      - /binary modules/ are not directly human readable
+      - generally in some lower-level language, e.g. machine language
+- either kind of /module/ can be loaded into the /REPL/
+- allowing /Interactive/ development of new modules
+Lisp development platforms like /DrRacket/ and /Emacs/ are designed to support
+this style of development.
 
 ** Syntactic Sugar: Form Macros
 
-Like everything to do with syntax, /Syntactic Sugar is superficial/. It might
-make a Lisp program prettier, but it doesn't effect what it /does/.
+Like everything to do with syntax
+- /Syntactic Sugar is superficial/
+- the code may become prettier to humans
+- its behavior and performance is exactly the same
 
-Because Lisp code consists of S-Exprs and Lisp is good at manipulating S-Exprs,
-you can write Lisp /Form Macros/ (usually just called Macros) which will
-translate fancy forms into compositions of simpler forms. This translation
-happens when your program is being /compiled/, i.e. when it's being translated
-to your computer's native code.
+/Form Macros/ create /Syntactic Sugar/ for /Forms/
+- /Form Macros/ are usually just called /Macros/
+- /Forms/ are /Lists/ which you can meaningfully =eval=
 
-Compilation to native code allows your program to run as fast as your computer
-can go, typically 10 to 50 times faster than a similar uncompiled program can
-run, e.g. a similar /Python/ program. Because macros are translated out before
-your program runs, they do not slow your program down.
+A /Form Macro/ is just a procedure which rewrites the /Form/
+- This is called /Macro Expansion/
+- A Form is an S-Expression
+- Lisp is good at manipulating S-Exprs
+- /Form Macros/ can be run early or late
+      - Early is when your code is being
+            - read, compiled, loaded or defined
+      - late is when your code is being evaluated
+- By running /Form Macros/ early
+      - /Macro Expansion/ is never a hot-spot
+      - It doesn't effect the performance of your program
+
+Similarity of Compilation to /Macro Expansion/
+- The forms of your program are translated to a lower-level language
+- This is expensive, but is usually done early
+- Therefore compilation doesn't slow your program's runtime performance
+
+Main difference of Compilation vs. /Macro Expansion/
+- Compilation can significantly improve runtime performance
+- Easily 50 or more times speed improvement using optimized native code
+- Macros don't typically affect performance at all
+      - Unless your macros generate Lower-Level code!
+      - Some Lisp Systems allow this!
 
 Some examples of what macros can do:
 
@@ -192,10 +275,15 @@ An example is the reader macro for quote (').
 so we can quote /s-exprs/ more compactly.
 
 Many Lisps provide a version of =print= which can read algebraic syntax, e.g.
-reading =a+b+c= as =(+ a b c)= making Lisp look more like other languages. After
-using an alternate =read= and =print= which make Lisp look more like the
-languages they used before Lisp, nearly all Lisp programmers discover that they
-now prefer Lisp's simpler and more consistent syntax!
+reading =a+b+c= as =(+ a b c)= making Lisp look more like other languages.
+
+Many new Lisp Programmers go through a phase of trying out alternative syntaxes
+using reader macros, often making Lisp look like languages the programmers has
+used before. The new programmer will often show off the new syntax with
+excitement and feel that it improves their productivity. After getting more
+experience with Lisp's regular syntax, most programmers discover that they like
+it as much or better than such alternatives and abandon their fancy reader
+macros!
 
 ** Lisp Lists and Pairs
 
@@ -204,52 +292,60 @@ Originally Lisp only had two kinds of atoms
 and only one way to put things together
 - Pairs
 Lisp still has Pairs, and in fact:
-- Lisp Lists are made of Pairs!
+- Lisp /Lists/ are made of /Pairs/!
 
 *** What Are Pairs?  How do they make Lists?
 
-A Pair is any two values.  For historical reasons
-- the first value in the Pair is called the =car=
-- the second value in the Pair is called the =cdr=
-You'll also hear Pairs called /cons cells/ because
-- The lisp function =cons= (for construct) makes Pairs
+A Pair is just any two values joined together into one combined value.
+- the procedure =cons= creates pairs
+      - =(cons X Y)= returns a pair of the two values =X= and =Y=
+      - /Pairs/ are also known as /cons cells/
+- the procedure =car= will return the first element of a /Pair/
+- the procedure =cdr= will return the first element of a /Pair/
 
-Pairs are written as
-- two values in parentheses
-- separated by " . "
-      - a dot (aka period aka full-stop) with a space on both sides
-- =(cons "yes" "no")= evaluates to the Pair of Strings
-      - ("yes" . "no")
-- =(cons 'hello 'bonjour)= evaluates to the Pair of Symbols
-      - (hello . bonjour)
-- Not that you need to be consistent:
-      - (cons 3.14159 'pi) evaluates to (3.14159 . pi)
-      - (cons (cons 'green 'orange) 'complementary-colors) evaluates to
-            - ((green . orange) . complementary-colors)
-            - The =car= is another Pair
-            - The =cdr= is a just a symbol
+Syntactically, Pair Literals are written as =(X . Y)=
+- two values in parentheses separated by " . "
+      - At least one space is required on each sides of the "."
 
-Pairs are very handy, and you can nest them any way you like:
-- =(cons (cons 'yes 'no) 'maybe)= evaluates to
-      - (yes no . maybe)
-- Wait!  Why didn't that evaluate to
-      - ((yes . no) . maybe)
-- There's some syntactic sugar when the =cdr= of a Pair is a Pair
-      - '((yes . no) . maybe) is valid input, but Lisp will reply
-      - ((yes . no) . maybe)
-- And when the last =cdr= of the last Pair is the empty list:
-      - (cons 'red (cons 'green (cons 'blue '()))) the result is written
-      - (red green blue)
-- There's another handy function =list=
-      - (list 'red 'green 'blue) which will return
-      - (red green blue)
-- =list= is just calling =cons= for each element to make a list!
+#+begin_src racket
+  > (cons "yes" "no")
+  ("yes" . "no")                          ; a pair of two strings
+  > (cons 'hello 'bonjour)
+  (hello . bonjour)                       ; a Pair of two Symbols
+  > (cons 3.14159 'pi)
+  (3.14159 . pi)
+  > (cons (cons 'green 'orange) 'complementary-colors)
+  ((green . orange) . complementary-colors)
+  > (car ("yes" . "no"))
+  "yes"
+  > (cdr ("yes" . "no"))
+  "no"
+  > (car (cons (cons 'green 'orange) 'complementary-colors))
+  (green . orange)
+  > (cdr (cons (cons 'green 'orange) 'complementary-colors))
+  complementary-colors
+#+end_src
 
-So a List is either
-- The Empty List, a special value written as ()
+But what's going on here:
+#+begin_src racket
+  > (cons (cons 'yes 'no) 'maybe)
+  (yes no . maybe)
+  > (cons 'red (cons 'green (cons 'blue '())))
+  (red green blue)
+  > '(red . (green . (blue . ())))
+  (red green blue)
+#+end_src
+
+Lisp's /Lists are just nested Pairs!/
+- In a /Proper List/ the last =cdr= is '()
+- otherwise it's an /Improper List/
+
+So a /Proper List/ is either
+- The Empty List, '()
 - A Pair where
-  - The =car= of the Pair is the first element of the List
-  - The =cdr= of the Pair is the rest of the List as Nested Pairs!
+      - The =car= of the Pair is /the first element of the List/
+      - The =cdr= of the Pair is /the rest of the List/
+            - either '() or more /Nested Pairs/
 
 So why do we do this?
 - The full story is complicated, but here are two cool things
@@ -257,8 +353,52 @@ So why do we do this?
 *** Pairs are fast to store in memory
 
 In the Computer's Memory, a Pair is just two adjacent Words
-- see 
-  
+#+begin_verse
+A Lisp Pair aka Cons-Cell:
+
+    +-------------+-------------+
+    |     car     |     cdr     |
+    +-------------+.------------+
+    <-- 2 machine words wide  -->
+
+The car and the cdr can each hold any 1-word value,
+typically a number, the value '() or the address of
+a larger object stored elsewhere in memory.
++end_verse
+
+##+begin_verse
+A Lisp List is made of Pairs
+
+    +-------------+-------------+      +-------------+-------------+
+    |  element-1  |     cdr----------->|  element-2  |   cdr=()    |
+    +-------------+.------------+      +-------------+.------------+
+
+Each car holds or points to 1 list element.
+Each car either points to (holds the address of)
+another Pair or has the value () aka nil.
+#+end_verse
+
+It's easy for Lists to grow:
+#+begin_src racket
+  (define sequence1 '(20 40))
+  (define sequence2 (cons 10 sequence1))
+#+end_src
+
+##+begin_verse
+
+             +-------------+-------------+      +-------------+-------------+
+sequence1--->|     20      |     cdr----------->|     40      |   cdr=()    |
+             +-------------+.------------+      +-------------+.------------+
+                    ^
+                    ^----------------\
+                                     ^
+                +-------------+------^------+
+sequence2--->   |     10      |     cdr     |
+                +-------------+.------------+
+
+(assert (eq sequence1 (cdr sequence2)))
+#+end_verse
+
 *** Pairs (and Lists) can Share Storage
 
 =(define fruit '(apples bananas peaches))=
