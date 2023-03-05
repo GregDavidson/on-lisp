@@ -432,6 +432,11 @@ Computer Science has distinguished a great variety of
 Lisp has a few features and some conventions which allow lisp programmers to
 efficiently leverage all of these useful abstractions.
 
+Lisp's Data Structures are very high level.  If you want to understand what
+that high level is resting on, read these two short articles:
+- [[https://gregdavidson.github.io/on-computing/what-computers-are/][What Computers Are]]
+- [[https://github.com/GregDavidson/on-computing/blob/main/composites.org][Composite Data Structures]]
+
 *** Lisp Vectors (aka 1-Dimensional Arrays)
 
 As wonderful as Lists are, they have a few flaws
