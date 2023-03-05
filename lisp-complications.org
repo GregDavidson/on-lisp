@@ -367,7 +367,7 @@ or the address of a larger object
 - stored elsewhere in memory.
 
 A Lisp List is made of Pairs:
-##+begin_quote
+#+begin_quote
 : +-----------+-----------+     +-----------+-----------+    \\
 : | element-1 |    cdr--------->| element-2 |  cdr=()   |    \\
 : +-----------+-----------+     +-----------+-----------+    \\
@@ -385,11 +385,7 @@ It's easy for Lists to grow /and to share storage/:
   (assert (eq? sequence1 (cdr sequence2)))
 #+end_src
 
-  *If you're reading the following on GitHub, please shift to the "Raw" version
-  of the file using the button to the upper-right. Github incorrectly handles
-  OrgMode literal blocks.*
-
-##+begin_quote
+#+begin_quote
 :              +---------+---------+                               \\
 : sequence0--->|    0    |   cdr   |                               \\
 :              +---------+----v----+                               \\
@@ -407,36 +403,170 @@ It's easy for Lists to grow /and to share storage/:
 :              +---------+---------+                               \\
 #+end_quote
 
-*** Pairs (and Lists) can Share Storage
+As long as Lists grow by adding new Pairs at the /front/
+- nothing already allocated needs to be copied
+- shared storage is not observable
 
-=(define fruit '(apples bananas peaches))=
-- allocates three pairs, or 6 words of memory
-- the value of the symbol =fruit= in the machine
-- is the /memory address/ of the first /Cons-Cell/ of the list
-=(define with-savory (cons 'avocado fruit))=
-- allocates 2 more words of memory
-- the =cdr= of =with-savory= is a Pointer to the first =cons-cell= of =fruit=
-=(define with-smelly (cons 'durian fruit))=
-- allocates 2 more words of memory
+In most Lisps
+- the =cons= and =cdr= parts of a Pair can be modified at runtime
+- which can mess up shared storage and comprehensibility
+- /this is discouraged by modern Lisp programmers - but still possible!/
 
-The list named =fruit= is still (apples bananas peaches
-- the =cdr= is the address of the of =with-savory= is =fruit=
+In Racket
+- Regular Pairs /cannot/ be modified, once created
+- An alternative data structure, Mutable Pairs, is provided
+- Racket's Mutable Pairs work analogously to Pairs but use the procedures
+      - =mcons=, =mcar=, =mcdr= instead of =cons=, =car=, =cdr=
+      - =set-mcar!= modifies the mcar of a Modifiable Pair
+      - =set-mcdr!= modifies the mcdr of an  Modifiable Pair
 
-  
-** Other Lisp Data Structures
-*** Lisp Arrays
-*** Other Sequence Types
+Modifiable Pairs are rarely needed and it's nice that Racket allows them
+without making regular Pairs - and therefore Lists, vulnerable to modifcation!
+
+** Other Data Structures
+
+Computer Science has distinguished a great variety of
+- [[https://en.wikipedia.org/wiki/Data_structure][Data Structures]]
+- for efficiently representing and processing data of all kinds
+
+Lisp has a few features and some conventions which allow lisp programmers to
+efficiently leverage all of these useful abstractions.
+
+*** Lisp Vectors (aka 1-Dimensional Arrays)
+
+As wonderful as Lists are, they have a few flaws
+- They "waste" half of the storage with the =cdr= links
+- It's expensive to count the number of elements in a list
+- It's expensive to access elements out-of-order (random access)
+- Modern machines are faster at accessing values stored adjacent in memory
+      - A List's Cons-Cells can be scattered all over memory
+
+Modern Lisps all provide a =vector= type.
+- It's technically an =atom type= so it can't be used for forms
+- For storing data, it can be more efficient than a List
+- /Vectors/ use different syntax and procedures from /Lists/
+
+The detailed syntax and semantics of /Vectors/ is different in different Lisp
+families but is usually pretty straightforward: [[https://docs.racket-lang.org/guide/vectors.html][Vectors in the Racket Guide]]
+
+**** A few examples:
+
+In Scheme, Racket and Common Lisp
+- Vector literals =#(look like this)= - a list with a hash
+- =vector= creates a vector like =list= creates lists
+
+In Clojure
+- =[Vector literals use square brackets]=
+
+In Scheme and Racket
+- =(vector-length V)= efficiently computes the length of a vector
+- =(vector-ref V N)= efficiently accesses element =N= of vector =V=
+
+*** Collections and Sequences
+
+A /Collection/ is a Data Structure for storing multiple elements.
+- You can add or remove elements from a collection
+- You can select subsets of a collection
+- You can perform operations on all or some elements in a collection
+- Elements of a Collection aren't necessarily ordered
+      - operations on multiple elements may occur in any order
+
+A Sequence is something which will
+- Provide values on demand
+- In some particular order
+- Sequences are /not necessarily/ available more than once!
+      - If they are revisitable, the order will be preserved
+
+      Lists and Arrays provide both Collection and Sequence functionality
+
+- Modern Lisps typically provide additional Collection Data Structures
+      - Hash Tables (see below) are popular
+
+- Modern Lisps typically provide additional Sequence Data Structures
+      - Strings are like vectors but only for characters
+      - Ports are sequences of characters, mostly used for I/O
+      - Generators are procedures which can return multiple values
+            - Generators can be built out of Lambdas!
+
 *** Lisp Sequence Abstractions
+
+In many programming language cultures it's common for programmers to use many
+custom data structures for collections and sequences because of slight
+differences in efficiency or other reasons. It has long been common for such
+cultures to criticize Lisp Programmers' tendency to use Lists for everything.
+
+This is what the prominent computer scientist Alan Perlis said in defense of
+the seeming overuse of Lists in Lisp Cuture:
+#+begin_quote
+It is better to have 100 functions operate on one data structure than 10
+functions on 10 data structures.
+#+end_quote
+
+Since that time, there have been some innovations which have been changing
+practices in all programming communities.
+
+[[https://en.wikipedia.org/wiki/Generic_programming][Generic Programming]] features have been added to popular statically typed
+languages such as in C++, Java, Rust, etc. to allow a programmer to define a for
+a procedure or Data Structure without specifying the data types of some of the
+argument or elements. The compiler creates specific versions of these Generic
+Entities as needed. This allows for good programmer productivity and runtime
+speed at the expense of an increase in memory usage for multiple specific
+versions of the same entities.
+
+Lisp Programmers increasingly use Sequence types other than Lists but don't want
+to have to manually write a whole new suite of procedures to operate on them.
+The simple solution is to provide some generic procedures for accessing the
+elements of any kind of Sequence without having to know the details.
+
+While it's easy to define such an abstraction in any Lisp, for convenience,
+efficiency and portability Racket provides two such mechanisms:
+- [[https://docs.racket-lang.org/reference/sequences_streams.html][Sequences and Streams]]
+
 *** Lisp Trees and Graphs
+
+Lists are a bit boring, since they're just a linear sequence of values. Pairs
+can be used to create much more diverse structures! All of the exotic Data
+Structures known to Computer Science can be created out of Lisps's Pairs (For
+efficiency we sometimes vectors as well.)
+
+Most advanced Data Structures are either
+- [[https://en.wikipedia.org/wiki/Tree_(data_structure)][Trees]] or [[https://en.wikipedia.org/wiki/Graph_(abstract_data_type)][General Graphs]]
+- /Trees are just Graphcs with the restriction of no cycles/
+- [[https://en.wikipedia.org/wiki/Category:Trees_(data_structures)][Wikipedia Category for Tree Data Structures]]
+ 
 *** Lisp Hash Tables
 
-** Built-In and library-provided atom types and procedures
+One powerful Data Structure which stands out as distinctly different from Lists,
+Vectors, Records, Trees and Graph Structures is the /Hash Table/. You can
+actually make them from /Vectors/, but they have very special semantics.
 
-The last two practical barriers to understanding a Lisp program is that you have
-to understand the atoms and procedures which your Lisp provides in its standard
-profile and which you import from libraries. When you're studying code written
-by others you may have a lot of things to track down in order to understand how
-that code works.
+TL;dr: Study the [[https://docs.racket-lang.org/guide/hash-tables.html][Racket Hash Table]] guide!
+
+*** Yes, but how do they work?
+
+Read [[https://en.wikipedia.org/wiki/Hash_table][Wikipedia on Hash Tables]] and look at the diagrams!
+
+Hash tables are easy to implement in any Lisp which provides a vector type, but
+for convenience, efficiency and portability (those words again) most modern
+Lisps provide them as a built-in feature.
+
+Many other dynamic languages, e.g. JavaScript, use Hash Tables for almost
+everything - kind of like how Lisp programmers use Lists for almost everything.
+Whenever you say either =myobject.someKey= or =myobject[someExpression]= in
+JavaScript, you're actually doing a Hash Lookup, but the weird hash function
+(they're always weird) and underlying vector are hidden from you!
+
+** Built-In and library-Provided Atom Types and Procedures
+
+Learning Lisp is easier than learning most computer programming languages
+because of its simple syntax and semantics. Once you've learned one Lisp, it's
+especially easy to learn another Lisp. However, there's more to learn than
+the language itself.
+
+You have to understand the rich variety of atom types and procedures which a
+Lisp provides in its standard profile and which are available from its
+libraries. When you're studying code written by others you may have a lot of
+things to track down in order to understand how that code works.
 
 Each atom type has a syntax which will be read by the =read= procedure. For
 example, /character Strings/ are enclosed in double quotes, with a special
