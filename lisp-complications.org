@@ -585,7 +585,7 @@ mechanism for going from any unfamiliar entity in your source code to the place
 in your Lisp's documentation which defines that construct or procedure.
 
 ** Would you like to learn more about Lisp?
- 
+
 Read [[lisp-systems.org][Lisp Systems]]
 
 Study the [[vis-mce.rkt][Meta-Circular Interpreter]] which defines Lisp in Lisp!
