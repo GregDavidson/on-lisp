@@ -378,25 +378,36 @@ Each car either points to (holds the address of)
 another Pair or has the value () aka nil.
 #+end_verse
 
-It's easy for Lists to grow:
+It's easy for Lists to grow /and to share storage/:
 #+begin_src racket
   (define sequence1 '(20 40))
   (define sequence2 (cons 10 sequence1))
+  (define sequence0 (cons 0 sequence1))
 #+end_src
 
+  *If you're reading the following on GitHub, please shift to the "Raw" version
+  of the file using the button to the upper-right. Github incorrectly handles
+  OrgMode literal blocks.*
+
 ##+begin_verse
+             +-------------+-------------+                                     \\
+sequence0--->|      0      |     cdr     |                                     \\
+             +-------------+.-----v------+                                     \\
+                                  /                                            \\
+                    /-------------                                             \\
+                    v                                                          \\
+             +-------------+-------------+      +-------------+-------------+  \\
+sequence1--->|     20      |     cdr----------->|     40      |   cdr=()    |  \\
+             +-------------+.------------+      +-------------+.------------+  \\
+                    ^                                                          \\
+                    ^-------------+                                            \\
+                                  ^                                            \\
+             +-------------+------^------+                                     \\
+sequence2--->|     10      |     cdr     |                                     \\
+             +-------------+.------------+                                     \\
 
-             +-------------+-------------+      +-------------+-------------+
-sequence1--->|     20      |     cdr----------->|     40      |   cdr=()    |
-             +-------------+.------------+      +-------------+.------------+
-                    ^
-                    ^----------------\
-                                     ^
-                +-------------+------^------+
-sequence2--->   |     10      |     cdr     |
-                +-------------+.------------+
-
-(assert (eq sequence1 (cdr sequence2)))
+(assert (eq? sequence1 (cdr sequence0)))
+(assert (eq? sequence1 (cdr sequence2)))
 #+end_verse
 
 *** Pairs (and Lists) can Share Storage
