@@ -354,95 +354,19 @@ Modern Lisp programmers prefer using Functional Procedures
 - Except where it's significantly inconvenient
 - Don't worry, you'll catch on!
 
-*** We're done!
+** Other Programming Paradigms
 
-That's it! That's how Lisp works!
+Functional Programming is just one of several important Programming Paradigms.
+The right paradigm can allow you to solving a challenging problem with elegance.
+Being fluent in multiple paradigms makes you a magical programmer.
 
-But how do you go about developing Lisp Programs? Most Lisp Programmers prefer
-to develop their Lisp Programs interactively, using a /REPL/. /DrRacket/
-provides a /REPL/ in the /Interaction Window/ along with additional windows in
-which you can save your results to a file. More sophisticated Lisp Development
-Environments, such as those based on the /Emacs Platform/ (written in Emacs
-Lisp) provide a /REPL/ and /much more/!
-
-** Using the (P)REPL
-
-- *(P)REPL:* (Prompt) Read Eval Print Loop session
-- /Lisp prints a prompt/, e.g. "> "
-- /You enter:/ (+ 1 (* 3 4) 5)
-- =eval= calls itself on each element to obtain =(#<procedure:+> 1 12 5)=
-- =eval= calls =apply= with #<procedure:+> and =(1 12 5)=
-- /The return value is printed:/ =18=
-- How did =(* 3 4)= become =12=?
-
-*(P)REPL Session*
-- =(quote (+ 1 (* 3 4) 5))=
-      - =(+ 1 (* 3 4) 5)=
-- =(apply + '(1 2 3 4 5 6))=
-      - =21=
-- =(map eval '(+ 1 (* 3 4) 5))=
-      - =(#<procedure:+> 1 12 5)=
-- =( (lambda (x y) (+ (* x x) (* y y)) ) 3 4 )=
-      - evaluates =(+ (* x x) (* y y))=
-      - in the environment extended with =(x 3) (y 4)=
-      - which =eval= turns into =(#<procedure:+> 9 16)=
-      - and =apply= turns into =25=
-
-Calls on built-in atomic procedures such as the atoms =#<procedure:+>= and
-=#<procedure:*>= will be compiled to inline machine code instructions where
-possible and to machine code procedure calls when necessary.
-
-Like everything else in Lisp. /procedures/ are /first class values/, i.e.
-- they can be bound to a symbol
-- they can be passed to a procedure as an argument
-- they can be returned from a procedure as the procedure's computed value
-
-As you work at the REPL, you save the functions you like in files which evolve
-into structured modules. Development sessions typically begin with loading the
-modules you've built so far into the REPL and then you work interactively and
-incrementally at creating new modules as well as improving the existing modules.
-A good /Lisp Development Environment/ will typically provide many features which
-extend the REPL to assist you with this kind of /incremental development
-process/.  This is all something to grow into gradually!
-
-** Built-In and Library-Provided Atom Types and Procedures
-
-The last two practical barriers to understanding a Lisp program is that you have
-to understand the atoms and procedures which your Lisp provides in its standard
-profile and which you import from libraries. When you're studying code written
-by others you may have a lot of things to track down in order to understand how
-that code works.
-
-Each atom type has a syntax which will be read by the =read= procedure. For
-example, /Character Strings/ are enclosed in double quotes, with a special
-/escape syntax/ for embedded special characters. The various kinds of numbers
-generally have the same syntax as other languages, except that many Lisps
-include more kinds of numbers, e.g. rationals and complex numbers. The =print=
-procedure also has to know that syntax so that it can print them properly. In
-Racket's /Slideshow Language/ =print= knows how to print pictures.
-
-In addition to (usually) building in a lot of powerful atom types and procedures
-which might be useful in your programs, your Lisp will come with lots of
-libraries which bring in new atom types and powerful procedures. You will need
-to study the documentation for any built-in features or libraries you use. Your
-development environment, e.g. DrRacket or Emacs will usually provide a handy
-mechanism for going from any unfamiliar entity in your source code to the place
-in your Lisp's documentation which defines that construct or procedure.
-
-*** Racket vs. Scheme
-
-[[https://racket-lang.org][Racket]] began as an implementation of the [[https://en.wikipedia.org/wiki/Scheme_(programming_language)][Scheme Programming Language]], the
-simplest of the two standardized dialects of Lisp. Over the years Racket added
-many additional features but maintained compatibility with Standard Scheme. Most
-Lisps allow the programmer to break a program down into modules which can be
-developed separately and then combined to produce complete programs. The Racket
-developers added a feature, =#lang= to specify which language a given Racket
-Module was written in, along with creating several interesting languages which
-are /not/ compatible extensions of Standard Scheme. Racket provides the ability
-to combine Racket Modules written in different Racket languages into a single
-program. The =#lang= declaration at the top of a Racket Module tells Racket
-which of the Racket Languages you're meaning to use in the current module so
-that Racket can understand you properly.
+Check out [[https://www.info.ucl.ac.be/~pvr/paradigms.html][The Principal Programming Paradigms]]. The best way to /learn/ a
+paradigm is to do some serious work using a language or toolkit which is
+narrowly focused on that paradigm. Once you are well steeped in it, you will
+probably want to use that paradigm in conjunction with others in a
+multi-paradigm language. The major Lisp implementations, e.g. Racket, Clojure
+and Common Lisp are good with all of these paradigms: despite their simplicity,
+they are all multi-paradigm languages!
 
 ** An Interactive Example Program
 
@@ -476,6 +400,8 @@ special forms in the reference manual as explained above.
 #+end_src
 
 ** Would you like to learn more?
+
+You now have a high-level understanding of Lisp.
 
 In order to present the elegant simplicity at the heart of Lisp, this document
 skipped over some [[file:lisp-complications.org][Lisp Complications]] which you might want to learn about soon.
