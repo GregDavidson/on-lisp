@@ -355,23 +355,23 @@ So why do we do this?
 In the Computer's Memory, a Pair is just two adjacent Words
 
 A Lisp Pair aka Cons-Cell:
-#+begin_verse
-:   +-------------+-------------+
-:   |     car     |     cdr     |
-:   +-------------+.------------+
-:   <-- 2 machine words wide  -->
-+end_verse
+#+begin_quote
+:   +-------------+-------------+                                     \\
+:   |     car     |     cdr     |                                     \\
+:   +-------------+.------------+                                     \\
+:   <-- 2 machine words wide  -->                                     \\
++end_quote
 The car and the cdr can each hold any 1-word value
 - such as a number or the value '() aka nil
 or the address of a larger object
 - stored elsewhere in memory.
 
 A Lisp List is made of Pairs:
-##+begin_verse
-:   +-------------+-------------+      +-------------+-------------+
-:   |  element-1  |     cdr----------->|  element-2  |   cdr=()    |
-:   +-------------+.------------+      +-------------+.------------+
-#+end_verse
+##+begin_quote
+: +-------------+-------------+      +-------------+-------------+    \\
+: |  element-1  |     cdr----------->|  element-2  |   cdr=()    |    \\
+: +-------------+.------------+      +-------------+.------------+    \\
+#+end_quote
 - Each car holds (or points to) 1 list element.
 - Each car either points to (holds the address of)
 - another Pair or has the value () aka nil.
@@ -390,7 +390,7 @@ It's easy for Lists to grow /and to share storage/:
   OrgMode literal blocks.*
 
 ##+begin_quote
-:               +-------------+-------------+                                    \\
+:              +-------------+-------------+                                     \\
 : sequence0--->|      0      |     cdr     |                                     \\
 :              +-------------+.-----v------+                                     \\
 :                                   /                                            \\
