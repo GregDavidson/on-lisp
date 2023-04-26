@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<title>fizzbuzz.scm with shadow boxes</title>
+<link rel="stylesheet" type="text/css" href="scheme8.css">
+</head>
+<body class="hl">
+#<span class="hl sym">!/</span>usr<span class="hl sym">/</span>bin<span class="hl sym">/</span>guile<br />
+<span class="hl sym">!</span>#<br />
+<div><div class="top c1">
+<span class="rw">define</span> <span class="p1">(</span><span class="fun">fizzbuzz</span> <em>i-max</em> <em>fizz-init</em> <em>buzz-init</em><span class="p1">)</span>
+<div> <div class="sexp c2">
+  <span class="rw">define</span> <span class="p2">(</span><span class="fun">bump</span> <em>n</em> <em>init</em><span class="p2">)</span><span class="pp p2"> (</span><span class="rw">if</span> <span class="p3">(</span>= <span class="hl num">0</span> <em>n</em><span class="p3">)</span> <em>init</em> <span class="p3">(</span><span class="fun">-</span> <em>n</em> <span class="hl num">1</span><span class="p3">)</span><span class="pp p2">)</span>
+</div></div>
+<div> <div class="sexp c2">
+  <span class="rw">define</span> <span class="p2">(</span><span class="fun">iter</span> <em>i</em> <em>fizz</em> <em>buzz</em><span class="p2">)</span>
+	<div> <div class="sexp c3">
+    <span class="rw">if</span> <span class="p3">(</span>&lt;= <em>i</em> <em>i-max</em><span class="p3">)</span>
+		<div> <div class="sexp c4">
+	<span class="rw">begin</span>
+	<div> <div class="in c5">
+	  <span class="pp p3">  (</span><span class="rw">if</span> <span class="p4">(</span>= <span class="hl num">0</span> <em>fizz</em><span class="p4">)</span><span class="p4"> (</span><span class="slf">display</span> <span class="hl sym">'</span><em>fizz</em><span class="p4">)</span><span class="pp p3">)</span>
+	</div></div>
+	<div> <div class="in c5">
+	  <span class="pp p3">  (</span><span class="rw">if</span> <span class="p3">(</span>= <span class="hl num">0</span> <em>buzz</em><span class="p4">)</span><span class="p4"> (</span><span class="slf">display</span> <span class="hl sym">'</span><em>buzz</em><span class="p4">)</span><span class="pp p3">)</span>
+	</div></div>
+	<div> <div class="in c5">
+	  <span class="pp p3">  (</span><span class="rw">if</span> <span class="pp p4">(</span><span class="rw">and</span> <span class="p5">(</span>&gt; <em>fizz</em> <span class="hl num">0</span><span class="p5">)</span><span class="p5"> (</span>&gt; <em>buzz</em> <span class="hl num">0</span><span class="p5">)</span><span class="pp p4">)</span><span class="p4"> (</span><span class="slf">display</span> <em>i</em><span class="p4">)</span><span class="pp p3">)</span>
+		</div></div>
+	<div> <div class="in c5">
+	  <span class="p3">  (</span><span class="slf">newline</span><span class="p3">)</span>
+	</div></div>
+	<div><div class="sexp c5">
+	  <span class="fun">iter</span>
+		<div> <div class="in c6">
+		<span class="p4">(</span>+ <em>i</em> <span class="hl num">1</span><span class="p4">)</span>
+		</div></div>
+	<div> <div class="in c6">
+		<span class="p4">(</span><span class="fun">bump</span> <em>fizz</em> <em>fizz-init</em><span class="p4">)</span>
+	</div></div>
+	<div> <div class="in c6">
+		<span class="p4">(</span><span class="fun">bump</span> <em>buzz</em> <em>buzz-init</em><span class="p4">)</span>
+	</div></div>
+	</div></div>
+		</div></div>
+	</div></div>
+</div></div>
+<div> <div class="in c2">
+  <span class="p2">(</span><span class="fun">iter</span> <span class="hl num">1</span> <em>fizz-init</em> <em>buzz-init</em><span class="p2">)</span>
+</div></div>
+</div></div>
+
+<div style="margin-top: 10px">
+<span class="p1">(</span><span class="fun">fizzbuzz</span> <span class="hl num">100 2 4</span><span class="p1">)</span>
+</div>
+
+</body>
+</html>
+
