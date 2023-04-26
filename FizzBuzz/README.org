@@ -5,9 +5,9 @@
 ** Exploration of FizzBuzz in Scheme
 
 Three approaches to solving FizzBuzz in Scheme
-- [[file:fizzbuzz.scm][fizzbuzz.scm]]
-- [[file:fizzbuzz-iota.scm][fizzbuzz-iota.scm]]
-- [[file:fizzbuzz-closure.scm][fizzbuzz-closure.scm]]
+- [[file:fizzbuzz.scm][fizzbuzz.scm]] :: a direct approach
+- [[file:fizzbuzz-iota.scm][fizzbuzz-iota.scm]] :: more general, using closures, iota and map
+- [[file:fizzbuzz-closure.scm][fizzbuzz-closure.scm]] :: more general, using closures and do loop
 
 ** Exploration of Lisp Formatting using HTML and CSS
 
