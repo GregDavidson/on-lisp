@@ -597,6 +597,6 @@ Read [[lisp-systems.org][Lisp Systems]]
 
 Study the [[vis-mce.rkt][Meta-Circular Interpreter]] which defines Lisp in Lisp!
 
-Join a [[https://github.com/GregDavidson/computing-magic][Computing Magic]] study group?
+Join a [[https://github.com/GregDavidson/computing-magic#readme][Computing Magic]] study group?
 
 Ask questions!
