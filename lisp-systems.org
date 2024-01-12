@@ -38,7 +38,7 @@ systems in interesting and usually ad hoc ways until LISP was replaced with
 many complex and incompatible Lisp family languages and dialects. Sharing work
 among institutions became increasingly difficult.
 
-In the 1970s several researchers began to work on distilling these experiments
+In the 1970s several groups of researchers began to work on distilling these experiments
 back into a single unified language. Two of these projects succeeded, producing
 two ISO standard languages that are still popular today. *Common Lisp* (1984)
 was a /design by committee/ production which unified the most popular features
