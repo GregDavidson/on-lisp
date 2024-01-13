@@ -126,8 +126,6 @@ evaluated.
 
 ** Evaluating Atoms
 
-*Except for symbols, atoms evaluate to themselves.*
-
 At any given time during evaluation, there is an *environment* consisting of
 *bindings*, i.e. pairs where a *symbol* is /bound to/ a *value*. Mathematically,
 an *environment* is a *mapping* from *symbols* to *values*.
@@ -135,9 +133,11 @@ an *environment* is a *mapping* from *symbols* to *values*.
 *A Symbol evaluates to its value in the environment.*  An attempt to evaluate a
 symbol lacking a value in the environment /raises an error/.
 
+/All other/ *atoms evaluate to themselves.*
+
 ** Evaluating Regular Forms
 
-A *Form* is a List which can be Evaluated.
+A *Form* is /a *List* which can be *Evaluated*/.
 
 A *Regular Form* is Evaluated in two steps
 1. *Evaluate each Element of the Form*
@@ -150,7 +150,7 @@ A *Regular Form* is Evaluated in two steps
    - the arguments are not acceptable to that procedure
 
 Given a *Lisp Environment* containing (among other bindings):
-| symbol | value                     | comment                              |
+| symbol | value                     | which                         |
 |--------+---------------------------+--------------------------------------|
 | +      | an addition procedure     | returns the sum of its arguments     |
 | *      | a multiplcation procedure | returns the product of its arguments |
@@ -201,9 +201,9 @@ Do you see how λ substitution works?  Try evaluating
 
 *** The *Quote Form* suppresses evaluation
 
-Nearly all Lisps have retained the special *Quote Form* from LISP to represent a
-literal *Symbolic Expression* without evaluating it, so that it can be processed
-as data.
+Nearly all Lisps have retained the special *Quote Form* from LISP to represent
+/a literal/ *Symbolic Expression* /without evaluating it/, so that it can be
+/processed as data/.
 
 Given these procedures:
 | Procedure | Required Arguments | Returns                       |
@@ -266,33 +266,96 @@ which would give:
 | (sum-sqrs 5 10)   |   125 |
 | (sum-sqrs 3 5 10) |   134 |
 
-*** Truth, False and Choices
+*** Truth, False, Boolean Functions, Conditional Forms
 
-In LISP, the symbol nil, the empty list '() and the Boolean /false/ value were
-considered equivalent. Every other value in LISP was considered to be /true/.
-This traditional arrangement continues in a few places, e.g. Emacs-Lisp, but
-most modern Lisps consider this arrangement to be ugly!
+**** Traditional True, False and the Empty List
 
-In Scheme, Boolean false is #f and Boolean true is #t.
+In traditional lisps,
+- the symbol NIL represents both /false/ and the empty list '()
+  - NIL is bound to itself so you don't need to quote it
+Every other value is considered to be /true/
+- including the symbol T which is used for a canonical /true/ value
+      - T is bound to itself so you don't need to quote it
 
-Most lisps provide these (and other) handy Boolean functions in the environment:
-| Function Symbol | Required Arguments       | Returns                                 |
-|-----------------+--------------------------+-----------------------------------------|
-| not             | a Boolean value          | the logical inverse                     |
-| and             | 0 or more Boolean values | false unless all arguments are true     |
-| or              | 0 or more Boolean values | true unless all arguments are false     |
-| =               | 0 or more numbers        | true iff all numbers are equal          |
-| <               | 0 or more numbers        | true iff numbers are in ascending order |
+| Expression        | Value | Comment                                 |
+|-------------------+-------+-----------------------------------------|
+| nil               | nil   | it's bound to itself in the environment |
+| t                 | t     | ditto                                   |
+| (not nil)         | t     |                                         |
+| (not t)           | nil   |                                         |
+| (not 'hello)      | nil   | everything not nil is true              |
+| (car '(hello)     | hello | first element of a singleton list       |
+| (cdr '(hello)     | nil   | the empty list                          |
+| (eq nil '())      | t     | they're the same object                 |
+| (if t 'yes 'no)   | yes   |                                         |
+| (if nil 'yes 'no) | no    |                                         |
 
-along with some special forms, generally including
-| special form     | Does What                                                      |
-|------------------+----------------------------------------------------------------|
-| (if /test/ /then/ /else/) | if /test/ is true, evaluate /then/ only, otherwise evaluate /else/ only |
+Many modern Lisps still use NIL and T this way, e.g.
+- Common Lisp
+- Emacs Lisp
+
+**** True, False and the Empty List in Scheme-based Lisps
+
+The designers of Scheme thought that
+- the cdr of a list should be a list, not a symbol
+      - nil is a symbol
+- boolean values should be atoms
+
+In Scheme
+- the atom #f represents /false/
+- all other values are /true/
+      - including the empty list '()
+- the atom #t is used for a canonical /true/ value
+
+| expression        | Value |
+|-------------------+-------|
+| (not #f)          | #t    |
+| (not #t)          | #f    |
+| (car '(hello)     | hello |
+| (cdr '(hello)     | '()   |
+| (eq nil '())      | #f    |
+| (if #t 'yes 'no)  | yes   |
+| (if #f 'yes 'no)  | no    |
+| (if '() 'yes 'no) | yes   |
+
+**** Predicates
+
+Most lisps provide many convenient predicates, i.e. functions which
+return either true or false.
+
+| Function Name | Required Arguments | Returns                                 |
+|---------------+--------------------+-----------------------------------------|
+| not           | a Boolean value    | the logical inverse                     |
+| =             | 0 or more numbers  | true iff all numbers are equal          |
+| <             | 0 or more numbers  | true iff numbers are in ascending order |
+
+and many more.  As a spelling convention, Scheme likes to spell the names of predicates 
+with a trailing question mark, e.g.
+- =eq= (traditional) true iff arguments are same object in memory
+- =eq?= (Scheme) same
+
+Remember:
+- there's only one Boolean False value
+      - nil or #f depending on the lisp
+All other values are considered true!
+
+**** Conditional Expressions
+
+/Conditional Expressions/ have to be /Special Forms/ because only some of their arguments
+will be evaluated, or only sometimes evaluated.
+
+along with several special forms, including
+| special form              | Sequentially Evaluates             | Returns What                        |
+|---------------------------+------------------------------------+-------------------------------------|
+| (if /test/ /then/ /else/) | /test/, then /then/ or /else/      | if /test/ then /then/ else /else/
+| and                       | arguments as long as they're true  | false unless all arguments are true |
+| or                        | arguments as long as they're false | first true value or false if none   |
 
 allowing us to say things like
 
-#+begin_src scheme
-(if (and (not (= x 0)) (< x y z)) (/ y x) (+ y z))
+#+begin_src racket
+(and (not (= n 0)) (/ d n))  ; returns false or a number
+(printf "answer = ~a\n" (if (or (string? x) (number? x)) x "unknown type"))
 #+end_src
 
 which would hopefully make sense in some application!
@@ -306,14 +369,13 @@ application domain and much more. Many of the /reserved words/ and /special
 forms/ in dialects of Lisp are actually just macros defined in the standard
 library.
 
-To understand what macros do we have to understand how a modern Lisp system
-works. The program consists of a series of symbolic expressions. The Lisp system
-(1) reads each symbolic expression (2) translates them to a machine
-language program which can perform the desired computation at the maximum
-possible speed, (3a) if it's a procedure being bound to a name in the
-environment, the machine program is stored as a procedure to be run later, or
-(3b) otherwise the Lisp system tells the computer to execute that machine
-program right away.  For example:
+*** A bit of background
+
+A Lisp program consists of a series of symbolic expressions. In order to
+efficiently evaluate them, a Lisp System has to first translate them to the
+machine language of the computer being used. Once translated, the code runs at
+the maximum possible speed.  The part of the Lisp System which does this magical
+translation is called /the compiler/.
 
 #+begin_src scheme
  (define π (* 2 (acos 0)))
@@ -328,7 +390,7 @@ program right away.  For example:
 #+end_src
 
 Suppose our Lisp doesn't have the modern ~if~ special form? It probably has the
-more general, but somewhat clunky ~cond~ special form from ancient LISP:
+more general ~cond~ special form from ancient LISP:
 
 #+begin_src lisp
 (cond
@@ -336,6 +398,7 @@ more general, but somewhat clunky ~cond~ special form from ancient LISP:
   (/test2/ /expression to evaluate if test2 is true/ ...)
   ... )
 #+end_src
+
 ~cond~ allows you to specify a series of clauses, each guarded with a test
 expression. The test expressions are evaluated in order, but nothing else is
 performed unless one of the tests evaluates to true. As soon as one of the tests
@@ -344,6 +407,8 @@ that clause becomes the value of the whole ~cond~ form. No more tests are
 evaluated. If none of the tests succeed then the whole ~cond~ form returns
 /false/.
 
+~cond~ is great when you have lots of tests to make, otherwise ~if~ is more
+convenient.
 
 Using Scheme syntax, here's how you can implement ~if~ using ~cond~:
 
@@ -446,7 +511,6 @@ they can, but often wind up having to use clumsier languages instead. They often
 notice that their ability to solve really hard problems elegantly comes from
 their experience with Lisp.
 
-
 References:
 1. [[http://www.paulgraham.com/avg.html][Paul Graham on Beating the Averages]]
 2. [[https://docs.racket-lang.org/quick/index.html][An Introduction to Racket with Pictures]]
@@ -457,12 +521,14 @@ References:
 
 As much as I admire and enjoy Lisp, especially its descendants Racket and
 Clojure, I do /not/ consider that the Lisp family of languages are the only good
-computer programming languages. I consider it essential to learn several good
-and diverse languages and apply them to suitable challenging problems which fit
-their paradigms. Unfortunately, most of the popular programming languages will
-not teach you much. At a later time I will include some resources to some of the
-best languages for leveraging some of the most powerful programming paradigms.
-In the meantime, I'll leave you with these two references to explore:
+computer programming languages.
+
+I consider it essential to learn several good and diverse languages and apply
+them to suitable challenging problems which fit their paradigms.
+
+Here is some guidance on [[https://github.com/GregDavidson/computing-magic/blob/main/Languages-And-Platforms/choosing-languages.org][Choosing Computer Languages]].
+
+And here are two more key references:
 
 1. [[https://en.wikipedia.org/wiki/Programming_paradigm][Programming Paradigms]]
 2. [[https://www.info.ucl.ac.be/~pvr/book.html][Concepts, Techniques, and Models of Computer Programming]]
