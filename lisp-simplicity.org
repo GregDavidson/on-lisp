@@ -490,7 +490,7 @@ Example Atom Literal Syntaxes
 - (define symbol value) :: binds symbol to value in the current Environment
       - define's first argument is /not evaluated/
       - define is syntactic sugar for a lambda!
-- (if condition-expression then-expression else-expression) ::
+- (if conditional-expression then-expression else-expression) ::
       - conditional-expression is evaluated and its value examined
       - if it's false, else-expression is evaluated and its value returned
       - otherwise, then-expression is evaluated and its value returned
