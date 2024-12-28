@@ -362,12 +362,12 @@ Modern Lisp programmers prefer using Functional Procedures
 
 ** Lisp Supports All Programming Paradigms
 
-There are many ways to go about programming, called Programming Paradigms. Some
-languages are specialize to a specific Programming Paradigm. Lisp was designed
-as a general purpose language, supporting programming in any Programming
-Paradigm. The right paradigm can allow you to solve a challenging problem with
-ease and elegance. Being fluent in multiple paradigms makes you a magical
-programmer.
+There are many ways to go about programming, called /Programming Paradigms/.
+Some languages are specialized for a specific Programming Paradigm. Lisp is
+designed to be a general purpose language, supporting programming in /any
+Programming Paradigm/. The right paradigm can allow you to solve a challenging
+problem with ease and elegance. Being fluent in multiple paradigms makes you a
+magical programmer.
 
 Check out [[https://www.info.ucl.ac.be/~pvr/paradigms.html][The Principal Programming Paradigms]]. The best way to /learn/ a
 paradigm is to do some serious work using a language or toolkit which is
