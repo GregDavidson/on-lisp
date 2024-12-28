@@ -417,7 +417,7 @@ complete as possible.
 
 Lisp Programs and Lisp Data consist of Symbolic Expressions.
 - A Lisp Program is a sequence of Symbolic Expressions
-      - Typically stored in a File
+      - Typically (so not always!) stored in a textfile
 
 Key Terms
 - Symbolic Expression ::
@@ -490,10 +490,10 @@ Example Atom Literal Syntaxes
 - (define symbol value) :: binds symbol to value in the current Environment
       - define's first argument is /not evaluated/
       - define is syntactic sugar for a lambda!
-- (if condition then-expression else-expression) :: conditional expression
-      - condition is evaluated
-      - if condition is false, the else-expression is evaluated and its value is returned
-      - otherwise, the then-expression is evaluated and its value is returned
+- (if condition-expression then-expression else-expression) ::
+      - conditional-expression is evaluated and its value examined
+      - if it's false, else-expression is evaluated and its value returned
+      - otherwise, then-expression is evaluated and its value returned
 
 **** Initial Atom Procedures
 
