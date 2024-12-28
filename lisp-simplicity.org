@@ -440,6 +440,34 @@ Evaluating A Lisp Program
 - Applying the Procedure obtained from the First Element
 - to the Arguments obtained from the Rest of the Elements
 
+*** Source Syntax
+
+When Lisp Code is stored as a sequence of characters in a Text File it can be
+read by the Lisp (read) procedure which will read and return a single complete
+symbolic expression, i.e. any nested expressions must be included.
+
+The source syntax understood by (read) can be extended, but starts out very
+simple.
+
+- Comments begin with a ; and go to the end of the line
+      - (read) ignores comments
+- Literal lists are enclosed ( in parentheses ) which are self-delimiting
+- 'expression is read as (quote expression)
+- Whitespace separates expressions and is otherwise ignored
+- Atom Types may have a syntax for their literals
+- Special syntaxes usually begin with a #
+
+Example Atom Literal Syntaxes
+- Symbols :: identifiers spelled with any characters /except/
+      - not starting like a number, e.g. with digits or a sign
+      - not including whitespece or ( ) [ ] { } " , ' ` ; # | \
+- String Literals :: are enclosed in "double quotes"
+      - An \escape syntax provided for including special characters in strings
+- Numeric Literals :: similar to most programming languages but
+      - include rational and complex numbers
+      - integers and rationals can have unlimited precision
+- Vector Literals :: look like Lists but use #( a hash symbol )
+
 *** Initial Global Environment Bindings
 
 **** Initial Syntax Transformers
