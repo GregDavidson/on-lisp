@@ -495,9 +495,16 @@ Example Atom Literal Syntaxes
       - if it's false, else-expression is evaluated and its value returned
       - otherwise, then-expression is evaluated and its value returned
 
-**** Initial Atom Procedures
+**** Initial Data Manipulation Procedures
 
-Each Atom Type has a Predicate, a Constructor and Operators
+Each Data Type typically has
+- a constructor procedure to create a value of that type
+- a predicate procedure which returns false for values of all other types
+- additional procedures as needed, e.g.
+      - numbers have procedures for arithmetic
+      - ports have procedures for I/O
+      - composite types (Lists, Strings, Vectors, Records) have procedures for
+        selecting elements
 
 ** Would you like to learn more?
 
