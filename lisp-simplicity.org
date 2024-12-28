@@ -399,6 +399,69 @@ special forms in the reference manual as explained above.
     (play)
 #+end_src
 
+** The Full Story in a Nutshell
+
+After the gentle introduction above, let's put it in a nutshell and also be as
+complete as possible.
+
+*** Lisp Syntax
+
+Lisp Programs and Lisp Data consist of Symbolic Expressions.
+- A Lisp Program is a sequence of Symbolic Expressions
+      - Typically stored in a File
+
+Key Terms
+- Symbolic Expression ::
+      - Either an Atom
+      - or a List of Symbolic Expressions
+- Atom :: anything other than a List
+      - e.g. Symbol, Procedure, Number, String, Vector, Record
+- List :: A Sequence of 0 or more Symbolic Expressions
+- Regular Form :: a List whose
+      - First Element evaluates to a procedure
+      - rest of whose elements evaluate to suitable arguments to satisfy that
+        procedure's parameters
+- Special Form :: a List whose First Element is a Symbol bound to a syntax
+  transformer
+- Environment :: a set of Bindings paring Symbols with Values
+      - e.g. global bindings, procedure parameter/argument bindings
+
+Evaluating A Lisp Program
+- Starting with an initial set of Bindings in the Global Environment.
+- Evaluates each of its Symbolic Expressions in that Environment.
+
+1. Special Forms are replaced by the result of applying their Syntax Transformer
+   procedure on themselves.
+       - This is done as early as possible, e.g. at compile time
+2. Symbols evaluate to their value in the current Environment
+3. All other Atoms evaluate to themselves
+4. Regular Forms are evaluated by
+- Evaluating each element of the form
+- Applying the Procedure obtained from the First Element
+- to the Arguments obtained from the Rest of the Elements
+
+*** Initial Global Environment Bindings
+
+**** Initial Syntax Transformers
+
+- (lambda parameter... body...) :: creates a new procedure which
+      - when called with an argument value for each parameter
+      - will evaluate each body in a nested environment
+            - with the parameters bound to the argument values
+      - and will return the value of evaluating the last body
+- (quote expression) :: returns expression unevaluated
+- (define symbol value) :: binds symbol to value in the current Environment
+      - define's first argument is /not evaluated/
+      - define is syntactic sugar for a lambda!
+- (if condition then-expression else-expression) :: conditional expression
+      - condition is evaluated
+      - if condition is false, the else-expression is evaluated and its value is returned
+      - otherwise, the then-expression is evaluated and its value is returned
+
+**** Initial Atom Procedures
+
+Each Atom Type has a Predicate, a Constructor and Operators
+
 ** Would you like to learn more?
 
 You now have a high-level understanding of Lisp.
