@@ -1,5 +1,11 @@
 * Understanding Lisp in Very Little Time
 
+** tl;dr
+
+We highly recommend reading all of this short and easy document
+- but if you just want a quick review
+- you can skip to the section *The Full Story in a Nutshell* below
+
 ** Read This First
 
 It's much easier to implement Lisp than most other programming languages. This
