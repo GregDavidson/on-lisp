@@ -336,7 +336,7 @@ sparingly. Macros can sometimes help abbreviate complex syntax, but they can
 also confuse someone trying to understand your program since they alter the
 normal Lisp execution mechanism.
 
-** Functions and Functional Programming
+** List Supports Functional Programming
 
 Many people in computing use the terms /procedure/ and /function/
 interchangeably, but a /functional procedure/ is something special.
@@ -354,11 +354,14 @@ Modern Lisp programmers prefer using Functional Procedures
 - Except where it's significantly inconvenient
 - Don't worry, you'll catch on!
 
-** Other Programming Paradigms
+** Lisp Supports All Programming Paradigms
 
-Functional Programming is just one of several important Programming Paradigms.
-The right paradigm can allow you to solving a challenging problem with elegance.
-Being fluent in multiple paradigms makes you a magical programmer.
+There are many ways to go about programming, called Programming Paradigms. Some
+languages are specialize to a specific Programming Paradigm. Lisp was designed
+as a general purpose language, supporting programming in any Programming
+Paradigm. The right paradigm can allow you to solve a challenging problem with
+ease and elegance. Being fluent in multiple paradigms makes you a magical
+programmer.
 
 Check out [[https://www.info.ucl.ac.be/~pvr/paradigms.html][The Principal Programming Paradigms]]. The best way to /learn/ a
 paradigm is to do some serious work using a language or toolkit which is
