@@ -452,8 +452,13 @@ Evaluating A Lisp Program
 *** Source Syntax
 
 When Lisp Code is stored as a sequence of characters in a Text File it can be
-read by the Lisp (read) procedure which will read and return a single complete
-symbolic expression, i.e. any nested expressions must be included.
+read as a sequence of symbolic expressions by the Lisp (read) procedure. Each
+call to (read) will read and return the next complete symbolic expression,
+including any nested expressions that are part of it.
+
+The (read) procedure can be called by an application, a compiler or an
+interpreter. Lisp development environments typically provide a REPL - which
+repeatedly calls (read), (eval) and then (print) in a Loop.
 
 The source syntax understood by (read) can be extended, but starts out very
 simple.
