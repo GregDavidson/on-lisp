@@ -1,0 +1,832 @@
+* Some Possible Futures for Lisp
+
+** First Things First
+
+Note: While this document has lots of interesting information about
+Lisp, if you don't already know Lisp well enough to think in it, we
+recommend [[https://github.com/GregDavidson/computing-magic/blob/main/Modules/Module-1/README.org][this excellent module]] from our [[https://github.com/GregDavidson/computing-magic/tree/main/#readme][Computing Magic]] course.  It
+takes you through a wonderful interactive tutorial.
+
+The first Lisp was invented around 1958!  *Lisp was the first
+programming language supporting general-purpose high-level computing,
+symbolic as well as numeric.* The orignal Lisp evolved into today's
+Lisp Family: A diverse set of languages which share Lisp's strongest
+historical features while offering exciting new approaches to
+computing.  Most of the important features of other modern programming
+languages appeared in Lisp first, including procedures, nestable
+blocks, conditionals and lambdas.  Yet today's *Lisp dialects contain
+extremely powerful features that other languages have yet to discover.*
+
+Today's major Lisp dialects are some of the most modern and vibrant
+programming languages in existence.  And Lisp's evolution is far from
+done!  This document expresses some possibilities about future
+evolutions of Lisp standards which will deepen your understanding of
+the nature and possibilities of programming languages.
+
+More importantly (probably), this document will show you how you can
+use the features of Future Lisps today.  This is possible because
+*Lisp is the original /Programmable Programming Language/* -- all
+Lisps provide features for extending the syntax and semantics of Lisp
+so that it will meet your needs better.
+
+Warning: In order to discuss the evolution of Lisp and radical new
+ways of using the language, we expose some of Lisp's normally hidden
+implementation details.  This will introduce some complexity which a
+conservative Lisp programmer doesn't really need to know.
+
+Note: The source of this document uses [[https://orgmode.org/][OrgMode]] markup.  If you're
+reading the source document itself, you'll notice that we're using
+markup to indicate /italics/, *bold*, ~literal code~, [[https://orgmode.org/quickstart.html][etc.]]  -- please
+don't worry about it and soon you won't notice it.  You can also view
+this document with a web browser at [[https://github.com/GregDavidson/on-lisp/blob/main/Nursury/lisp-future.org][lisp-future.org]].  You can edit an
+OrgMode file with any text editor, although the most powerful
+experience will come from learning and using [[https://github.com/GregDavidson/computing-magic/blob/main/Software-Tools/Emacs/emacs-readme.org][Emacs]] -- which is written
+in Lisp, of course!
+
+You can edit Racket code with Emacs or, even better for beginners,
+with DrRacket in the Racket distribution.  DrRacket and rest of the
+Racket system is all written in Racket and it's all entirely Open
+Source Free Software!
+
+** Lisp Quick Review - Omitting Some Details!
+
+We'll use the especially powerful [[https://racket-lang.org/][Racket Dialect of Lisp]] for most of
+our examples but we'll keep close to the simpler Scheme dialect which
+Racket evolved from and which it's still compatible with.
+
+*** Symbolic Expressions and How They Appear As Source Text
+
+Lisp is made of Symbolic Expressions.
+
+When a Lisp Program is running, its Symbolic Expressions are stored as
+objects alive in your computer's memory.  But when you're reading or
+editing a Lisp Code you'll usually be working with Symbolic
+Expressions in an inactive form, encoded as Text suitable for saving
+in a Textfile.  Our examples will show Symbolic Expressions as Source
+Text, but remember: once your program is running the Symbolic
+Expressions will come alive!
+
+- The Lisp procedure ~read~ reads Symbolic Expressions in Text Form
+  and incarnates them as objects in your program.
+  - /the ~squigglies~ are OrgMode markup, so not part of the name!/
+- ~read~ ignores any text beginning with a semicolon (;) to the end of the line.
+- Humans use text following a ; to comment on programs without offending Lisp. ;-)
+- ~read~ considers contiguous whitespace characters equivalent to a space.
+- [[https://en.wikipedia.org/wiki/Whitespace_character][Whitespace Characters]] :: characters which move the cursor but don't print anything.
+  - Good style to only use spaces and newlines as whitespace in Source Text.
+
+- Symbolic Expression aka S-Exp :: Either an /Atom/ or a /List/ of /Symbolic Expressions/.
+- Atom :: Any Lisp /Value/ that isn't a /List/, e.g.
+  - Numbers :: 1 2 -10 2/3 3.14159 6.02214076E23 2+3i
+  - Strings :: "Hello" "Some text ending in a newline character:\n"
+  - Symbols :: people People-I-Love favorite-animals catch22 etc.
+    - symbols are often used to name things
+    - symbols can also be used as values instead of using Strings
+    - symbols can't contain whitespace or any of the reserved characters "'()[]#"
+- Value :: a Symbolic-Expression, as that's all there is!
+- List :: An ordered sequence of Lisp Values
+  - as Text, Lists are written (in parentheses) with element separated by whitespace, e.g.
+  - (1 2 (buckle your shoe)) ; a 2 element list: the 3rd element is another list
+  - ((light-primaries red green blue) (pigments cyan magenta yellow black)) ; 2 elements!
+
+Both Lisp Code and Lisp Data are represented as Symbolic Expressions.
+
+A Lisp Source File is simply a sequence of Symbolic Expressions in
+Text form.
+
+** Key Concepts and Terminology
+
+If you'd like some background on bits, bytes, words, memory and
+pointers, I recommend the article [[https://gregdavidson.github.io/on-computing/what-computers-are/][What Computers Are]] and the other
+materials at [[https://github.com/GregDavidson/on-computing/#readme][On Computing]].
+
+It should work to have only a rough idea of these key concepts when
+you first read this Document.  The document will have examples which
+will clarify these concepts to a degree.  You might want to read the
+document a second time after you've understood these concepts better.
+
+*Procedure*
+- a chunk of code performing computations on data
+- usually with a name (although that is not required)
+- taking 0 or more /Parameters/ (Inputs)
+- producing 0 or more /Results/ (Outputs)
+- and possibly containing /Side-Effects/
+  - i.e. the code might Modify (change, mutate) entities outside of a
+    single activation of the procedure, e.g.
+  - cause /Program Input/ or /Program Output/ operations
+  - modify /Global Bindings/
+  - modify /Provate Bindings/ within a /Closure/
+    - a Closure is a set of Bindings in existence when a Procedure is
+      /Defined/ which persist as long as the Procedure exists and
+      which therefore can be accessed /and modified/ by any
+      activations (instances) of that Procedure.
+
+Example: A Procedure
+- named ~greet~
+- with 1 Parameter named ~someone~
+- no Result
+- a Side-Effect of producing /Program Output/
+#+begin_src racket
+#lang racket
+
+(define (greet someone)
+  (println "Hi ~a, how do you do?\n" someone) )
+
+;; an example call to greet:
+(greet 'Dana)
+;; writes the line:
+;; Hi Dana, how do you do?
+;; on the output device.
+#+end_src
+
+*Function*, aka *Functional Procedure* -- A Procedure with
+- No Side Effects
+- At least one Parameter
+- At least one Result Values
+
+Example: A Function
+- Named: ~labeled-arrow~
+- Three /Positional Parameters/ named: from, to, label
+  - assumed (!) to be two Pictures and a String
+- Three optional /Keyword Parameters/ named: length, width, color
+  - assumed (!) two suitable Numbers and a valid Color
+- One result: a new (unnamed) picture
+#+begin_src racket
+#lang slideshow
+
+(define (labeled-box label-text)
+  (let* ( [label (text label-text)]
+          [box (rectangle (pict-width label) (pict-height label))] )
+    (cb-superimpose label box) ) )
+
+(define (labeled-arrow from to label
+		       #:head-width [head-width 10]
+		       #:width [width 3]
+		       #:color [color "black"] )
+  (let* ( [length (+ (pict-width from) (pict-width to) head-width)]
+          [from-to (hc-append length from to)] )
+    (pin-arrow-line head-width
+                     from-to
+                     from rc-find
+                     to lc-find
+                     #:line-width width
+                     #:color color
+                     #:label (text label) ) ) )
+
+(labeled-arrow (labeled-box "the past") (labeled-box "the future") "living life")
+#+end_src
+- produces [[file:pin-arrow-example.png][this picture]]
+
+*Object* aka *Memory Object*
+- One or more bytes or words which are contiguous in memory.
+- The components of an Object might be primitive Values
+  - Such as Numbers or Strings of Text
+- Or they might be Pointers
+  - A *Pointer* is *the Address of an Object*
+    - or sometimes *an Address within an Object*
+- A *Complete Object* is the entirety of a contiguous Object in memory.
+- A *Field* is a contiguous part of an *Object*
+  - In some languages (but not Lisps!)
+    - Fields might be arbitrarily complex Objects
+    - Such *Sub-Objects* might be nested to any degree
+- Lisp does /not/ allow arbitrary Sub-Objects
+  - Lisp fields are single machine words
+    - they either contain a simple 1-word Value, e.g. a small number
+    - or they contain a Pointer to another Complete Object
+- WARNING :: DO /not/ confuse /Memory Objects/ with /Instances of
+  Classes/ called /Objects/ in /Object Oriented Computing/.  A /Memory
+  Object/ is simply any data structure which occupies a contiguous
+  part of a computer's main memory.
+** Move to High-Level Data Structures
+
+The name /Lisp/ stands for /List Processing/ because it had only one
+composite data structure, i.e. only one data structure which can hold
+multiple Values, the Elements of the List.
+
+- All Lists are represented as a sequence of
+  - CONS-Pairs :: two contiguous words of memory containing
+    - the CAR :: Holding a data element or a refernce to a data element
+    - the CDR :: A reference to the pair of words containing the next element
+      - when this is the last there is no next element, the CDR contains a special value called the NULL value.
+
+In the original Lisp and all subsequent Lisps
+- Lisp code is represented as nested Lists
+	
+In Lisp, List Elements can be of any type: Numbers, Procedures,
+Strings, and especially: Sub-Listed within larger lists.
+
+the CAR
+- directly contains Element Values if they can fit in a single WORD of memory
+  - e.g. a single text character, a small number, etc.
+- otherwise contains a reference aka a Pointer aka a Memory Address
+  - of a separate Memory Object representing the Element Value
+
+Lisp hides this complexity from the Programmer, instead doing everything through three Procedures
+- (cons /NEW-FIRST-ELEMENT/ /EXISTING-LIST/) :: creates a new list
+  - One element longer than /EXISTING-LIST/ (which could be the EMPTY-LIST)
+- (car /A-LIST/) :: returns the FIRST-ELEMENT of /A-LIST/
+- (cdr /A-LIST/) :: returns the Rest Of /A-LIST/ following the FIRST-ELEMENT
+
+Here's a test for you:
+- If ~a-list~ is a non-empty list
+- What's the value of ~(cons (car a-list) (cdr a-list))~
+
+Syntax
+- The empty list can be denoted as '().
+- A list of literal data can just be given as '( /ELEMENT-VALUES-SEPARATED-BY-WHITESPACE/ )
+- Or lists can be created by nesting calls to the ~cons~ procedure
+- The handy ~list~ procedure is equivalent to nested calls to ~cons~
+
+#+begin_src scheme
+(define primary-color-lovers '( (John red) (Mary green) (Dana blue) ))
+(define exotic-color-lovers '( (Henry orange) (Susan teal) (Robin purple) ))
+(define people-colors (append primary-color-lovers exotic-color-lovers))
+;; people-colors now bound to '( (John red) (Mary green) (Dana blue) (Henry orange) (Susan teal) (Robin purple) )
+
+(define (name pair) (car pair)) ; or just (define name car)
+(define (color pair) (car (cdr pair))) ; lisp provides cadr as an abbreviation for this
+
+(define primary-colors (map color primary-color-lovers))
+; primary-colors now bound to '(red green blue))
+(define known-colors (map color people-colors))
+; known-colors now bound to '(red green blue orange teal purple))
+(define known-people (map name people-colors))
+; known-people now bound to '(John Mary Dana Henry Susan Robin)
+
+;; (define /symbol/ /value/) binds /symbol/ to /value/ in The Environment
+;; (define (/procedure-name/ /parameter-name/...) /expression...) is a shorthand for
+;; (define /procedure-name/ (lambda /parameter-name/...) /procedure-body/)
+;; - where the /procedure-name/ and the /parameter-name/s (if any) are symbols.
+;; (lambda /parameter-name/...) /procedure-body/) creates a procedure which when ""called""
+;; - requires an argument-value for each parameter-name (if any)
+;; - evaluates the symbolic-expresions in the /procedure-body/
+#+end_src
+
+The brilliant (and highly quotable) Alan Perlis considered doing
+everything with this one powerful data structure (Lists) to be one of
+Lisp's strengths
+#+begin_quote
+It is better to have 100 functions operate on one data structure than
+10 functions on 10 data structures.
+
+-- Alan Perlis
+#+end_quote
+
+In later Lisps additional composite data structures were added,
+e.g. Vectors and Records, but Lists were still the preferred data
+representation.  Vectors are almost always more memory and computation
+efficient than Lists, but Lisp Programmers continued to mostly use
+Lists, following the aphorism
+#+begin_quote
+Premature optimization is the root of all evil.
+
+-- Donald Knuth, 1974
+#+end_quote
+
+If we are to take both of these gentlemen seriously:
+- /We Should Write Lisp Programs in terms of Generic High-Level
+  Composite Data Structures/ instead of Lists!
+
+There are two especially useful Generic Composite Data Structures:
+/Sequences/ and /Streams/.
+
+*** Sequences
+
+A Sequence is an ordered collection of Values which can be processed
+  multiple times.
+
+A Sequence can be /Any Composite Data Structure/!
+- Lists, Vectors, or hundreds of other Composite Data Structures which
+  are most efficient for certain kinds of data or computations.
+
+Modern Lisps provide a rich set of procedures for working with
+Sequences, but they are different from and usually more awkward than
+the procedures for working with lists.
+
+Procedures written for Sequences
+- don't know what the actual low-level representation is
+- so they'll work with Lists, Vectors, etc.
+
+A better Lisp would reserve the simplest and most natural procedures
+for Sequences.
+
+*** Streams
+
+A Stream is a sequence of Values which might not be stored anywhere, so (as far as we know) it can only be processed once.
+
+Examples include
+- Data coming from an Input Stream
+- Data being generated by a Procedure
+- As well as any regular Stream type
+  - which /could/ be processed multiple times
+  - but viewed as a Stream we don't know that!
+
+Modern Lisps provide a rich set of procedures for working with
+Streams, but (you guessed it) -- they are different from and usually
+more awkward than the procedures for working with lists!
+
+Procedures written for Streams
+- don't know what the actual low-level representation is
+- so they'll work with the widest possible collections of data
+
+*** Why Sequences and Streams are Better
+
+If all procedures which only process a collection of data once are
+written using Streams we do better than Alan Perlis's epigram:
+- Our 100 functions can process any Values which are stored OR which
+  are Program Inputs OR which are generated by a procedure!
+
+When an algorithm needs to process a collection more than once we can
+- Write our algorithm as a procedure requiring a Sequence
+- We'll get the full Value Alan Perlis promised
+
+We also are following Donald Knuth's advice
+- We're postponing optimizing our Sequences into specific low-level
+  composite types until the program's finished and we've measured
+  where the efficiency bottlenecks are!
+
+When we need to apply a Sequence procedure to a Stream, we can just
+wrap any Streams with a Function which creates a temporary Sequence
+out of the Stream.  Easy-Peasy!
+
+**** Defaultng Sequences to Vectors rather than Lists
+
+Lisps represented Lists as a CONS-PAIRS or 2-word record for each
+element of the List.  In each CONS-PAIR the first word (traditionally
+called the CAR) references one element of the list and the second
+word (called the CDR) references the next CONS-PAIR (which can be
+anywhere in memory) or it contains the sepecial NULL_VALUE marking the
+last CONS-PAIR in the List. This representation for Sequences is
+extremely inefficient!  In almost all cases a better representation
+would be a vector.  Here's an example using a bit of ASCII Art of the
+difference:
+
+The Sequence '(Hello World)
+
+First, as a List
+#+begin_src artist
+  AT FIRST_CONS_PAIR_ADDRESS (somewhere in memory)
+  2 WORDS: | CAR: HELLO_ADDRESS | CDR: SECOND_CONS_PAIR_ADDRESS |
+
+  AT SECOND_CONS_PAIR_ADDRESS (somewhere in memory)
+  2 WORDS: | CAR: WORLD_ADDRESS | CDR: NULL_ADDRESS |
+#+end_src
+
+Second, as a Vector
+#+begin_src artist
+  AT VECTOR_ADDRESS (somewhere in memory)
+  2 WORDS: | 0: HELLO_ADDRESS | 1: WORLD_ADDRESS |
+#+end_src
+
+Lists are twice as bulky as Vectors, their elements can only be
+accessed sequentially from the beginning and cannot take advantage of
+cache memory (at least 10 x faster than regular memory) or parallel
+processing instructions (way faster on modern machines).
+
+To complete either of the above pictures, a traditional Lisp, e.g. emacs-lisp, would also allocate something like the following:
+#+begin_src artist
+  SYMBOL TABLE (somewhere in memory)
+
+  AT HELLO_ADDRESS (somewhere within the SYMBOL TABLE)
+  3 WORDS: | PROCEDURE: ADDRESS | VALUE: WORD | SPELLING: HELLO_STRING_ADDRESS |
+
+  AT WORLD_ADDRESS (somewhere within the SYMBOL TABLE)
+  3 WORDS: | PROCEDURE: ADDRESS | VALUE: WORD | SPELLING: WORLD_STRING_ADDRESS |
+
+  STRING TABLE (somewhere in memory)
+
+  AT HELLO_STRING_ADDRESS (somewhere within the STRRING TABLE)
+  5 Bytes: |h|e|l|l|o|
+
+  AT WORLD_STRING_ADDRESS (somewhere within the STRRING TABLE)
+  5 Bytes: |w|o|r|l|d|
+#+end_src
+A modern scheme-family lisp would be able to get rid of the PROCEDURE:
+and VALUE: slots from the Symbols, reducing them to only 1 word.
+
+Lisp Values will always be represented as a single word which either
+(1) directly stores a primitive type, such as a small numeric Value, or
+(2) is the address of a larger structure stored somewhere else in
+memory.
+
+Lisp data tends to spread out over memory!  Since a Dynamically Typed
+Lisp doesn't know what kind of thing a Value might be, in the general
+case it has to be stored as a Pointer to the Value, i.e. as the
+address of separate memory object representing that Value.  And in a
+Dynamic Lisp we have to encode the actual type of the object either in
+it's address (addresses in most machines contain a few extra bits
+which we can steal for this purpose) or in an additional word or two
+as a "type and size header" prefacing the data.
+
+Statically Typed Lisps can represent a lot of data more compactly, making programs smaller and faster.
+
+** Manifest (Static) Type Checking
+
+Almost all Lisps to the Present Time (2025) defer type checking until
+a low-level procedure is called at which point if the datatype is
+inappropriate the program will terminate with an error message.
+
+Some modern Lisps provide various mechanisms to capture the error
+rather than having the program terminate.  Explicit code can then try
+to determine how to proceed, either working around the error or
+shutting the program down gracefully.  These mechanisms and associated
+code can greatly increase the length and complexity of a program --
+which ironically can be a source of still more errors!
+
+The problem is that when a human reads non-trivial Lisp code, it is
+/in general/ impossible to know whether the program might encounter an
+error caused by a mismatch between a procedure's expectations and the
+type (or value range) of the data provided to it.  No matter how
+carefully you (or a sophisticated software tool) reads and analyses a
+program's code, you can't tell if it will do what it's supposed to do
+when you run it!
+
+Languages with a focus on reliability have long provided /Type
+Declarations/ which are /Manifest/ in the program's text.  (This is
+what is called a /Static Typing Model/.)  The idea is a human or a
+software tool such as a compiler
+- can check whether the program will ever suffer from a type error
+- without running the program at all!
+
+Note: A compiler is the program which translates high-level code,
+e.g. Lisp into the low-level machine language which can be directly
+executed by a particular model of computer.  With Static Typing, a compiler will
+- Not generate code if there are Type Errors so the program won't have
+  to check for, deal with or misbehave because of type errors.
+  - The program will be simpler and more reliable!
+- Provide error messages identifying and pinpointing the problems.
+- Will produce /smaller and faster code/ when types are known and there are not errors!
+
+In addition to specifying Types, some languages allow programmers to
+specify more general Contracts, e.g. specifying which values of a
+Value or of combinations of values are allowed.  Ideally these
+Contracts are Manifest in the Program Source Code.  It is not always
+possible to statically guarantee that the program will satisfy general
+Contracts, i.e. in advance of running the program.  Instead, the
+compiler will sometimes need to insert code which will check the
+contracts at runtime - but generally well before data migth be
+corrupted or a low-level operation would generate an error.
+
+** Supporting Modern Programming Paradigms
+
+*** Functional Programming
+
+
+Lisp was inspired by the /Lambda Calculus/, a complete and elegant
+mathematical theory of computation.  The original Lambda Calculus was Dynamically Typed.  Later a Typed Lambda Calculus was developed.  Much of the evolution of Lisp has been to get closer to Lambda Calculus by eliminating unnecessary features and refining Lisp semantics to be closer to the Lambda Calculus.  This was a big inspiration in the Scheme Language (and subsequent Lisps in the Scheme sub-family).  An inspiring quote from the R5RS Scheme Standard alludes to this:
+#+begin_quote
+Programming languages should be designed not by piling feature on top of feature, but by removing the weaknesses and restrictions that make additional features appear necessary. Scheme demonstrates that a very small number of rules for forming expressions, with no restrictions on how they are composed, suffice to form a practical and efficient programming language that is flexible enough to support most of the major programming paradigms in use today.
+#+end_quote
+
+Innovations in the Scheme Langauge from the Lambda Calculus include
+- Lexical Binding of Symbols
+  - Symbol Binding is Manifest in the Source Code
+  - /not/ occuring in arbitrary control paths at runtime
+- Procedures are
+  - Constructed anywhere needed by the ~lambda~ "special form"
+    - Statically or dynamically
+  - Subsequently treated the same as any other Values
+    - Passed to procedures
+    - Returned from procedures
+    - Incorporated in data structures
+    - A name (a binding to a symbol aka a variable) is optional
+    - Bindings can also be temporary, as with any other Value
+- All control flow is the result of applying procedures to arguments.
+  - No special /control-flow/ operators are needed.
+
+The Scheme language specification was the simplest, shortest as well
+as the most complete specification of any computer language when it
+was ratified in 1975.  Scheme was also the most powerful programming
+language ever defined up to that point.
+
+The Lambda Calculus is a [[https://en.wikipedia.org/wiki/Functional_programming][Functional Programming Language]].  Much of the
+power of Lisp - and especially Scheme - is that it allows programmers
+to write in a Functional Programming /Style/, but Scheme and all other
+Lisps are not Functional Programming Languages because they allow
+mutation.
+
+In the Lambda Calculus all data is immutable
+- You can't modify anything once you create it!
+- And /Procedures can't have Side-Effects!/
+
+In Scheme (and all other Lisps) data is mutable
+- You can change what Value Symbols are bound to
+- You can modify the elements of composites
+  - e.g. Lists, Vectors, Records and Strings.
+
+When Lisp was invented, even when Scheme was invented, most
+programmers believed that mutation was an essential feature for being
+able to write concise and efficient programs.  They believed that the
+purity of the Lambda Calculus was impractical.
+
+Yet around the same time that Scheme was being invented, the modern
+Functional Programming Paradigm was emerging with languages such as ML
+and later Haskell and OCaml.  Gradually functional programmers were
+able to show how to elegantly and efficiently implement all algorithms
+with purely Functional Procedures.
+
+While once Lisp was the best language for Functional Programming, it
+has now fallen behind.
+
+*** Relational Programming Features
+
+When Lisp and Scheme were invented
+- Data Structures were implemented in terms of complex Objects in memory.
+- Objects were connected and processed using explicit Pointers to Objects and Fields.
+- Optimization required changing the structure of these Objects in memory.
+- This requires changing the procedures which create, access and mutate those structures.
+- This all requires a lot of tedious, error prone programming!
+
+Relational Programming was invented to support
+- Storing and processing large data collections,
+- persisting Over long periods of time,
+- during which requirements are likely to change.
+- And where reliability is essential!
+
+Relational Systems use the simplest possible Data Structure
+- Relations :: Sets of Records holding Fields of simple Non-Pointer Data
+- Relations can be
+  - Used as Program Inputs or Outputs
+  - Generated as Intermediate Data during processing
+  - Stored in simple contiguous Tables
+- The order of Records within Relations are ignored
+- Duplicate Records within Relations can be ignored or discarded
+
+With Relational Programming, the programmer specifies
+- The Relationships which exist between
+  - The existing Relations containing the needed data
+  - The Relations to be generated which will contain the desired results
+- The programmer does /not/ tell the system /how/ to organize the processing!
+
+So how can Relational Systems do complex processing efficiently?
+- Every time a piece of data is required, the Relation holding needs to be searched!
+- Since Relations are not sorted, this could require processing every Record in the Relation!
+
+In Traditional Programming, complex arrangements of Pointer Fields
+embedded in Data Structures allow fast access to needed data.  But
+these fields and the procedures which use them have to be written and
+maintained by programmers according to ever changing needs.
+  
+In Relational Programming a Data Specialist (not necessarily a
+programmer) can tell the system to create and maintain /indexes/.
+
+Relational Systems use Indexes to create fast access methods to obtain
+the Records containing desired data given the values of associated
+(Related) Key Fields.
+
+With the right indexes Relational Processing can be quite efficient.
+
+The genius of the Relational System is that
+- the Relational Program is independent of the Indexes
+- Adding or removing Indexes can only impact efficiency, never correctness
+- Relational Programs and Indexes can be maintained separately!
+- And software tools exist which can guide the maintenance of Indexes.
+
+Traditional Lisps are essentially pre-adapted for Relational Programming
+
+Most /List Processing/ Programs involve
+- Traversing Lists of Records
+- Fetching needed Data from those Records
+- Constructing Lists of new Records
+- And so on, until we obtain the final Lists of the desired results
+
+To make /List Processing/ more efficient, Lisps have
+- Added complex new composite type to store the Record Objects
+- Added complex references (Pointers) between those Record Objects
+
+Instead, Lisp could
+- Use Vectors to store Tables
+- Use Streams to store Intermediate Relations
+- Use Indexes to speed up searching the Tables
+
+Lisp Relational Programs might look somewhat like the Racket Rebellion
+code in the section below.  But so far Lisp doesn't seem to have
+embraced the idea of Indexes.
+
+Indexes are based on the complex datatypes traditionally used with List Process, but
+- The Indexes are generic structures which
+  - Live outside the Relations containing the Data Records
+  - Even though they contain references (Pointers) to those Records
+- Indexes need to be /automatically updated/ when those Relations change
+
+In order to make Relational Programming work with Lisp, any data
+stored as Relations would only be accessible through a Relational
+Engine.  Direct access to the structure of Relations and the Records
+within them would destroy the integrity of the Relational System.
+
+This (and other possibilities discussed in this document) would force
+Lisp to evolve to become a High-Level programming Language.
+
+*** Transactional Features
+
+
+*** Persistence Features
+
+
+
+*** Logic Programming Features
+
+*** Constraint Programming Features
+
+*** Meta-Programming Features
+
+
+** Do Any Lisps Follow Any Of This Advice?
+
+Yes!
+
+All of the runtime (not the Static) features discussed above can be
+implemented by any Lisp without a great deal of trouble!
+- This is why Lisp is a favorite language of sophisticated programmers!
+
+Some Lisps have (and more Lisps will soon have) support for Static
+Type Checking.
+
+All Lisps could do a better job at supporting all of these recommendations
+- Ideally without being much more complicated!
+
+*** Kudos to Specific Lisps
+
+**** Towards Generic Functions
+
+Scheme and Lisps in the Scheme sub-family provide /generic arithmetic
+functions/ which can work with /a "tower" of numeric types/ including
+Rationals and Complex Numbers.  E.g. ~(/ 10 3)~ doesn't generate ~3~
+or ~3.3333...~, it generates the /exact/ result ~3 1/3~.  Alas, the
+numeric tower cannot be extended with new numeric types.  The best you
+can do is to rewrite all of the numeric functions and rebind the
+conventional operators to the new definitions.  Awkward and
+inefficient!
+
+Common Lisp (the Lisp with the most features) and Guile (in the
+elegant Scheme sub-family) have general support for generic operators.
+
+Generic operators can allow for
+- Natural notation for high-level datatypes
+- Extending Generic Arithmetic to new types, e.g. GA Multi-Vectors.
+- Object-Based and Object-Oriented programming.
+
+**** Towards Static Typing and Contracts
+
+Typed Racket, based on Racket (in the Scheme sub-family) provides full
+compile-time type checking.
+
+Racket and Typed Racket support very general support for Static
+Declaration and Dynamic (runtime) Checking of general Value, Procedure
+and Module-aware Contracts.
+
+[[https://typedclojure.org][Typed Clojure]] is a new optional static typing system for Clojure.
+
+[[https://coalton-lang.github.io/][Coalton]] is a new static typing system which works with Common Lisp
+
+**** Towards Immutability
+
+Racket began was a fully Scheme-compatible Scheme dialect.  It has
+since made some incompatible changes along with a number of
+extensions.
+
+In Racket, Lists are Immutable.  ()Racket provides the ~mcons~ data
+structure which can be used to build mutable Lists, but this is
+discouraged unless you're porting some truly ugly Scheme code.)
+
+Many of Racket's composite types are available in mutable and
+immutable versions.  Functional purists can therefore ignore the
+mutable versions and the language semantics will support their purity.
+
+**** Towards Generic Sequences and Streams
+
+[[https://janet-lang.org][ Janet]] is much like other modern lisps, except that it represents all
+code and (most) data as nested Vectors rather than nested Lists.  This
+is much more efficient!  Alas, Janet does not yet have support for
+general generic programming or the Stream or Sequence abstractions.
+
+Racket, Clojure and Common Lisp use Generic Functions to allow
+algorithms to be written in terms of Streams or Sequences, but one
+still must be specific when choosing a concrete conposite type to be a
+container for your data.  Choosing Vector is generally a better choice
+than List.  And optimizing to another composite type should be trivial
+if all of the procedures which will be operating on the data are
+written generically.
+
+The original difference between coding for Lists vs. Vectors vs. other
+composite data structures was iteration: The functions which sequenced
+through the elements are different for each concrete composite type.
+This was originally done with iteration.  Functional programmers
+prefer to use higher-level operations such as filters, maps and folds.
+With the *delimited continuations* provided by Scheme dialects (and
+some other Lisps) there should be no need for primitive iteration.
+
+;; Old Scheme List Iteration, eschewing abstraction
+#+begin_src scheme
+(define name-age-list '((fred 10) (sue 18) (alice 17) (joe 22)))
+;; return up to n names from lst whose ages are at least min
+;; the names should be in the same order as in the original list
+(define (n-names-over n lst min (accum '()))
+  (cond ( (or (<= n 0) (null? lst)) (reverse accum) )
+      ( (< (cadar lst) min) (n-names-over n (cdr lst) min accum) )
+      ( #t (n-names-over (- n 1) (cdr lst) min (cons (caar lst) accum)) ) ) )
+;; example runs
+(printf "2 names over 16: ~a\n" (n-names-over 2 name-age-list 16))
+(printf "10 names over 16: ~a\n" (n-names-over 10 name-age-list 16))
+#+end_src
+
+;; Old Scheme Vector Iteration, eschewing abstraction
+#+begin_src scheme
+(define name-age-vector '#(#(fred 10) #(sue 18) #(alice 17) #(joe 22)))
+;; return a vector of up to n names from vec whose ages are at least min
+;; the names should be in the same order as in the original vector
+(define (n-names-over n vec min (i 0) (accum '()))
+  (cond ( (or (<= n 0) (>= i (vector-length vec))) (list->vector (reverse accum)) )
+      ( (< (vector-ref (vector-ref vec i) 1) min) (n-names-over n vec min (+ i 1) accum) )
+      ( #t (n-names-over (- n 1) vec min (+ i 1) (cons (vector-ref (vector-ref vec i) 0) accum)) ) ) )
+  #+end_src
+
+;; Modern Lisp Sequence Processing, Racket Rebellion Style
+#+begin_src racket
+#lang racket/base
+(require racket/sequence)
+(require rebellion/streaming/transducer)
+(require rebellion/streaming/reducer)
+
+;; Given a sequence of some form of people's info including names and ages,
+;; return the (up to n) names of those people who are at least min years old.
+;; The names should be in the same order as in the original sequence.
+
+;; ** Processing Sequences of name-age Pairs
+
+(define (data-name data) (sequence-ref data 0))
+(define (data-age data) (sequence-ref data 1))
+(define ((over-age min-age) data) (>= (data-age data) min-age))
+
+(define (filter-map-into people filter map into)
+  (transduce people (filtering filter) (mapping map) #:into into) )
+
+;; ** List of List Pairs --> List of Names
+
+(require rebellion/collection/list)
+
+(define list-data '((fred 10) (sue 18) (alice 17) (joe 22)))
+
+(printf "2 names over 16: ~a\n"
+        (filter-map-into list-data (over-age 16) data-name (reducer-limit into-list 2)) )
+(printf "10 names over 16: ~a\n"
+        (filter-map-into list-data (over-age 16) data-name (reducer-limit into-list 10)) )
+
+;; ** Vector of Vector Pairs --> Vector of Names
+
+(require rebellion/collection/vector)
+
+(define vector-data '#(#(fred 10) #(sue 18) #(alice 17) #(joe 22)))
+
+(printf "2 names over 16: ~a\n"
+        (filter-map-into vector-data (over-age 16) data-name (into-vector #:size 2)) )
+(printf "10 names over 16: ~a\n"
+        (filter-map-into vector-data (over-age 16) data-name (into-vector #:size 10) ) )
+
+;; ** Getting Cleaner with Records
+
+(struct person (name age)) ; defines Racket Record Type person with two fields
+(define ((person-over min-age) person) (>= (person-age person) min-age))
+
+(define person-vector
+  (vector (person 'fred 10) (person 'sue 18) (person 'alice 17) (person 'joe 22) ) )
+
+(printf "2 names over 16: ~a\n"
+        (filter-map-into person-vector (person-over 16) person-name (into-vector #:size 2)) )
+        
+(printf "10 names over 16: ~a\n"
+        (filter-map-into person-vector (person-over 16) person-name (into-vector #:size 10)) )
+
+#+end_src
+
+This style of Declarative Programming
+- Has long been experimented with in many Lisps
+- Was refined in the Pure Functional Programming Language Haskell
+  - It's especially handy since mutation is not possible in Haskell!
+- Was popularized by
+  - LINQ in Microsoft's .NET languages
+  - List comprehensions in Python
+
+In Haskell, C# and Typed-Racket
+- It leverages those languages' Static Type system
+- The compiler can produce code as efficient as specialized hand-written loops!
+
+In most Lisps and in Python it is processed entirely at runtime.
+- This makes optimization more difficult!
+
+As usual
+- Python has one syntax and semantics for this
+- Different Lisp libraries provide different syntaxes and semantics
+  - allowing for experimentation and evolution
+  - at the cost of portability and code stability
+
+**** 
+
+allows new kinds of
+numbers to be added to the standard kinds of numbers allowed by
+generic arithmetic.
+
+**** 
+- Clojure provides and recommends convenient high-level functions to use instead of low-level composite functions.
+
+
