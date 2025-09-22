@@ -474,7 +474,7 @@ simple.
 Example Atom Literal Syntaxes
 - Symbols :: identifiers spelled with any characters /except/
       - not starting like a number, e.g. with digits or a sign
-      - not including whitespece or ( ) [ ] { } " , ' ` ; # | \
+      - not including whitespace or ( ) [ ] { } " , ' ` ; # | \
 - String Literals :: are enclosed in "double quotes"
       - An \escape syntax provided for including special characters in strings
 - Numeric Literals :: similar to most programming languages but
