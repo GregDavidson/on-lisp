@@ -54,13 +54,17 @@ We'll use the especially powerful [[https://racket-lang.org/][Racket Dialect of 
 our examples but we'll keep close to the simpler Scheme dialect which
 Racket evolved from and which it's still compatible with.
 
+Fundamentally, 
+
 *** Symbolic Expressions and How They Appear As Source Text
+
+
 
 Lisp is made of Symbolic Expressions.
 
 When a Lisp Program is running, its Symbolic Expressions are stored as
 objects alive in your computer's memory.  But when you're reading or
-editing a Lisp Code you'll usually be working with Symbolic
+editing Lisp Code you'll usually be working with Symbolic
 Expressions in an inactive form, encoded as Text suitable for saving
 in a Textfile.  Our examples will show Symbolic Expressions as Source
 Text, but remember: once your program is running the Symbolic
@@ -68,21 +72,27 @@ Expressions will come alive!
 
 - The Lisp procedure ~read~ reads Symbolic Expressions in Text Form
   and incarnates them as objects in your program.
-  - /the ~squigglies~ are OrgMode markup, so not part of the name!/
+  - /if you're seeing the markup arund the name readme, it's not part of the name!/
 - ~read~ ignores any text beginning with a semicolon (;) to the end of the line.
 - Humans use text following a ; to comment on programs without offending Lisp. ;-)
 - ~read~ considers contiguous whitespace characters equivalent to a space.
 - [[https://en.wikipedia.org/wiki/Whitespace_character][Whitespace Characters]] :: characters which move the cursor but don't print anything.
-  - Good style to only use spaces and newlines as whitespace in Source Text.
+  - Good style is to only use spaces and newlines as whitespace in Source Text.
 
 - Symbolic Expression aka S-Exp :: Either an /Atom/ or a /List/ of /Symbolic Expressions/.
 - Atom :: Any Lisp /Value/ that isn't a /List/, e.g.
-  - Numbers :: 1 2 -10 2/3 3.14159 6.02214076E23 2+3i
-  - Strings :: "Hello" "Some text ending in a newline character:\n"
-  - Symbols :: people People-I-Love favorite-animals catch22 etc.
+  - Numbers :: 1, 2, -10, 2/3, 3.14159, 6.02214076E23, 2+3i
+  - Strings :: "Hello", "Some text ending in a newline character:\n"
+  - Symbols :: people, People-I-Love, favorite-animals, catch22, etc.
     - symbols are often used to name things
     - symbols can also be used as values instead of using Strings
-    - symbols can't contain whitespace or any of the reserved characters "'()[]#"
+    - symbols can't contain whitespace or any of the reserved characters
+      - ( ) [ ] " ' ` ; # |
+    - symbols can't begin with something that could be a number
+      - e.g. 1st is illegal
+    - otherwise: whatever makes sense to you is fine.
+    - Any symbols which are spelled the same are the same symbol!
+      - That's kind of the point!
 - Value :: a Symbolic-Expression, as that's all there is!
 - List :: An ordered sequence of Lisp Values
   - as Text, Lists are written (in parentheses) with element separated by whitespace, e.g.
@@ -93,6 +103,37 @@ Both Lisp Code and Lisp Data are represented as Symbolic Expressions.
 
 A Lisp Source File is simply a sequence of Symbolic Expressions in
 Text form.
+
+*** Lisp Semantics: The Evaluation of Symbolic Expressions
+
+When a Lisp Program is "running", what it's doing is evaluating Symbolic Expressions.
+
+How Lisp Evaluates Symbolic Expressions
+- If it's a symbol :: It evaluates to what that symbol is bound to in the environment.
+  - It's an error if the symbol is unbound!
+  - Given ~(define foo 'green)~ then ~foo~ evaluates to the symbol green.
+    - We'll explain the single quote shortly!
+- If it's any other atom :: It simply evaluates to itself!
+  - 123 evaluates to 123
+  - "Hello" evaluates to "Hello"
+- If it's a list :: We do two things:
+  1. We evaluate each element of the list separately
+     - It's an error if the first element doesn't evaluate to a procedure.
+  2. We call that procedure, passing it the rest of the evaluated elements as parameter arguments.
+     - It's an error if those values are not suitable parameter argumentsfor that procedure!
+  - Note: A List whose first eleeent evaluates to a procedure is called a *Form*
+    - ~(+ 2 3 5)~ is a form
+      - The symbol + is bound to the addition procedure
+      - the rest of the elements 
+    - ~(1 2 (buckle my shoe))~ is /not/ a form
+      - because 1 doesn't eveluate
+    - ~(+ 'red 'green) is an invalid form
+      - + evaluates to Lisp's addition procedure
+	'red evaluates to the symbol ~red~
+	'green evaluates to the symbol ~green~
+	~red~ ~green~ are passed to the addition procedure
+	- the addition procedure produces an error because ~red~ and ~green~ are not numbers
+	- evaluation is aborted
 
 ** Key Concepts and Terminology
 
