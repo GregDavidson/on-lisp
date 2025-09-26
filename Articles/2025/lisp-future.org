@@ -98,8 +98,8 @@ Expressions will come alive!
 - Value :: a Symbolic-Expression, as that's all there is!
 - List :: An ordered sequence of Lisp Values
   - as Text, Lists are written (in parentheses) with element separated by whitespace, e.g.
-  - (1 2 (buckle your shoe)) ; a 2 element list: the 3rd element is another list
-  - ((light-primaries red green blue) (pigments cyan magenta yellow black)) ; 2 elements!
+  - ~(1 2 (buckle your shoe))~ ; a 2 element list: the 3rd element is another list
+  - ~((light-primaries red green blue) (pigments cyan magenta yellow black))~ ; 2 elements!
 
 Both Lisp Code and Lisp Data are represented as Symbolic Expressions.
 
@@ -129,7 +129,7 @@ How Lisp Evaluates Symbolic Expressions
       - the rest of the elements 
     - ~(1 2 (buckle my shoe))~ is /not/ a form
       - because 1 doesn't eveluate
-    - ~(+ 'red 'green) is an invalid form
+    - ~(+ 'red 'green)~ is an invalid form
       - + evaluates to Lisp's addition procedure
 	'red evaluates to the symbol ~red~
 	'green evaluates to the symbol ~green~
@@ -728,7 +728,7 @@ Racket began was a fully Scheme-compatible Scheme dialect.  It has
 since made some incompatible changes along with a number of
 extensions.
 
-In Racket, Lists are Immutable.  ()Racket provides the ~mcons~ data
+In Racket, Lists are Immutable.  Racket provides the ~mcons~ data
 structure which can be used to build mutable Lists, but this is
 discouraged unless you're porting some truly ugly Scheme code.)
 
