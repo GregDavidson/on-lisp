@@ -54,11 +54,13 @@ We'll use the especially powerful [[https://racket-lang.org/][Racket Dialect of 
 our examples but we'll keep close to the simpler Scheme dialect which
 Racket evolved from and which it's still compatible with.
 
-Fundamentally, 
+You might explore those links:
+- Fundamentally, [[file:../2024/lisp-simplicity.org][lisp is simple!]]
+- And [[file:../2023/lisp-complications.org][there are some complications!]]
+
+or simply read on for a concise review tailored to our needs here.
 
 *** Symbolic Expressions and How They Appear As Source Text
-
-
 
 Lisp is made of Symbolic Expressions.
 
