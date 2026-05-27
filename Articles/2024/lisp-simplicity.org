@@ -1,91 +1,382 @@
-* Understanding Lisp in Very Little Time
+* The Simplicity of Lisp
 
 ** tl;dr
 
-We highly recommend reading all of this short and easy document
-- but if you just want a quick review
-- you can skip to the section *The Full Story in a Nutshell* below
+We're going to explain Lisp twice
+- A First-Level Intuitive Explanation
+- Second, in Lisp itself!
 
-** Read This First
+Both explanations will show the simplicity of Lisp.
 
-It's much easier to implement Lisp than most other programming languages. This
-has led to the /Lisp Curse/: Many individuals and institutions have created their
-own dialects of Lisp, each a bit deviant from the others or either of the two
-major standards. Fortunately, most dialects of Lisp are more alike than they are
-different. If you have experience with one Lisp it's generally easy to learn any
-other Lisp. The examples we're giving here are based on the influential and
-especially elegant (simple yet powerful) Lisp dialect /Scheme/ as implemented in
-the /Racket System/.
+We'll follow those explanations with notes about a few details which
+one might want to know in practice.
 
-NOTE: This claim to simplicity applies only to /the language itself/. In
-practice, you'll be using various libraries which extend the base language with
-special types and procedures. You'll need to study the details of any such
-features your program is using. While this is true with /any/ programming
-language, Lisp allows such libraries to significantly extend Lisp's syntax and
-semantics: For this reason, Lisp is often called /the programmable, programming
-language!/
+We highly recommend reading all of this short and easy document!
 
-** Lisp expressions use Nested Lists!
+** Lisp is a Family of Extremely Powerful Languages
 
-A humorous definition of Lisp:
-- *Lisp:* Lots of Irritating Silly Parentheses
+Lisp is not a single language, it is a large /fammily of languages/.
+All Lisps have a lot in common, despite some interesting differences.
 
-Let's compare Lisp with some popular languages which use /algebraic syntax/
-- e.g. Java, JavaScript, C, Python, Rust, etc.
+We'll be using the Scheme Language for our Lisp examples.
+- See: *A Few Important Modern Lisps* for alternative dialects.
 
-- Algebraic operator syntax: =a + b + c + d=
-- Lisp: =(+ a b c d)=
+*** Language vs. Libraries vs. Tools
 
-- Algebraic function calls: =f(a,b,c)= and =f(a,g(b,c),d)=
-- Lisp: =(f a b c)= and =(f a (g b c) d)=
-- /Function/ =g= /is nested inside function/ =f= /in both notations./
+A Lisp implementation generally includes
 
-Is the Lisp notation more complex?
-- Lisp Programmers claim that after a few days of experience Lisp's syntax
-  becomes as clear and pleasant as /algebraic syntax/
-- /Do you find that claim credible?/
+An Efficient Compiler
+- Lisp Systems create the useful illusion that the computer directly
+  understands Lisp.  This is rarely true of efficient implementations!
+- Behind the scenes a compiler is translating Lisp to machine language
+  - Machine language is
+    - the language interpreted by your computer's hardware
+    - typically 10-50 times faster than a software program
+      can interpret a high-level representation of your program.
 
-A key feature to Lisp syntax is that all Lisp expressions can serve as /both
-code and data/, e.g. the Lisp expressions
-- =(+ a b c d)=, =(f a b c)= and =(f a (g b c) d)=
-can be executed as part of a program or manipulated as data.
-- /This feature is sometimes a great advantage!/
+Extensive libraries providing ready-made solutions for common problems.
+- There will often be multiple libraries providing different solutions
+  to the same problem.
+- Programmers have to evaluate Libraries for quality and and for
+  suitability for their needs.
+- It's always possible to solve any problem without the help of
+  Libraries.
+- Lisp libraries are normally written in Lisp, so experienced Lisp
+  programmers can create new libraries.
 
-** Lisp Syntax
+Additional software tools (all written in Lisp), e.g.
+- Program Browsers, Editors, Debuggers, etc.
+- REPL :: (Prompt) Read Evaluate Print Loop
+  - A REPL Makes it look like the computer directly understands Lisp
+  - The REPL Loop:
+    1. Print a prompt, e.g. "> "
+    2. Read a Lisp Expression from the User
+    3  Evaluate ther Expression
+    4. Print the Result
+    5. Loop back to Step 1
 
-/Syntax/ defines what a language looks like, not what it does. Syntax is
-therefore relatively superficial. Lisp has the simplest syntax of any popular
-modern language. Once you learn it, you're unlikely to ever forget it.
+A REPL Example (user input follows the "> " prompts)
+#+begin_example
+> (+ 2 4 8 1/2 1/4 1/8)
+   7
+14 -
+   8
+> (append  '(one two three) '(red blue green))
+'(one two three red blue green))
+#+end_example
 
-Lisp Programs are made out of *Symbolic Expressions* defined as follows:
+A Lisp Program is just one or more textfiles containing Lisp
+Expressions which evaluate the same as if they were typed at a REPL.
 
-*Atom:* Anything /NOT/ a /List/
-- Atoms can be simple, e.g. a character or a number
-- Or complex, e.g. /string/, /record/, etc.
-*List:* A flexible, extensible sequence of arbitrary elements
-- Lisp's /List Syntax/ uses parentheses
-*Symbolic Expression aka S-Expr:* Either
-- An /Atom/
-- A /List/ of /Symbolic Expressions/
-      - The empty list: =()=
-      - A list of three numbers: =(1 3/4 3.14159 -10+5i)=
-      - Another list of 3 elements: =(1 "two" (buckle my shoe))=
-            - An integer number, a string and a list of symbols
-            - /Note how we can freely nest lists inside of lists/
+So
+- What's a "Lisp Expression"?
+- What's Evaluation?
 
-Each kind of /Atom/ has its own syntax.
-- You can add new atom types!
+** First-Level Intuitive Explanations
+
+*** Lisp Syntax, Intuitive Explanation
+
+/Syntax/ defines what a language looks like, not what it does.
+
+Lisp's syntax is extremely simple:
+
+A Lisp Program is a sequence of *Symbolic Expressions*.
+
+A *Symbolic Expression* is either
+1. *An Atom* -- Anything /NOT/ a /List/
+2. *A List of Symbolic Expressions*
+
+*Atoms*
+
+A typical Lisp System provides several Atom Types.
+- Each is designed to store a particular kind of data.
+- Each is written with its own syntax.
+
+Some Example Atom Types:
+- Numbers :: 1, 2, -10, 2/3, 3.14159, 6.02214076E23, 2+3i
+  - Three Integers, a Rational, two floating-point Reals and a Complex Number.
+- Strings :: "Hello", "Some text ending in a newline character:\n"
+  - Strings have elements (characters), but they're still atoms!
+  - There's a backslash convention for all the non-printable characters.
+- Symbols :: people, People-I-Love, favorite-animals, catch22, etc.
+  - Symbols are typically ued to name things.
+
+*Lists*
+
+2. *A List of Symbolic Expressions*
+  - A flexible, extensible sequence of elements.
+  - Each element of a List can be any kind of Symbolic Expression.
+  - List elements are (enclosed in parentheses) and separated by whitespace
+    - Whitespace can be 1 or more spaces or newlines.
+
+Example Lists:
+- The empty list: =()=
+- A list of three elements, all numbers: =(1 3/4 3.14159 -10+5i)=
+- Another list of 3 diverse elements: =(1 "two" (buckle my shoe))=
+  - The first element is an integer number
+  - The second element is a string
+  - The third element is itself a list, in this case a list of three symbols
+
+Remember:
+- We can freely nest lists inside of lists, to any level.
+- Symbols, Strings and all the Numeric types are Atoms.
+- Symbols are typically used to name things.
+- Only Lists are not atoms!
+
+*** Lisp Semantics, Intuitive Explanation
+
+The Semantics (meaning) of Lisp Code is defined by what Values it
+Evaluates to when you run your program.
+
+All Lisp code consists of Symbolic-Expressions.
+- Not all Symbolic-Expressions are valid Lisp Code.
+- A Form is a List which is valid Lisp Code.
+
+All Lisp Data Values are also Symbolic-Expressions!
+- All Symbolic-Expresions are valid Data Values.
+- So a "Value" is just another name for a Symbolic-Expression.
+
+We can define a Symbol to have a Value with a define form.
+#+begin_src scheme
+  (define first-us-president "George Washington")
+  (define light-primaries '(red green blue) )
+  ; the ' quotes the following symbolic-expression
+  ; comments go from any naked semicolon to the end of the line
+#+end_src
+
+When we associate a Symbol with a Value we say that
+- *it is bound* (to that value) *in the Current Environment*
+and we say that
+- *an Environment is a set of* (Symbol Value) *bindings*.
+
+How Lisp Evaluates a Symbolic Expression:
+
+1. *A Symbol evaluates to its value* in the *Current Environment*
+   - an Error is Signaled if the symbol is unbound!
+2. *Any other kind of Atom evaluates to itself!*
+3. A Form should be either a /Special Form/ or a /Normal Form/
+   - Special Forms are lists beginning with a Reserved Symbol
+     - ~define~ forms are an example.
+     - We'll cover more /Special Forms/ shortly.
+   - *Evaluating a Normal Form*
+     1. *Evaluate Each Element* of the Form
+     2. The *First Element should evaluate to a Procedure* Value
+	- Otherwise an Error is Signaled
+     3. The *Remaining Elements should evaluate to suitable Arguments*
+        for that Procedure's parameters
+	- Otherwise an Error is Signaled!
+     4. We *Apply the Procedure to the *Arguments*
+     5. The Form Evaluates to whatever the Procedure Returns.
+
+Procedures can do more than just return a Value.
+- They can have various kinds of "Side-Effects"!
+We call a Procedure a Function when we're focusing on its Return Value.
+
+
+**** Lisp Evaluation Examples
+
+#+begin_src scheme
+  (define early-us-presidents '( ("George Washington" 1789)
+  			       ("John Adams" 1797)
+  			       ("Thomas Jefferson" 1801) ) )
+  (define first-us-president (list-ref early-us-presidents 0))
+  (define first-us-president-name (list-ref first-us-president 0))
+  (display "Some early US presidents:\n")
+  (display early-us-presidents)
+  (newline)
+  (printf "~a's term began in ~a\n"
+  	first-us-president-name 
+  	(list-ref first-us-president 1))
+  (printf "~a's term began in ~a\n"
+  	(list-ref (list-ref early-us-presidents 1) 0)
+  	(list-ref (list-ref early-us-presidents 1) 1) )
+  (define president-number 3)
+  (printf "President ~a data: ~a\n"
+  	president-number
+  	(list-ref early-us-presidents (- president-number 1)) )
+#+end_src
+
+Produces output:
+#+begin_example
+Some early us presidents:
+((George Washington 1789) (John Adams 1797) (Thomas Jefferson 1801))
+George Washington's term began in 1789
+John Adams's term began in 1797
+President 3 data: (Thomas Jefferson 1801)
+#+end_example
+
+Of the various procedures used here
+- list-ref is a considered a Function aka a Functional Procedure
+  - it takes a list and an offset as arguments
+  - and returns the element at that offset as a result.
+- in (- president-number 1)
+  - '- is the name of the subtraction function
+  - We have an ordinal number and want an offset.
+- display, newline and printf are not functions
+  - they produce output as a side-effect
+  - their actual return values are (void), i.e. nothing
+    - it would be useless to nest them!
+  - the produce output, which
+- ~define~ is not a procedure, it is a reserved name for a Special
+  Form.
+
+**** Special Forms
+
+Special Forms are "Special" because they prevent the evaluation of
+some parts of the form.  Four of these are necessary for Lisp
+Semantics.  A few others exist for convenience.  Lisp Programmers
+can define new Special Forms with the Lisp Macro mechanism which we'll
+cover later.
+
+*Necessary Special Forms*
+
+(quote /x/) or '/x/ :: creates literal values
+- returns literal /x/ simply by not evaluating it!
+- quote is a /Reserved Symbol/ in all Lisps
+- all Lisp Readers turn 'x into (quote x) for convenience
+  - i.e. 'x is "syntactic sugar" for (quote x)
+
+(define /name/ /value/) :: binds /name/ to /value/ in /Current Environment/
+- Given: Symbol /name/, Symbolic-Expression /value/
+- /name/ is NOT evaluated!
+- /value/ IS evaluated!
+
+(if /test/ /then/ /else/) :: Either evaluates /then/ OR /else/
+- Given: Symbolic-Expressions /test/, /then/, /else/
+- First: /test/ is evaluated
+- if /test/ did NOT evalute to the false value (#f in Scheme)
+  - /then/ is evaluated and its value is returned
+- otherwise:
+  - /else/ is evaluated and its value is returned
+
+Here's the fancy one and the most important.  Lambda is the Special
+Form which creates all procedures!
+
+(lambda /parameters/ /body-expression/) :: creates a new procedure!
+- parameters should be a list of parameter symbols *not evaluated*
+- body-expressions should be a symbolic expressions *not evaluated*
+- lambda returns a /New Procedure/ consisting of 3 pieces:
+  - *Current Environment* now called *Closure Environment*
+    - We say that lambda "captures the current environment as a closure"
+  - the parameters
+  - the body-expression
+
+How do Procedures work when we evaluate them in a form?
+
+Each time a Procedure is evaluated as in (procedure arguments...)
+- A *Call Environment* is created out of the Procedure's *Closure Environment*,
+  - extended with bindings of the form's Arguments to the Procedure's Parameters
+- The body-expresion is evaluated in the *Call Environment*
+  - its value is returned as the value of the /normal form/
+
+There are a few more common (but not necessary) Special Forms and some
+of the Special Forms explained above provide some convenient
+abbreviations.
+	
+*define Form Syntactic Sugar for Procedures*
+- (define (name args) body) :: creates and names a procedure in one go
+  - just an abbreviation for (define name (lambda args body))
+
+Whew!  Let's see some examples:
+
+
+** Second-Level: Lisp Defined in Lisp
+
+**** Lisp Syntax Second-Level
+
+Lisp Syntax is defined by the Lisp Reader and the Lisp Writer.
+
+The most important procedures are
+- read :: reads and translates symbolic expressions into a Value
+  - reads symbolic expressions in text form
+    - e.g. from a textfile or other text data source
+  - converts them into their in-memory binary format 
+  - returns the Value a reference aka pointer aka memory reference
+- write :: translates a Value into a human readable text format
+
+~read~ and ~write~ should be reversible, e.g.:
+- Object x --> (write) --> external text --> (read) --> Object y :: (equal x y)
+  - x and y are binary objects presenting Lisp Values in memory
+  - If Object y was created by ~read~ from some external text
+  - which was created by ~write~ from an Object x
+  - then x and y should be equivalent Lisp Values.
+- equal :: the Lisp Function which tests two values for equivalence
+  - it returns either #t for true or #f for false.
+
+~read~ and ~write~ (and the other Lisp I/O procedures) can be extended
+- You can add new atom types and give them a nice syntax!
 - e.g. [[https://docs.racket-lang.org/quick][Racket Slideshow]] adds atoms which are [[https://docs.racket-lang.org/pict][pictures]].
-- You can design the syntax and semantics for a new atom type!
 
-Symbols are atoms which can be used to identify values or which can be used as
-values themselves.
-- Symbols can be short or long sequences of printable characters
-      - except for the special characters ( ) [ ] { } " , ' ` ; # | \
-      - or anything which would look like a number.
-- Here are seven short symbols: x y n + - * /
-- Here are two longer symbols: greet person-name-as-string
-- Your symbol spelling should be meaningful to you, Lisp doesn't care!
+Scheme has atom types for more kinds of numbers than most computer
+languages provide, e.g.
+- exact integers and rationals of any size
+- inexact floating-point and complex numbers
+
+Symbols are convenient names for things you might want to talk about
+- e.g. red, wood, widowed, latest-poll-numbers, etc.
+- symbols can't contain whitespace or any reserved characters
+  - ( ) [ ] " ' ` ; # |
+  - or anything that looks like a number.
+
+Lists are not a primitive in Lisp.  Instead, they're made of
+Cons-Pairs, one for each List Element.
+
+Cons-Pairs are written as two values in parentheses separated by
+- " . ", i.e. by a period character which must have whitespace around it.
+
+Example Cons-Pairs
+- ( 'this . 'that )
+- ( "George Washington" . 'first )
+
+The way you make a List out of a Cons-Pair is to nest them:
+- ( 'red . ( 'green . ( 'blue . () ) ) )
+- If you try to output this, though, you'll be surprised:
+
+#+begin_src scheme
+  (write '( this . that ))
+  (newline)
+  (write '( "George Washington" . first ))
+  (newline)
+  (write '( red . ( green . ( blue . () ) ) ) )
+  (newline)
+#+end_src
+
+produces
+#+begin_example
+(this . that)
+("George Washington" . first)
+(red green blue)
+#+end_example
+
+Note that the first two values print as Cons-Pairs.
+- because their second elements are NOT Cons-Pairs.
+The third value prints as a List because it IS a List!
+- A non-empty List is a Cons-Pair
+  - whose first Element is the first Element of the List
+  - whose second Element is the Rest of the List
+- The Rest of a Non-Empty List is either the empty list or ...
+
+Many List-Processing functions are simpler when they're written with
+functions which work on Cons-Pairs.  We'll see this in our second
+round of Lisp Semantics!
+
+Whitespace consists of
+- anything else which visibly separates things without making a visible mark.
+- e.g. one or more spaces, tabs, newlines, etc.
+- Good Lisp Style only uses spaces and newlines as whitespace.
+
+Comments:
+- The Lisp Reader functions ignore any input starting with
+  a semicolon (;) to the end of a line.
+- Humans can use comments to talk smack about Lisp without it knowing! ;-)
+- Lisp Programmers typically use
+  - one semicolon to comment on code to the left
+  - two semicolons to comment on code immediately below it
+  - three or more semicolons for section titles
+  
+Lisp has always left most ASCII special characters for the programmer
+to use as they might like.  And now we have all of the Unicode special
+characters too!
 
 ** Lisp Semantics: =eval=, =apply=
 
@@ -94,18 +385,36 @@ happens when the computer /evaluates/ it. The Semantics of a language is the big
 deal. Lisp has the simplest semantics of any popular modern language. Once you
 learn it, you're unlikely to ever forget it.
 
-Note: Code can either be directly evaluated by an /interpreter program/
-(software) or it can be translated into /machine code/ by a /compiler/ and then
-interpreted directly by your CPU (hardware). Lisp systems can use either
-approach and typically use both.
+
+*** More Detail on Lisp Semantics
+
+Lisp Semantics is defined by the behavior of two functions
+- (eval /x/ /environment/) :: evaluates /x/ in /environment/
+- (apply /procedure/ /arguments/) :: "calls" /procedure/ with /arguments/
+  - we can think of /procedure/ as created by ~lambda~ with three things
+    - clojure environment :: current environment when procedure created
+    - parameters :: list of symbols
+    - body-expresion :: a symbolic expression to evaluate
+  - /arguments/ contains *values* for the *parameters*
+    - equal sized lists or an error will be signaled
+  - a call *environment* is created by
+    - extending the *clojure-environment* within /procedure/
+    - with the bindings of the /arguments/ to the *parameters* within /procedure/
+  - ~eval~ evaluates *body-expression* using the call environment
+
+These functions are part of every Lisp system (although in Scheme the
+system supplies the /environment/ argument implicitly).  When they are
+called with machine code produced by a Lisp Compiler instead of
+high-level Lisp Objects they will let the machine's hardware execute
+that code directly.  The only difference will be faster evaluation.
 
 *** Environments Supply Context For Evaluation
 
-Lisp evaluates your S-Exprs using the procedures =eval= and =apply= in the
+Lisp evaluates your S-Exps using the procedures =eval= and =apply= in the
 context of /an Environment/
 
 - *Symbol:* An Atom which can serve as a name
-- *Value:* An /S-Expr/ which can be /returned/ from a /procedure/
+- *Value:* An /S-Exp/ which can be /returned/ from a /procedure/
 - *Binding:* A /symbol/ "bound to" (associated with) a /value/
 - *Environment:* a set of /Bindings/, like a /dictionary/
 
@@ -115,7 +424,7 @@ Here's an example:
   ; Lisp comments follow a ; and are ignored
   ; This is a Racket Program
   #lang racket
-  ; Which adds three bindings to the current Environment
+  ; Which adds three bindings to current Environment
   (define advice "Don't Panic!")
   (define answer 42)
   (define shopping '(bread milk))
@@ -143,7 +452,7 @@ shortly!
 
 The built-in procedures =eval= and =apply= do the work.
 
-The Lisp procedure =eval= takes an /S-Expr/ and returns its /Value/.
+The Lisp procedure =eval= takes an /S-Exp/ and returns its /Value/.
 
 There are two rules for atoms (non-lists):
 
@@ -153,9 +462,9 @@ There are two rules for atoms (non-lists):
 
 *Evaluable Lists* are called *Forms*
 
-*Evaluating Regular Forms*:
+*Evaluating Normal Forms*:
 
-1. /All Elements/ of /Regular Forms/ are /evaluated/
+1. /All Elements/ of /Normal Forms/ are /evaluated/
        - /recursively when nested/
        - The /first element/ must evaluate to a procedure /or signals an error/
 2. =apply= calls the procedure, /applying it/ to the other values
@@ -187,7 +496,7 @@ That's Lisp Semantics in a Nutshell!
 Let's explain this example, feature by feature:
        - =(define (greet s) (string-append "Hello " s ", how are you?"))=
              - Creates a procedure bound to the symbol =greet=
-             - in the current (/global/ or /top-level/) environment.
+             - in current (/global/ or /top-level/) environment.
              - The symbol =s= will be bound in a local environment when the procedure
                is evaluated.
              - Instead of a short name like =s= you could use something more
@@ -258,9 +567,9 @@ treatment.
 - so ='(1 2 3)= is a shorthand for =(quote (1 2 3))=
 
 =(if TEST IF-TRUE IF-FALSE)= evaluates =TEST=, then either =IF-TRUE= or =IF-FALSE=
-- =TEST=: an S-Expr which evaluates to a /Boolean truth value/
+- =TEST=: an S-Exp which evaluates to a /Boolean truth value/
 - The atom =#f= is the /Boolean Value/ for /false/
-      - all other S-Exprs are considered /true/
+      - all other S-Exps are considered /true/
       - the atom =#t= is the /canonical/ Boolean Value for /true/
 - thus =(if TEST IF-TRUE IF-FALSE)=
       - evaluates =TEST=
@@ -269,14 +578,14 @@ treatment.
 - so =if= only evaluates two of its three arguments!
 
 =(define SYMBOL VALUE)= binds =SYMBOL= to the given /VALUE/
-- in the current /environment/
+- in current /environment/
 - Special features of =define=
       - it does NOT evaluate its first argument
             - the SYMBOL is implicitly quoted
       - it does NOT return a normal value
             - you can't use a nested define as an argument
       - In Racket, the definition must be /monotonic/
-            - undefined in the current environment
+            - undefined in current environment
 
 =(set! symbol value)= /changes/ the binding of =symbol= to a new value
 - Special features of =set!=
@@ -293,7 +602,7 @@ treatment.
 =(lambda PARAMETERS BODIES)= creates a procedure
 - *PARAMETERS:* a list of 0 or more /symbols/
       - or a single /symbol/ which gets /all PARAMETERS/ as a /list/
-- *BODIES:* 1 or more S-Exprs to evaluate.
+- *BODIES:* 1 or more S-Exps to evaluate.
       - The value of the last body is /returned/ as the value of the
         procedure call
 - *when the procedure is called*
@@ -426,7 +735,7 @@ Key Terms
 - Atom :: anything other than a List
       - e.g. Symbol, Procedure, Number, String, Vector, Record
 - List :: A Sequence of 0 or more Symbolic Expressions
-- Regular Form :: a List whose
+- Normal Form :: a List whose
       - First Element evaluates to a procedure
       - rest of whose elements evaluate to suitable arguments to satisfy that
         procedure's parameters
@@ -442,9 +751,9 @@ Evaluating A Lisp Program
 1. Special Forms are replaced by the result of applying their Syntax Transformer
    procedure on themselves.
        - This is done as early as possible, e.g. at compile time
-2. Symbols evaluate to their value in the current Environment
+2. Symbols evaluate to their value in current Environment
 3. All other Atoms evaluate to themselves
-4. Regular Forms are evaluated by
+4. Normal Forms are evaluated by
 - Evaluating each element of the form
 - Applying the Procedure obtained from the First Element
 - to the Arguments obtained from the Rest of the Elements
@@ -492,7 +801,7 @@ Example Atom Literal Syntaxes
             - with the parameters bound to the argument values
       - and will return the value of evaluating the last body
 - (quote expression) :: returns expression unevaluated
-- (define symbol value) :: binds symbol to value in the current Environment
+- (define symbol value) :: binds symbol to value in Current Environment
       - define's first argument is /not evaluated/
       - define is syntactic sugar for a lambda!
 - (if conditional-expression then-expression else-expression) ::
@@ -510,6 +819,65 @@ Each Data Type typically has
       - ports have procedures for I/O
       - composite types (Lists, Strings, Vectors, Records) have procedures for
         selecting elements
+
+** Similarities and Differences Among Different Lisps
+*** A Few Important Modern Lisps
+
+- [[https://en.wikipedia.org/wiki/Scheme_(programming_language)][Scheme]] :: an especially powerful yet also especially simple Lisp.
+  - There are now many Scheme-derived Lisps, creating the Scheme
+    Sub-Family.
+- [[https://racket-lang.org/][Racket]] :: an efficient practical Lisp built on top of Scheme.
+  - Racket adds a lot of features to Scheme making some kinds of
+    programming a more convenient.
+- [[https://en.wikipedia.org/wiki/Clojure][Clojure]] :: a very modern take on elegant minimalism.  Clojure is
+  especially good at interacting with Java and with JavaScript.
+- [[https://en.wikipedia.org/wiki/Common_Lisp][Common Lisp]] :: the largest Lisp.  Programmers using other Lisps tend
+  to import features from diverse Libraries according to their taste,
+  leading to unnecessary inconsistency across programs.  In contrast,
+  Common Lisp integrates a large number of commonly desired features
+  into the language itself.  This makes the language larger but
+  creates more uniformity among Common Lisp programs than is typical
+  with other Lisps.  Despite its "batteries included" design, Common
+  Lisp is missing some of the most powerful features present in the
+  Scheme Sub-Family!
+
+*** Some Strengths of All Lisps
+
+The major dialects of Lisp are arguably the most expressive, flexible
+and powerful programming languages in existence.
+- Lisp is the first /General Purpose Programming Language/.
+- Lisp has good support for every known [[https://en.wikipedia.org/wiki/Programming_paradigm][Programming Paradigm]].
+- Lisp is the /Programmable Programming Language/
+  - You can extend any Lisp to accommodate a specific application domain.
+  - Both the Syntax and the Semantics are extensible.
+
+
+
+*** Lisp vs. Other Languagesexpressions use Nested Lists!
+
+A humorous definition of Lisp:
+- *Lisp:* Lots of Irritating Silly Parentheses
+
+Let's compare Lisp with some popular languages which use /algebraic syntax/
+- e.g. Java, JavaScript, C, Python, Rust, etc.
+
+- Algebraic operator syntax: ~a + b + c + d~
+- Lisp: ~(+ a b c d)~
+
+- Algebraic function calls: ~f(a,b,c)~ and ~f(a,g(b,c),d)~
+- Lisp: ~(f a b c)~ and ~(f a (g b c) d)~
+- /Function/ ~g~ /is nested inside function/ ~f~ /in both notations./
+
+Is the Lisp notation more complex?
+- Lisp Programmers claim that after a few days of experience Lisp's syntax
+  becomes as clear and pleasant as /Algebraic Syntax/
+- /Do you find that claim credible?/
+
+A key feature to Lisp syntax is that all Lisp expressions can serve as /both
+code and data/, e.g. the Lisp expressions
+- ~(+ a b c d)~, ~(f a b c)~ and ~(f a (g b c) d)~
+can be executed as part of a program or manipulated as data.
+- /This feature is sometimes a great advantage!/
 
 ** Would you like to learn more?
 
@@ -531,3 +899,8 @@ Help improve these materials!
 - Fork this repository
 - Improve your copy of it
 - Send us a /pull request/ with your improvements!
+
+** TODO ROADMAP
+
+Move the complications to [[file:~/Gits/On-Lisp/Articles/2023/lisp-complications.org::*Lisp Language Complications][Lisp Language Complications]]
+Move the history to 
