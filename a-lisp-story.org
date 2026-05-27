@@ -1,0 +1,223 @@
+* A Lisp Story
+
+** What is a Lisp?
+
+[[https://en.wikipedia.org/wiki/Lisp_(programming_language)][Lisp]] is a [[https://en.wikipedia.org/wiki/List_of_Lisp-family_programming_languages][large family]] of [[http://paulgraham.com/avg.html][especially powerful]] computer programming languages
+with several sub-families and hundreds of dialects. Lisp was inspired by an
+elegant and completely general theory of computation called the [[https://en.wikipedia.org/wiki/Lambda_calculus][Lambda Calculus]].
+Lisp has been vigorously evolving for over 60 years becoming more and more
+awesome - and it's not done yet!
+
+** Some excellent modern Lisps
+
+Some excellent and elegant modern Lisps are
+
+[[https://www.scheme.org][Scheme]] Sub-Family - elegant
+- [[https://racket-lang.org][Racket]] - most featureful with superb tutorials and documentation
+- [[https://www.gnu.org/software/guile][Gnu Guile]] - a great extension language for complex programs
+- [[https://cisco.github.io/ChezScheme][Chez Scheme]] - the fastest Scheme-family implementation
+
+[[https://en.wikipedia.org/wiki/Clojure#Alternative_platforms][Clojure Sub-Family]] - elegant, plays well with others
+- [[https://clojure.org][Clojure]] - runs on the [[https://en.wikipedia.org/wiki/Java_virtual_machine][Java Virtual Machine]] and interoperates well
+  with Java and other JVM languages.
+- [[https://clojurescript.org][ClojureScript]] - targets and interacts well with [[https://en.wikipedia.org/wiki/JavaScript][JavaScript]] in Web
+  browsers and elsewhere.
+
+Some other excellent Lisps are
+
+[[https://en.wikipedia.org/wiki/Common_Lisp][Common Lisp family]] - complex, featureful, powerful, efficient
+- http://www.sbcl.org/
+
+** Lisp Evolution
+
+*** Adding Features vs. Refining the Design vs. Breaking Compatibility
+
+There are two major trends in the evolution of computer programming languages
+- Add new features, creating a more capable but more complex language
+- Generalize the language to increase power and decrease complexity.
+The evolution of Lisp has demonstrated both trends!
+- The original standard for the Scheme dialect of Lisp was
+      - the shortest standards document ever accepted
+      - the most complete standards document ever accepted
+            - an appendix supplied a complete semantic specification
+- The original standard for the Common Lisp dialect of Lisp was
+      - the longest standards document ever accepted
+
+Yet it can be argued that Scheme is a more powerful language
+- All of the features of Common Lisp can be implemented straightforwardly as
+  libraries in Scheme
+- Some powerful features of Scheme cannot be easily implemented in Common Lisp
+      - Tail Call Optimization
+      - Continuations
+      - Hygienic Macros
+
+Nevertheless, Common Lisp has some important pragmatic advantages which we'll
+mention below.Nevertheless, Common Lisp has some important pragmatic advantages
+which we'll mention below.Nevertheless, Common Lisp has some important pragmatic
+advantages which we'll mention below.Nevertheless, Common Lisp has some
+important pragmatic advantages which we'll mention below.Nevertheless, Common
+Lisp has some important pragmatic advantages which we'll mention
+below.Nevertheless, Common Lisp has some important pragmatic advantages which
+we'll mention below.Nevertheless, Common Lisp has some important pragmatic
+advantages which we'll mention below.Nevertheless, Common Lisp has some
+important pragmatic advantages which we'll mention below.Nevertheless, Common
+Lisp has some important pragmatic advantages which we'll mention below.
+
+*** Refining the Design
+
+#+begin_quote
+Programming languages should be designed not by piling feature on top of
+feature, but by removing the weaknesses and restrictions that make additional
+features appear necessary. Scheme demonstrates that a very small number of rules
+for forming expressions, with no restrictions on how they are composed, suﬃce to
+form a practical and eﬃcient programming language that is ﬂexible enough to
+support most of the major programming paradigms in use today
+#+end_quote
+from the introduction to R5RS, the Fifth Revised Scheme Standard
+
+Perhaps the greatest advantage of Common Lisp over Scheme is that it is a more
+complete /Standard/: When programmers implement features similar to those of
+Common Lisp, they do so in different incompatible ways, reducing the ability to
+exchange and combine code among programmers and groups.
+
+Neither Scheme nor Common Lisp have held still.
+
+Scheme has undergone the most evolution, from the original Scheme Standard to
+the 7th Revised Standard totaling 8 major versions of the language. The major
+thrust has not been to add the features to directly meet all the vital needs of
+programmers, but rather to add the features required to write good libraries
+which can attempt to meet all the needs imagined by all of the programmers.
+
+*** Libraries and Modules
+
+Lisp code can be stored in many formats
+- A text format (usually a Unicode encoding these day)
+- Lisp symbolic expressions which can be efficiently
+      - Converted to text for viewing by humans
+      - Edited / refactored / transformed
+- A binary object code format which is efficient to interpret (execute)
+      - Either by a software /Interpreter Program/
+      - or by a hardware processing unit (CPU, GPU, etc.)
+
+Once upon a time, the code of a Lisp system would live in a /memory images/. The
+parts being edited by programmers would be in the form of Lisp Symbolic
+Expressions. The parts which were considered finished (at least for now) would
+be translated (by a compiler program) into object code. Code in either form
+could be executed. Procedures in either form could reference symbols and values
+(including other procedures) in either form. The only differences were that the
+Symbolic Expressions were usually easier to print and/or edit and the object
+code would run faster when executed.
+
+
+chunks of symbolic expressions  form or as chunks of binary object code or (most
+commonly) as combination of both (code still being worked on would be in the
+form of symbolic expressions and code thought be be finished (at least for now)
+would be translated from symbolic-ecpression form to binary object format.
+Developers would use a debugger or code browser to edit (refactor, transform or
+add to) or evaluate (run or execute) the code in these memory images as desired.
+These memory images could be saved by writing them to a binary file and then
+restored by reading them back into memory.
+
+An alternative to using /memory images/ was to store lisp /source code/ as text.
+Programmers would edit those text files using the same text editors used to edit
+any other data in text form. When the programmer felt that the program was
+complete and free of bugs the programmer would use a compiler program to
+translate the text files to a binary object file.
+
+(nowadays using a Unicode format) and process that tec Modern Lisps work by
+compiling /source code/ residing in files encoded as text (usually a unicode
+encoding these days) into a lower level (non-text or binary) /object code/ which
+is more efficient to interpret by either a software interpreter or the machine
+code interpreter built into a hardware processing unit.
+
+It is possible, but awkward to bring together all of the source code for an
+entire program or system to be compiled as one job.
+
+Most modern development environments allow the code for a system to be
+partitioned into smaller chunks of code called /modules/ and /libraries/ which
+can be compiled separately. Modules consist of code which will be incorporated
+into a program or system in its entirety. Libraries consist of code which will
+be incorporated into a system if referenced by that system but not defined. Any
+additional code in libraries will be ignored.
+
+
+
+Scheme also has the [[https://srfi.schemers.org][SRFI System: Scheme Requests for Implementation]]
+- a community curated system for
+      - proposing, discussing and implementing new language and library features.
+- helping avoid unnecessary divergence of features across Scheme Implementations
+
+*** Major Departures
+
+For both the good and bad aspects of diversity
+- Scheme Implementations tend to provide more than the standard and the SRFIs
+  specify
+- Generally in a manner that allows programmers to stick to the Standard, i.e.
+  preserving /backwards compatibilty/ with the language
+- Alas, programmers have a tendency to use convenient or interesting
+  non-standard features, making their code
+      - harder for others to use
+      - harder to combine with the code written by others
+
+The most radical ex
+Some implementations of Scheme have grown well beyond even the latest Scheme
+
+[[https://racket-lang.org][Racket]] began as an implementation of Scheme and proceeded to add useful
+libraries and important features for larger scale practical programming.
+
+Libraries are great to adding features in a controlled manner. What libraries
+/cannot do/ is change or remove existing features. The desire to do such is a
+major force driving the creation of new incompatible languages. Like all modern
+implementations of Scheme, Rackets provides a module system to allow large
+programs to be constructed as a collection of modules: smaller pieces of code
+which help isolate complexity in large systems.
+
+Racket offers a radical option:
+- The ability to create new languages which diverge a little or a lot from the
+  syntax and semantics of Scheme.
+- And the ability to write different modules of a single system in these
+  different languages!
+
+
+** Efficiency and Micro-Efficiency
+
+The Efficiency of a programming language is the performance which you can expect
+from reasonably short, simple and clear programs written in that language with
+well-known techniques and a natural style for that language. Efficiency, btw,
+can include raw speed as well as resource consumption: memory, energy, I/O
+bandwidth, etc.
+
+The Micro-Efficiency of a language is a measure of the efficiency of code in
+that language when designed and hand-optimized by sophisticated programmers and
+translated by optimizing compilers with the best optimization options. This is
+often what you'll get when reading competitive benchmarks. It is /not/ the
+efficiency you should expect to get in regular practice!
+
+The performance you'll get from a program written in a particular language in
+practice has /a lot/ to do with the nature of the task and how programmers
+happen to design and code that program rather than the language.
+
+Lisp Family languages provide features which allow clear, concise high-level
+programs to run faster and more efficiently than is commonly observed in
+programs written in most other languages. For example, Scheme-family languages
+guarantee [[https://en.wikipedia.org/wiki/Tail_call][Tail Call]] optimization which makes functional-style code especially
+fast. In less capable languages programmers often have to work much harder to
+get good performance.
+
+With those caveats in mind, here are some
+- [[https://ecraven.github.io/r7rs-benchmarks][Scheme family micro-benchmarks]]
+- [[https://benchmarksgame-team.pages.debian.net/benchmarksgame/fastest/lisp.html][SBCL vs. Java]]
+- [[https://benchmarksgame-team.pages.debian.net/benchmarksgame/fastest/sbcl-racket.html][SBCL vs. Racket]]
+
+In practice, the faster Lisps, e.g. Racket, Chez and SBCL should be efficient
+enough for almost all purposes. You can (with care) write Clojure code which is
+as efficient as Java code and ClojureScript should be at least as efficient as
+JavaScript. Watch out, though, for toy implementations of Lisps with poor
+performance!
+
+A great many language implementations are inherently slow because they do not
+have an optimizing compiler able to translate them to efficient machine code. As
+a notorious example, the most popular implementation of [[https://benchmarksgame-team.pages.debian.net/benchmarksgame/fastest/python3-java.html][Python]] is so slow that
+it is mostly used as a shell to call library code written in C. This works well
+until you try to implement your own alternative ideas in pure Python and you get
+punished with a slowdown of more than a factor of 50!

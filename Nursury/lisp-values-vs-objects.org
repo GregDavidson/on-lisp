@@ -1,0 +1,190 @@
+* Values vs Objects, a Lisp Perspective
+
+One of the fundamental distinctions in Computing is
+- the distinction between a /Value/ and an /Object/
+- applying to computing in general, in any language
+- informed by the perspective of Lisp Family languages
+
+Several links and examples here are from the [[https://racket-lang.org][Racket Language]]
+- Racket is in the Scheme sub-family of Lisps.
+
+Essential prerequisite: [[https://github.com/GregDavidson/on-computing/blob/main/Writings/2024/values-vs-objects.org][What are Values and Objects]]
+
+Recommended prerequisites:
+- [[https://gregdavidson.github.io/on-computing/what-computers-are][What Computers Are?]]
+- [[https://github.com/GregDavidson/on-computing/blob/main/composites.org][Composite Data Structures]]
+
+** No Location, No Mutability
+
+The idea of a /Pure Value/, long understood in Mathematics, took a long time to
+be well understood in Lisp and other early computer languages.
+
+Something which would fit into a Single World of memory, e.g.
+- numbers small enough to fit in a word
+      - used for most arithmetic
+- pointers, i.e. memory addresses
+      - often thought of as a kind of number
+      - typically the locations of or for other objects
+
+Values which would fit into a single computer world
+- can be stored in /registers/ (super-fast memory)
+      - registers lack addresses in most computer architectures
+- can be cheaply copied (moved around) as convenient
+      - so no permanent address exists
+
+Lacking the idea of a /location/ where a value is stored,
+the idea of mutating such a value makes little sense.
+
+In the examples
+
+#+begin_src fortran
+x = 123 + 321
+c x contains 444
+x = x + 1
+c x contains 445
+#+end_src
+
+#+begin_src lisp
+(setq x (+ 123 321)) ; x is bound to 444
+(setq x (+ x 1))     ; x is bound to 445
+#+end_src
+
+The /variable/ ~x~ represents a location in memory
+- with a stable address
+- containing some bits representing a value
+- easily overwritten with a new value
+
+The values ~123~ and ~321~ and ~1~ are /literals/
+- without a known address in most computer languages
+- appearing /literally/ as part of the code of the program being run
+- not expected to change
+
+In at least one early FORTRAN system it was possible for a programmer to change
+literal values in the source code!
+- this caused horrible bugs!
+- this was later prohibited!
+
+So the early idea of a /pure value/ in computing was simply
+- Data with no location, or at least none known to the programmer
+- Data that cannot be modified (mutated)
+
+** Mathematics is Different!
+
+In Mathematics, the statement
+- ~x = x + 1~
+has the value /false/!
+- ~x~ can't possibly equal ~x + 1~ can it?  No!
+
+In Mathematics, a /variable/, e.g. ~x~, refers to a specific (possibly unknown)
+value.
+
+So why are they called /variables/?  Well, consider a formula defining a geometric figure, e.g.
+- ~x squared + y squared = r squared~
+which represents a circle with radius ~r~
+- early mathematicians imagined ~x~ and ~y~ /varying/ along the figure
+- modern mathematicians consider this to represent a /set of points/
+      - each point has a value named - ~x~ and a value named ~y~
+      - each point is distinct and nothing /varies/
+
+Throughout modern mathematics, talking about things /varying/ is just a poetic
+way of talking about relationships and sets. Nothing actually /varies/ and
+variables are not /mutated/.
+
+Most early Computer Scientists were familiar with modern mathematics but they
+didn't see a problem reinterpreting mathematical notation, i.e. by having the
+expression
+- ~x = x + 1~
+represent updating a memory location. This led to symbols, such as ~x~, having
+different values at different times despite being considered /the same
+variable/.
+
+Over time, Computer Scientists have come to believe that this was a mistake and
+that Computing notation should be consistent with modern Mathematics. Because
+this new understanding (among many others) is taking a long time to propagate,
+most computer languages today, especially the ones most known and most popular,
+allow mutation of variables.
+
+** Lisp Was Different!
+
+A Lisp program consists of a sequence of Symbolic Expressions.
+
+A Symbolic Expression is either
+- A literal value
+- A symbol which might be bound to a value
+- A List of Symbolic Expressions
+
+An crucially
+- Symbolic Expressions are themselves possible values!
+
+So any Symbolic Expression can be
+- Created by a Lisp Program
+- Modified by a Lisp Program
+and then if it's meaningful as code
+- Evaluated, aka run or executed
+      - to do things (called /side effects/)
+      - to produce new value(s)
+
+This traditional lisp program
+
+#+begin_src lisp
+  (setq a-list '(setq x 10))
+  (printf "a-list is ~a\n"  a-list1)
+  (setcar (cdr (cdr a-list)) 20)
+  (printf "a-list is ~a\n"  a-list1)
+  (print a-list)
+  (eval a-list)
+  (printf "x is ~a\n" a-list1)
+#+end_src
+
+will produce output like this
+
+#+begin_example
+a-list is (setq x 10)
+a-list is (setq x 20)
+x is 20
+#+end_example
+
+Lists
+
+See [[file:lisp-mutation.org][Mutation of Lists in Lisp]] for a complete explanation.
+
+What's going on here? Three functions are involved
+- ~cons~ :: constructs a list from a head and a tail, placing them into a pair
+  of words called a /pair/ or /cons-cell/. If the values are bigger than a
+  machine word, pointers will be stored.
+- head :: the fist value of a list
+- tail :: the (possibly empty) rest of a list (after the first value)
+- ~car~ :: extracts the /head/ from a /cons-cell/.
+- ~car~ :: extracts the /tail/ from a /cons-cell/.
+Examples
+- ~(cons '1 '(2 3))~ evaluates to ~(1 2 3)~
+- ~(car (1 2 3)~ evaluates to ~1~
+- ~(cdr '(1 2 3)~ evaluates to ~(2 3)~
+- ~(cdr '(1)~ evaluates to the empty list
+
+The functions
+- ~read~ :: reads symbolic expressions into memory
+- ~list~ :: turns its arguments into a list
+do so by calling ~cons~.  Thus these expressions are equivalent
+- '(+ 123 321)
+- ~(list + 123 321)~
+- ~(cons + (cons (123 (cons 321 '()))))~
+
+Traditionally the two values in the car and cdr parts of the cons-cell are
+mutable, and the functions allowing that mutation are
+- ~setcar~ :: replace the ~car~ of a ~cons-cell~ with a new value
+- ~setcdr~ :: replace the ~cdr~ of a ~cons-cell~ with a new value
+
+The previous example is now considered horrible style and modern Lisp
+Programmers won't write code like this, even if their /Lisp System/ allows it.
+Some modern Lisps, e.g. /Racket/, prohibit changing parts of a cons-cell and do
+not provide ~setcar~ or ~setcdr~.
+
+Modern Lisp programmers would never change parts of a Symbolic Expression
+representing /Lisp Code/. Nevertheless, the fact that /Lisp Code/ is also /Lisp
+Data/ means that the meaning of such an operation is completely clear.
+
+Why is this bad? Over time, programmers have learned that bugs (errors) tend to
+occur much more often in programs which mutate (modify) data compared to
+programs which simply create new data structures out of existing data. It's also
+generally easier to develop, explain and test code which eschews mutation.

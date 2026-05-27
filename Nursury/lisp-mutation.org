@@ -1,0 +1,115 @@
+* Mutation of Data Structures in Lisp
+
+** Mutation of Lists in Lisp
+
+*** Traditional Lisp List Mutation
+
+This traditional lisp program
+
+#+begin_src lisp
+  (setq a-list '(setq x 10))
+  (printf "a-list is ~a\n"  a-list1)
+  (setcar (cdr (cdr a-list)) 20)
+  (printf "a-list is ~a\n"  a-list1)
+  (print a-list)
+  (eval a-list)
+  (printf "x is ~a\n" a-list1)
+#+end_src
+
+will produce output like this
+
+#+begin_example
+a-list is (setq x 10)
+a-list is (setq x 20)
+x is 20
+#+end_example
+
+*** How Does This Work?
+
+What's going on here? Three functions are involved
+- ~cons~ :: constructs a list from a head and a tail, placing them into a pair
+  of words called a /pair/ or /cons-cell/. If the values are bigger than a
+  machine word, pointers will be stored.
+- ~car~ :: extracts the /head/ from a /cons-cell/.
+- ~car~ :: extracts the /tail/ from a /cons-cell/.
+where
+- head :: the fist element of a list
+- tail :: the (possibly empty) rest of a list (following the first element)
+
+Examples
+- ~(cons '1 '(2 3))~ evaluates to ~(1 2 3)~
+- ~(car (1 2 3)~ evaluates to ~1~
+- ~(cdr '(1 2 3)~ evaluates to ~(2 3)~
+- ~(cdr '(1)~ evaluates to the empty list
+
+The functions
+- ~read~ :: reads symbolic expressions into memory
+- ~list~ :: turns its arguments into a list
+do so by calling ~cons~.  Thus these expressions are equivalent
+- ~'(+ 123 321)~
+- ~(list + 123 321)~
+- ~(cons + (cons (123 (cons 321 '()))))~
+
+Traditionally /cons-cells/ are /mutable/ via the two functions
+- ~setcar~ :: replaces the ~car~ of a ~cons-cell~ with a new value
+- ~setcdr~ :: replaces the ~cdr~ of a ~cons-cell~ with a new value
+
+
+** Avoid Mutation in Lisp
+
+*** Mutation of Lists is Especially Harmful
+
+The previous example is now considered horrible style and modern Lisp
+Programmers won't write code like this, even if their /Lisp System/ allows it.
+Some modern Lisps, e.g. /Racket/, prohibit changing parts of a /cons-cell/ and
+do not provide ~setcar~ or ~setcdr~.
+
+Modern Lisp programmers would never change parts of a Symbolic Expression
+representing /Lisp Code/. Nevertheless, the fact that /Lisp Code/ is also /Lisp
+Data/ means that the meaning of such an operation is completely clear.
+
+Why is this bad? Over time, programmers have learned that bugs (errors) tend to
+occur much more often in programs which mutate (modify) data compared to
+programs which simply create new data structures out of existing data. It's also
+generally easier to develop, explain and test code which eschews mutation.
+
+Mutating Lists is particularly problematic because lists often share sublists,
+as in this example
+
+#+begin_src lisp
+  (setq primary-colors '(red green blue))
+  (setq stylus-colors (cons 'black primary-colors))
+  (setcar primary-colors 'magenta)
+  (print stylus-colors) ; (black magenta green blue)
+#+end_src
+
+*** Avoid Rebinding Symbols
+
+Also avoid rebinding symbols even though it's less of a problem, i.e.
+- prefer ~defconstant~ over ~setq~ in /Common Lisp/ 
+- prefer ~define~ over ~set!~ in /Scheme/ or /Racket/ 
+
+#+begin_src racket
+  (define primary-colors '(red green blue))
+  (define new-stylus-colors (cons 'black primary-colors))
+  (define primary-colors (cons 'magenta (cdr primary-colors))
+  (display primary-colors) ; (magenta green blue)
+  (display stylus-colors)  ; (black red green blue)
+#+end_src
+
+** What To Do Instead
+
+When lists are intended as data rather than as part of a program:
+- Create new lists rather than mutating parts of existing lists
+
+Check out handy functions such as
+- map, filter, foldl, foldr, etc.
+which might have different names in your Lisp.
+
+In metaprogramming (creating functions which create functions) use lambda
+
+#+begin_src racket
+  #lang racket
+  (define (metaprogram meta-args ...)
+    (lambda (args...) (code which uses meta-args))
+#+end_src

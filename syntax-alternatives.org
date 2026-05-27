@@ -1,0 +1,57 @@
+* Syntax Alternatives
+
+It is a myth that Lisp Family Languages
+- have to use Polish Notation
+- require more parentheses than algebraic languages
+
+** Comparing Syntaxes
+
+*** Lisp S-Exp Notation
+
+*** Functional Notation
+
+foo(x, bar(y, z))
+
+*** Algebraic Notation with Precedences
+
+**** C++
+
+A large but fixed collection of operator symbols use prefix, postfix and infix
+notation along with parentheses as needed. Anyone reading C++ must needs to have
+the 17 levels of precedence well-memorized. Anyone writing C++ without using
+unnecessary parentheses also needs to have the 17 levels of precedence
+well-memorized.
+
+https://en.cppreference.com/w/cpp/language/operator_precedence
+
+**** Prolog allows a mutable syntax
+
+**** Haskell allows multiple syntactic options
+
+
+
+All other operators use Functional Notation
+
+*** Algebraic Notation without Preceddence
+
+J and BCQ examples
+
+*** Polish Notation
+
+[[https://en.wikipedia.org/wiki/Polish_notation][Polish Notation]] was invented by Jan Łukasiewicz in 1924 but he assumed a known arity for operations allowing
+the writer to eliminate most parenthese
+
+*** Reverse Polish Notation
+
+
+*** Wisp Notation
+
+[[https://www.gnu.org/software/guile/manual/html_node/SRFI_002d119.html#index-wisp][WIsp Notation in Guile]]
+
+[[https://srfi.schemers.org/srfi-119/srfi-119.html][Wisp Notation SRFI]]
+
+*** Maxima Algebraic Notation
+
+*** Sweet Expressions
+
+[[https://srfi.schemers.org/srfi-110/srfi-110.html][Sweet Expression SRFI]]
