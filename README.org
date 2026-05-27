@@ -1,6 +1,29 @@
 * On Lisp
 
+#+begin_quote
+LISP has jokingly been described as "the most intelligent way to
+misuse a computer." I think that description is a great compliment
+because it transmits the full flavour of liberation: it has assisted a
+number of our most gifted fellow humans in thinking previously
+impossible thoughts.
+
+— Edsger Dijkstra 
+#+end_quote
+
+#+begin_quote
+LISP is worth learning for a different reason -- the profound
+enlightenment experience you will have when you finally get it. That
+experience will make you a better programmer for the rest of your
+days, even if you never actually use LISP itself a lot.
+
+— Eric S. Raymond, "How to Become a Hacker"
+#+end_quote
+
 ** Aspects of Lisp
+
+Lisp is not a language!  Lisp is a large family of languages which
+share some superficial characteristics and which differ radically in
+vision, design and semantics.
 
 I've had a long-term love affair with Lisp:
 - Expressing myself in diverse and brilliant Lisp languages and dialects
@@ -96,3 +119,17 @@ structures of any competing languages, including powerful features which were
 rare or non-existent among other languages of the time. Since then, many popular
 languages have added features in imitation of Scheme, but without the same
 elegance. Those papers are still an excellent read!
+
+** Criticism of Lisp Family Languages
+
+Many of the most powerful programming techniques were first discovered
+by Lisp programmers and many of the most powerful programming language
+feature first appeared in various dialects of lisp.
+
+At the same time, many of the most popular current Lisps
+- lack some of the best features of other Lisps
+- lack great features now present in other languages
+
+Please see our related articles
+- [[file:Play/Next-Lisps/lisp-design.org][Lisp Design Issues]]
+- Designing a [[file:Play/Next-Lisps/simpler-better-lisp.org][Simpler, Better Lisp]]
