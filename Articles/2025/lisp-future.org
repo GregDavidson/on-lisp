@@ -1,4 +1,6 @@
-* Some Possible Futures for Lisp
+* Lisp Futures
+
+Context below : 
 
 ** First Things First
 
@@ -872,4 +874,8 @@ generic arithmetic.
 **** 
 - Clojure provides and recommends convenient high-level functions to use instead of low-level composite functions.
 
+** Notes
 
+*** OrgMode
+
+Why this document is a textfile with [[https://github.com/GregDavidson/loel/blob/main/Devel/why-orgmode.org][OrgMode Formatting!]]
