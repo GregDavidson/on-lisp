@@ -1,0 +1,181 @@
+
+* A Simpler, Better Lisp
+
+** Inspiration and Caution
+
+#+begin_quote
+What's in your hands, I think and hope, is in-telligence: the ability
+to see the machine as more than when you were first led up to it, that
+you can make it more."
+
+—Alan Perlis
+#+end_quote
+
+One of the best things about the Lisp Family of Languages is how easy
+it is to create a new dialect of Lisp which meets your personal ideal
+of a programming language.
+
+One of the worst things about the Lisp Family of Languages is how many
+different and slightly (or majorly) incompatible dialects of Lisp
+there are.  This is bad because it interferes with being able to share
+good code with fellow programmers using a different dialect!
+
+- [[https://xkcd.com/927/][XKCD on Standards]]
+
+It's always educational to create a new Lisp for private
+enlightenment.  Releasing such a creation to the public and advocating
+its use should not be done casually!
+
+** Removing Unnecessary Restrictions
+
+#+begin_quote
+Programming languages should be designed not by piling feature on top
+of feature, but by removing the weaknesses and restrictions that make
+additional features appear necessary.
+
+-- [[https://conservatory.scheme.org/schemers/Documents/Standards/R5RS/HTML/][Introduction to the 5th Edition of Scheme]]
+#+end_quote
+
+One of the greatest revolutions in Lisp was the development of Scheme, a new Lisp which was
+- More powerful than any previous Lisp
+- Simpler than any major previous Lisp
+
+Scheme was designed in 1971!
+- It's had huge influence in later Lisps, yet
+  - Most later Lisps are less powerful than Scheme!
+  - Most later Lisps are more complex than the original Scheme
+    - Including later "editions" of Scheme!
+
+We've learned a lot since 1971!
+- Some of this learning has become new Programming Language Features
+- Making Programming Languages more complicated
+
+Much of what we've learned since 1971 (and even before)
+- Has NOT been added to the major popular Lisps!
+- This presents a huge opportunity!
+
+It would be worth creating a new Lisp if
+- It is no more complex than existing popular Lisps
+  - Especially the latest edition of Scheme
+- Has great support for the missing advances pioneered by
+  - Other Lisps
+  - Other radical Languages
+  - and some bits of theory!
+
+** A Modern No-Compromise Lisp
+
+Desirable features for a truly clean modern Lisp
+
+- Maximum support for Declarative over Procedural Code!
+- Multiple Notations
+  - can be thought of as an orthodox Homoiconic Reprsentation
+  - but normally represented as intermediate tree-form.
+  - browser shows relevant aspects in desired form
+- Rich High-Level Manifest Lexical Contracts
+    - Types & Constraints
+- An extensible Numeric Type system
+    - With Compile-Time Dimensions and Units
+
+** A Modern High-Level Type System
+    
+- Sum, Product and Enumeration Types
+
+** Modern High-Level Constraints
+
+** First-Class Environments
+
+** Immutable or Monotonically Mutable or Versioned Mutable
+
+** Tail Calls Modulo Constructors
+
+** Functional Text
+
+Text is data representing information in one or more human languages.
+
+Unicode is not the solution to these problems; indeed, it's part of the problem!
+
+How might we deal with  [[Lisp represent Text][Text in Lisp]]
+
+** Original List
+
+Lets move these things into their own sections with expansions!
+
+- An extensible Numeric Type system
+      - With Compile-Time Dimensions and Units
+      - With runtime Error Propagation Tracking
+- Purely declarative code
+      - Manifest or inferred Abstract Types
+      - Functional and Monotonic Semantics
+      - General efficient pattern matching for code and data
+      - Principle of Least Power providing choice of computation models
+            - Regular, Functional, Relational Programming
+            - Datalog, Logic and Declarative Constraint Programming
+            - Staged Metaprogramming
+- Provably safe non-intrusive optimizations and specializations
+      - Programs specified abstractly
+            - Operations on Streams and Collections
+            - Parentheses in Symbolic Expressions would not imply Linked Lists
+      - Concrete Implementations Inferred or Recommended
+            - Reasonable initial automatic inferences
+            - Updated automatically based on profiling
+            - Human suggestions checked and applied where safe and useful
+            - like how indexes and query planning work in relational databases
+- Syntactically distinct special forms (reserved forms and macro forms)
+      - Either a naming convention for the symbol beginning the form
+      - or perhaps special braces for the form
+- Macros able to expand conditionally based on argument types
+- Great programming tools
+      - Store code in Relational Database
+      - Browse code with unwanted details suppressed
+      - Provably correct refactoring
+      - Logical debugging
+- And all of this through elegant generality rather than complexity! 
+
+** Notes
+
+*** Analogy with Go vs. Chess
+
+The board game [[https://en.wikipedia.org/wiki/Go_(game)][Go]] has a much simpler design than [[https://en.wikipedia.org/wiki/Chess][Chess]].
+- Yet people familiar with both consider that Go is a deeper game than
+  Chess.
+- And it took much longer before AI systems could play Go well!
+
+*** Inbox
+
+**** Indexes on collections
+
+Racket/rebellion provides the right pieces, but they're 
+
+Lots of collections can be viewed as representing maps (functions & relations).
+- Validate all of them!
+- Allow wrapping them in a high-level interface
+- Allow indexes to be added to provide efficiency
+
+** R7RS TO Know About
+
+*** Keywords
+
+All major Schemes have keywords and [[https://docs.scheme.org/surveys/keyword-syntax/][Scheme Keyworld Syntax Differs]]!
+
+R7RS supports both foo: and :foo and treats them as distinct (in the sense of eqv?).
+
+*** C*R
+
+Uses the (scheme cxr) library to support 24 car/cdr combinations.
+- Alternative: Let symbol macros be triggerable with patterns!
+
+*** environment and eval
+
+(scheme eval) provides
+- (environment import-set-list...)
+   ;; returns an environment-specifier for an immutable environment
+- (eval expr-or-def enrivonment-specifier)
+
+** S-Exp vs. printed representations of them!
+
+- Lisps can talk about the character-level syntax of s-exprs.
+- I prefer to talk about them as objects in images
+  - and separately about how some of them can be printed and parased
+    by write and read!
+  - which is secondary and optional!
+

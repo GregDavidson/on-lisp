@@ -1,0 +1,6 @@
+* My Ideal Lisp-Inspired Language
+
+Why not create it as a Racket language?
+
+https://beautifulracket.com/
+

@@ -1,0 +1,131 @@
+* Evolving and Rebooting Lisp
+
+This document assumes that the reader is
+- fairly familiar with the design space of
+      - computer programming languages in the Lisp family
+      - especially [[https://en.wikipedia.org/wiki/Scheme_(programming_language)][Scheme]] and the [[https://en.wikisource.org/wiki/Lambda_Papers][Lambda Papers]]
+      - See [[file:lisp-design.org][lisp-design.org]]
+- somewhat familiar with the design space of
+      - high-level computer programming languages
+      - https://en.wikipedia.org/wiki/ALGOL
+            - the simple [[https://en.wikipedia.org/wiki/ALGOL_60][ALGOL 60]] with its
+                  - sophisticated descendant [[https://en.wikipedia.org/wiki/ALGOL_68][ALGOL 68]]
+                  - object-oriented descendant [[https://en.wikipedia.org/wiki/Simula][Simula]]
+                        - the inspiration for C++, Java, etc.
+                  - modest descendant [[https://en.wikipedia.org/wiki/Pascal_(programming_language)][Pascal]]
+      - typed functional programming languages
+            - Especially [[https://www.haskell.org][Haskell]]
+      - See
+            - [[file:comp-lang-design-notes.org][comp-lang-design-notes.org]]
+            - [[file:comp-lang-design.org][comp-lang-design.org]]
+
+** A Modern No-Compromise Lisp
+
+Goals
+- Code easy to statically verify
+      - What it does
+      - Correctness vis-a-vis specifications
+      - By programmer inspection and/or proof checkers
+      - Rule Of Least Power sub-languages
+      - Code explicitly declarative
+            - Pragmas might suggest/direct implementation specifics
+- Simplicity through generalization
+- Compatible with all powerful modern programming paradigms
+      - Especially the [[https://en.wikipedia.org/wiki/Declarative_programming][Declarative Programming Paradigms]]
+- Built-in support for
+      - Concurrency
+      - Persistence
+      - Distributed Computing
+- Compatible with code living in
+      - Virtual Image a la Smalltalk (and some early Lisps)
+      - Object-Relational Databases
+      - Network of such (distributed)
+
+- State of the art /Static Typing/ and /Contracts/
+      - Algebraic Data Types
+            - No =NIL= or =NULL= needed for structures!
+            - /TBD/ pseudo-value means no-value yet
+            - Sets of Enumerators instead of symbols!
+      - Opaque Types
+      - Roles (and Interfaces?) with Inheritance
+      - Full language available at Compile-Time
+            - Instead of using type-system for computation
+            - Infinite tower?
+
+- Everything immutable by default
+      - Collections can be marked /monotonic/
+            - Adding new elements allowed
+            - Filling in a /TBD/ allowed /once/
+      - Single ownership where possible concurrency
+- Arbitrary-sized nestable contiguous data objects
+      - Sub-objects, ranges, embedded references
+      - Cons-Cells not special and rarely needed
+      - Constructors, Selectors, Mapping Functions abstract
+      - Pragmas can advise or require specific implementations
+      - Symbolic-Expressions are therefore abstract
+            - Sequences can be vectors or compact records
+            - Whole S-Expr could be one memory object
+
+First-Class Modules and Numerics
+- See [[https://en.wikipedia.org/wiki/ML_(programming_language)][ML]] and [[https://en.wikipedia.org/wiki/Category:ML_programming_language_family][family]]
+- Numerics
+      - Numeric lattice specified by current numeric module
+      - Compile-Time Dimensions and Units
+
+Macros and Compile Time Processing
+- Smart Manifest Macros
+      - Operate on Syntax Objects which provide
+            - Type and other manifest properties of arguments
+            - Continuation (result destination) properties
+      - Convenient Pattern Matching syntax
+            - Macros visually distinguishable from functions
+            - Special Character as pseudo-operator or as identifier affix
+
+Fully Specified Semantics
+- As is Scheme but few other languages
+- Suitable for use by theorem proovers, e.g. Coq, Lean
+
+Rule of Least Power Support
+      - Less Powerful non-Turing Complete Sub-Languages available
+      - Regular Expressions
+      - Recursive structure parsers
+      - Relational algebra system for Data Management
+      - Datalog available
+
+Constraint-Logic and Metaprogramming Features
+            - Environments and bindings support Constraint-Logic programming
+            - E.g. implementing Sutherland's Sketchpad straightforward
+      - First-Class Environments
+            - Generalization and encapsulation of /dynamic binding/
+            - Can smuggle module-specific values for, e.g. /visitor pattern/
+
+A truly clean modern Lisp would have
+
+- Sum, Product and Enumeration Types
+- An extensible Numeric Type system
+      - Manifest or inferred Abstract Types
+      - Functional and Monotonic Semantics
+      - General efficient pattern matching for code and data
+      - Principle of Least Power providing choice of computation models
+            - Regular, Functional, Relational Programming
+            - Datalog, Logic and Declarative Constraint Programming
+            - Staged Metaprogramming
+- Provably safe non-intrusive optimizations and specializations
+      - Programs specified abstractly
+            - Operations on Streams and Collections
+            - Parentheses in Symbolic Expressions would not imply Linked Lists
+      - Concrete Implementations Inferred or Recommended
+            - Reasonable initial automatic inferences
+            - Updated automatically based on profiling
+            - Human suggestions checked and applied where safe and useful
+            - like how indexes and query planning work in relational databases
+- Syntactically distinct special forms (reserved forms and macro forms)
+      - Either a naming convention for the symbol beginning the form
+      - or perhaps special braces for the form
+- Macros able to expand conditionally based on argument types
+- Great programming tools
+      - Store code in Relational Database
+      - Browse code with unwanted details suppressed
+      - Provably correct refactoring
+      - Logical debugging
+- And all of this through elegant generality rather than complexity!

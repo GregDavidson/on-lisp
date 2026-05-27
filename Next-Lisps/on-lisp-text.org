@@ -1,0 +1,129 @@
+
+* Dealing with Text in Lisp
+
+Some background to read first: [[https://github.com/GregDavidson/on-computing/blob/main/on-computing-text.org][On Computing Text]]
+
+Some background: [[https://github.com/GregDavidson/on-computing/blob/main/on-computing-text.org][On Computing Text]]
+
+** Text as Blobs vs. Text as Structured Data
+
+Because of Accessibility and Internationalization concerns, programs and programmers have no business knowing what text a user of a program might be shown.
+
+Most programs need to do only two things with text
+1. Output the right piece of text in a given situation
+2. Format data by inserting it into specific fields of a text
+   templates with the right slots and the right content for this user.
+
+This is Text as Blobs! There's no need for the code to look inside any of the pieces of Text.  Even with format strings, the program only needs to deal with filling the slots, there's no need to notice the actual text.
+
+Ideally Lisp would make both of these things easy without leaking the details of what text is being shown or how that text is represented in terms of bytes in the computer's memory or storage.
+
+Note: Unicode is not the solution to these problems; indeed, it's part of the problem!
+
+If Lisp provides proper abstractions in this area, the details of what
+text to display to which user can be handled by
+1. the person who packages the program.
+2. extendable or overridable by the computer's administrator.
+3. extendable or overridable by the end user.
+
+However that is done or not done should have no impact on the
+programmer!
+
+A minimal goal: Creating reasonable Lisp wrappers for gettext.
+Here's an example: [[https://docs.racket-lang.org/gettext/][Racket Library gettext]]
+
+A bigger goal: What might make managing Text As Blobs superb in Lisp?
+
+- What tooling 
+
+*** Text As Blobs Ideas
+
+**** Internationalization
+
+A common way to do Internationalization is to
+1. Pick a default language which the developers are comfortable with.
+   - Let's imagine it's General-North-American English, i.e. EN:US
+2. For each place in the program where some text is required
+   - Provide either a Put any short text strings in that language wrapped in a handy function.
+
+**** Formatted Text
+
+When Internationalization is not a concern, 
+
+Strings (and other data structures) with slots that can be filled with
+values are generally treated as data, as the same datatype
+
+Let's start with a typical Lisp form
+- (format "~a: sum=~a, difference=~a\n" this x (+ foo bar) (- foo bar))
+
+The first argument in a (format) form is a "format string" which
+serves as a template to create a new string.  Special embedded "format
+codes" such as "~a" serve as "slots" to be filled by the rest of the
+(format) arguments.
+
+First, let's change the "format code" notation a bit to allow room for
+additional optional information"
+- (format "{}: sum={}, difference={}\n" this x (+ foo bar) (- foo bar))
+
+Either way, the "string in double quotes with fillable slots" is still
+just some data of type string.  The fillable slots don't change the
+type.
+
+But we could create a function, as follows:
+- (λ (x y z) (format "{}: sum={}, difference={}\n") x y z)
+
+And in a lisp with type contracts, we could write:
+- (λ ([x symbol?] [y numeric?] [z numeric])
+    (format "{}: sum={}, difference={}\n") x y z)
+
+This is fine, but
+- it's verbose
+- it's inefficient inflexible (it has to scan a string to find the slots)
+- it's inflexible (it only works with strings)
+- it requires unneeded elements, e.g. useless names for the slots
+
+Suppose that we treat
+- "{:symbol?}: sum={:numeric?}, difference={:numeric?}\n"
+as shorthand for something like
+- (λ ([x symbol?] [y numeric?] [z numeric])
+    (λ ([out text-sink])
+      (fprintf out "~a: sum=~a, difference=~a\n" x y z) ) )
+
+Which would mean that
+- "{:symbol}: sum={:numeric}, difference={:numeric}\n"
+  - creates a function which given three arguments of suitable types
+  - returns a new function
+- ("{:symbol}: sum={:numeric}, difference={:numeric}\n"
+    name (+ a b) (- a b) )
+  - creates a functoin 
+  - is a function which will print some text on a text output channel
+  - which could be
+    - a string buffer
+    - an output stream
+    - etc.
+
+  - creates a function which can print 
+    
+        this x (+ foo bar) (- foo bar))      (
+      (compose (display x out)
+               (display ": ")
+               (display ": sum=" out)
+	       (display y out)
+               (display ": difference=" out)
+	       (display z out)
+               (display "\n" out)
+
+  
+we treat
+-  "In ~a x=~a, y=~a\n"
+as a string, even though it is incomplete.
+
+Instead let's treat "In ~a x=~a, y=~a\n" as being of type
+- (<- string? symbol? printable? numeric?)
+  - A function returning a string when given 3 values
+    - a symbol, any printable value, a numeric value
+
+It would also 
+
+*** Ideas for Text as Structured Data
+

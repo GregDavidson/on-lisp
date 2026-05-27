@@ -1,0 +1,339 @@
+
+* Lisp Design Issues
+
+#+begin_quote
+“A language that doesn’t affect the way you think about programming is not worth knowing.”
+
+— Alan Perlis
+#+end_quote
+
+#+begin_quote
+LISP has jokingly been described as "the most intelligent way to
+misuse a computer." I think that description is a great compliment
+because it transmits the full flavour of liberation: it has assisted a
+number of our most gifted fellow humans in thinking previously
+impossible thoughts.
+
+— Edsger Dijkstra 
+#+end_quote
+
+#+begin_quote
+LISP is worth learning for a different reason -- the profound
+enlightenment experience you will have when you finally get it. That
+experience will make you a better programmer for the rest of your
+days, even if you never actually use LISP itself a lot.
+
+— Eric S. Raymond, "How to Become a Hacker"
+#+end_quote
+
+** Lisp Is A Family Not A Language
+
+Lisp is a large family of languages which share some superficial
+characteristics and which differ radically in vision, design and
+semantics.
+
+Designers of the various Lisps have explored, discovered and tamed
+most known powerful programming techniques.  But individual Lisps vary
+in how well they support those techniques.
+
+The rest of this document describes a number of the issues affecting
+the quality of Lisp Family Languages.  Consideration of these issues
+and the ways that various Lisps have addressed them successsfully
+leads us to the possibility of
+- [[file:simpler-better-lisp.org][A Simpler, Better Lisp]]
+
+*** Similarities Among Lisps
+
+- Homoiconic Syntax of Symbolic Expressions
+    - Symbolic Expressions describe both programs and data
+- First-Class Functions (as Closures) created by Lambda Expressions
+- Changeable, adaptable syntax
+    - via Macro Forms which Rewrite Themselves at compile time
+    - via (read) and (print) procedures
+- Interactive computing with REPLs
+      - Read, Evaluate, Print Loop
+- The idea of a "programmable programming language"
+      - Maximum flexibility at almost any cost
+- Some influence from the [[https://en.wikipedia.org/wiki/Lambda_calculus][Lambda Calculus]]
+      - Procedures are created by the lambda /Special Form/
+      - The /Lambda Calculus/ only supports [[https://en.wikipedia.org/wiki/Purely_functional_programming][Purely Functional Programming]]
+            - See also [[https://en.wikipedia.org/wiki/Functional_programming][Functional Programming]] for deviations from purity
+      - Lisps traditionally add lots of [[https://en.wikipedia.org/wiki/Imperative_programming][Imperative Programming]] features
+
+*** Lisp Is A Compromise
+
+Lisp began as a compromise between
+- [[https://en.wikipedia.org/wiki/Purely_functional_programming][Purely Functional Programming]]
+- in the style of the [[https://en.wikipedia.org/wiki/Lambda_calculus][Lambda Calculus]]
+and
+- [[https://en.wikipedia.org/wiki/Imperative_programming][Imperative Programming]]
+- in the style of early [[https://en.wikipedia.org/wiki/Fortran][FORTRAN]] and [[https://en.wikipedia.org/wiki/ALGOL][ALGOL]]
+
+The creators of Lisp didn't realize that
+- these compromises were unnecessary!
+- and made Lisp weaker!
+
+Practical Functional Programming took decades to develop!
+- removing unnecessary restrictions in Functional Languages
+- discovering good techniques to write Functional Code
+  - to solve real-world problems
+  - with clear, maintainable code
+- efficient ways to implement Functional Languages
+
+More modern Lisps are largely distinguished by which of these
+compromises they've discarded.
+
+None of the popular Lisps have thrown them all away yet - why?
+
+Programmers tend to get locked into
+- familiar languages
+- familiar techniques
+Everything else seems confusing, even wrong!
+  
+Lisp programmers like to point out to non-Lisp programmers how great
+Lisp is and how much they'd benefit if they'd open their minds and
+learn how to think and program in Lisp.
+
+Functional programmers like to point out to non-Lisp programmers how
+great Functional prgramming is and how much they'd benefit if they'd
+open their minds and learn how to think and program Functionally!
+
+** A Critical Look at the Family
+
+My opinions of the merits of the features of current lisps appear [inside of
+square brackets].
+
+*** Bad ideas in early Lisps [all bad here]
+
+- Lots of Special Forms without any syntactic marking
+- Special Forms required for efficient Control Flow
+- Dynamic Binding
+- Confusion between Symbols, Binding, Functions and Associations
+- Non-Monotonically Mutable Data Structures
+- Lack of Abstract Types, e.g. Sequences
+- Lack of Manifest Lexical Types or Type Inference
+- Lack of Tail Call Optimization
+- Interpreting Lisp Code rather than Compiling it to efficient Native Code
+- Lack of Namespaces or Modules
+- NIL Symbol used as both /Empty List/ and /Boolean False/
+- Everything not False is True
+- Symbols as Enumeration Types
+- Overuse of Linked Lists
+- Orientation towards low-level coding
+      - Explicitly iterating or recursing over structure
+- Lack of Linear or Affine Types (as in /Rust/ or /Clean/)
+      - Over-use of Garbage Collection
+      - No general resource management
+
+*** Radical Differences among Current Lisps
+
+- Imperative vs. Functional Programming
+      - Common Lisp code is highly imperative [bad!]
+      - Scheme code is a mixture of both styles [mediocre!]
+      - Clojure code is mostly functional [good!]
+- Dynamic vs. Lexical Variable Binding
+      - Dynamic in early Lisps and many of today's Lisps [bad!]
+      - Lexical in Scheme, Common Lisp and Clojure [good!]
+      - Dynamic by default but optionally lexical in Emacs-Lisp [weird!]
+- Types determined at Run Time vs. Compile Time
+      - In most Lisps compilers (and human readers) can't infer datatypes [bad!]
+      - A few Lisps, e.g. Typed Racket, allow type inference by inspection [good!]
+- Whether Function Calls can provide efficient Control Structures
+      - Scheme-derived dialects provide
+            - Tail-Call Optimization [good!]
+            - Continuations [ambitious but inefficient]
+      - Most other Lisps require special built-in control structures [bad!]
+- Collection Types other than Linked Lists [it's a jungle!]
+
+Two Lisps need special mention right from the start: Scheme and Common Lisp.
+
+*** Scheme Fixed Several Of These Flaws
+
+Scheme was one of many attempts to create a modern Lisp free of historical cruft.
+It invented many of the best features of modern Lisps and has spawned an important sub-family 
+
+- All Functions created by Lambda
+- Function Bindings same as any other Binding (a minor issue, actually)
+- Functions provide efficient iteration (Tail-Call Optimization)
+- Function provide exotic control flow (Continuations)
+- Separate /Empty List Value/ and /Boolean False Value/
+- Rich (but rigid) numeric types
+- Much complexity was dropped - Scheme was refreshingly elegant
+- But many bad traditional compromises were retained
+
+The original Scheme specification was the /shortest/ specification of any
+general-purpose computer language at the time it was adopted, including its
+radical innovation of an appendix with a complete denotational semantics of the
+language.
+
+Scheme has gone through six revised standards, attempting to add on the
+practical features to enable efficient general-purpose programming. In the
+process, the language has grown much larger. And none of the fundamental
+compromises have been fixed, as that would break existing code.
+
+The Latest Scheme Standard, R7RS still has
+- Non-Monotonically Mutable Data Structures
+- Poor data abstraction
+      - Sequences and Streams are a clumsy extension
+- Lack of manifest types or type inference
+- Everything not False is True
+- Clumsy Abstract Sequences
+- Poor support for functional programming
+- Poor support for pattern matching
+- Rich (but rigid) numeric types
+- No way to tell if something is a special form
+
+Scheme has spawned a sub-family of languages which are free to deviate from the
+Scheme standard (and break existing Scheme code) in the spirit of further
+cleaning up the language. Many of these languages are excellent. None of them
+are as elegant as Scheme.
+
+Some of the implementations of Scheme and Scheme-derived Lisps are efficient
+enough for performance-critical computing.
+
+**** Racket Attempts to be a Modern Scheme
+
+Racket have added
+- Immutable Cons-Cells and Lists [good]
+- Delimited Continuations - more flexible and efficient [good]
+- Flexible Namespaces and Modules [complicated]
+- Sequence and Stream Types [clumsily]
+- Typed Racket provides Manifest types and type inference [clumsily]
+- A structured way to create new sub-languages [should be avoided!]
+
+Racket is an efficient, practical and feature-rich programming language. It also
+has a lot of complex and seemingly redundant features. It lacks the coherence
+and elegance of Scheme.
+
+Racket Issues
+- Any binding can be modified
+- Inflexible struct form (all fields mutable or all fields immutable)
+- Contract system is very complex!
+
+**** Typed/Racket Alternative
+
+The Racket System underlying the Racket Language provides alternative languages.
+
+The [[https://docs.racket-lang.org/ts-guide][Typed Racket]] language adds modern manifest types to a language otherwise
+similar to regular dynamically typed Racket.
+
+*** Common Lisp
+
+Common Lisp was an attempt to pull together the best features and ideas of the
+major Lisps at the time, including Scheme. This led to a very large language.
+CL's specification was the /longest/ ISO specification of any computer language
+at the time it was adopted.
+
+The Common Lisp community should be called out for the practice of speaking and
+writing about CL as if it is /the/ Lisp or the only Lisp which should be taken
+seriously. If you need to abbreviate the name, call it /CL/, not /Lisp/!
+
+Some of Common Lisp's added features
+- Namespaces [complicated]
+- General sequence support [through duck typing]
+- Very general object-oriented programming support [very complicated]
+- Only a few of the great ideas of Scheme [no Tail Call optimization!]
+
+One advantage to Common Lisp's huge monolithic standard is that the language
+evolves very slowly, rarely breaking existing code.
+
+Some of the implementations of Common Lisp are efficient enough for
+performance-critical computing.
+
+*** Clojure
+
+Clojure is a fresh modern Lisp, adopting Functional Programming practices
+at the expense of breaking with Lisp tradition.
+
+There are really multiple Clojures. The original and dominant Clojure compiles
+to the JVM and is designed to allow very efficient interoperation with other JVM
+languages, especially Java. The downside of the JVM Clojure being the defining
+implementation is that it suffers from many design flaws of the JVM, including
+the lack of efficient Tail Calls and large memory overhead.
+
+Other implementations of Clojure include
+- ClojureScript -- compiles to JavaScript
+- ClojureCLR -- for Microsoft's .net CLI environment
+
+Clojure provides
+- Namespaces
+- General sequence support
+- Functional Programming support
+      - Programming with Lazy sequences
+      - Immutable data structures
+- Flexible Pattern Matching syntax
+  
+Clojure lacks
+- Continuations
+- Tail-Call Optimization
+- Manifest Types or Type Inference
+- Sum or Product Types
+- Enumeration Types
+
+** Common Weaknesses in Lisp Family Languages
+
+Almost all Lisps have similar fundamental weaknesses
+1. The correctness of Lisp procedures and programs is unnessarily
+   difficult to determine by reading or analyzing the code of those
+   procedures and programs!
+2. Lisp programmers tend to spend a lot of time trying to find and fix
+   bugs in Lisp programs, yet bugs tend to remain and even accumulate!
+Why?
+- low-level representation choices leak into high-level code
+- program architecture and design is implicit
+- you have to run the code to find out what it does
+  - but each run can behave differently!
+
+Debugging is tedious and insufficient!
+- With lots of time and skill, debugging can find most of the bugs in
+  a program running with particular input in a particular systems
+  environment.
+- No amount of debugging will find all of the bugs.
+- Changes in a program's input or the systems environment of the
+  program can reveal or cause new bugs!
+- When debugging discovers a bug, it is tempting to simply add a bit
+  of code to patch that specific bug rather than to address the
+  underlying source of the bug.
+- Many of the bugs in programs are caused by the code intended to fix
+  earlier bugs!
+
+** Great Features in Earlier Lisps which Modern Lisps lack
+
+*** Transitory vs. Persistent Images
+
+When we "run" a program, an operating system feature called the
+"loader" creates an "image" of the program in memory containing all of
+the program's code and data.  The image exists in a Process
+(technically a "heavyweight process") which is connected to resources
+such as CPU Threads (which can execute code) and Input/Output
+channels.
+
+In most programming environments including most modern lisps, images
+and processes are transitory: They exist for the brief time that the
+program is "running" and are then thrown away.
+
+Programs only persist in the form of Source Code which consists of
+textfiles - lines of text in files stored in directories (folders).
+Programmers edit these textfiles with text editors.  Text editors
+allow programmers to arbitrarily change the contents of these files,
+regardless of whether the changes make any sense.
+
+In many earlier Lisps, programs persisted images.  Images could be
+stored as binary files, but were always loaded into live processes for
+development. *A live process is a running program.  Early Lisp
+programming was done by interacting with a running Lisp program!*
+
+This technique was lost for a stupid reason:
+- The computers used by most Lisp Programmers in the 1970s didn't have
+  the ability to address "large" memory spaces, i.e. images couldn't
+  be larger than a few million bytes.  There wasn't room to keep a
+  development environment within a "large" program image.
+
+The Smalltalk Family of languages is in many ways similar to the Lisp Family.
+- Smalltalk found a way to continue to do software development within
+  persistent program images.
+- Learning and exploring Smalltalk is a great way to learn this style
+  of programming and will also teach you to be a better Lisp
+  programmer and a better programmer in general!
+
+Modern 
