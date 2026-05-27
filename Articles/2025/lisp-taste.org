@@ -1,0 +1,9 @@
+* A Taste of Lisp
+
+Experience a bit of Lisp through a series of examples.
+
+Lisp is a 
+
+The examples here are designed to work in
+
+** Alternatives to this 

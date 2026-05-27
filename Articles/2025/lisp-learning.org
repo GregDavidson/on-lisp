@@ -1,0 +1,14 @@
+* Learning Lisp Programming
+
+Context: 
+
+
+** We recommend the Computing Magic Lisp Introduction
+
+- [[https://github.com/GregDavidson/computing-magic/tree/main/Modules/Module-1/#readme][Lisp (Racket) for Computing Magic]]
+
+** Notes
+
+*** OrgMode
+
+Why this document is a textfile with [[https://github.com/GregDavidson/loel/blob/main/Devel/why-orgmode.org][OrgMode Formatting!]]

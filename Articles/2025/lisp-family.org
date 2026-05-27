@@ -1,0 +1,47 @@
+* The Magical Lisp Language Family
+
+Lisp was invented around 1958!  *Lisp was the first General-Purpose
+High-Level Programming Language*, providing rich support for Symbolic,
+Numeric and other kinds of computing on an equal footing. *The orignal
+Lisp evolved into today's Lisp Family*: A diverse set of languages
+which share Lisp's strongest historical features while offering
+exciting new approaches to computing.  Most important features of
+modern programming languages appeared in Lisp first before being
+adopted into other languages.  *Today's leading Lisp dialects contain
+power still lacking in today's most popular languages!*
+
+The first Lisp was invented around 1958!  *Lisp was the first
+programming language supporting general-purpose high-level computing,
+symbolic as well as numeric.* The orignal Lisp evolved into today's
+Lisp Family: A diverse set of languages which share Lisp's strongest
+historical features while offering exciting new approaches to
+computing.  Most of the important features of other modern programming
+languages appeared in Lisp first, including procedures, nestable
+blocks, conditionals and lambdas.  Yet today's *Lisp dialects contain
+extremely powerful features that other languages have yet to discover.*
+
+Today's major Lisp dialects are some of the most modern and vibrant
+programming languages in existence.  And Lisp's evolution is far from
+done!  This document expresses some possibilities about future
+evolutions of Lisp standards which will deepen your understanding of
+the nature and possibilities of programming languages.
+
+More importantly (probably), this document will show you how you can
+use the features of Future Lisps today.  This is possible because
+*Lisp is the original /Programmable Programming Language/* -- all
+Lisps provide features for extending the syntax and semantics of Lisp
+so that it will meet your needs better.
+
+Warning: In order to discuss the evolution of Lisp and radical new
+ways of using the language, we expose some of Lisp's normally hidden
+implementation details.  This will introduce some complexity which a
+conservative Lisp programmer doesn't really need to know.
+
+Note: The source of this document uses [[https://orgmode.org/][OrgMode]] markup.  If you're
+reading the source document itself, you'll notice that we're using
+markup to indicate /italics/, *bold*, ~literal code~, [[https://orgmode.org/quickstart.html][etc.]]  -- please
+don't worry about it and soon you won't notice it.  You can also view
+this document with a web browser at [[https://github.com/GregDavidson/on-lisp/blob/main/Nursury/lisp-future.org][lisp-future.org]].  You can edit an
+OrgMode file with any text editor, although the most powerful
+experience will come from learning and using [[https://github.com/GregDavidson/computing-magic/blob/main/Software-Tools/Emacs/emacs-readme.org][Emacs]] -- which is written
+in Lisp, of course!
