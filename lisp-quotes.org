@@ -1,0 +1,7 @@
+* Lisp Quotes
+
+** 
+
+"Lisp is a programmable programming language."
+
+- John Foderaro, CACM, September 1991
