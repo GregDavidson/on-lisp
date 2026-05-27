@@ -1,0 +1,67 @@
+* FAME: Functional And Monotonic Environments
+
+** About =fame=s
+
+A =fame= is
+- a mapping from symbols to values
+- either immutable functional mappings
+- or (optionally) monotonically extensible mappings
+- along with other optional features including
+  - =fame=s can extend other =fame=s
+  - mappings can have attributes which are also =fame=s
+
+There are multiple implementations of =fame=s supporting different feature sets.
+- Ideally, they would all be in /Typed Racket/
+- Ideally, they would be derived from a common /Interface/
+- Alas: /Typed Racket/ does not yet support /Interfaces/.
+Therefore, some parts are implemented in /Typed Racket/ and
+other parts are in /Untyped Racket/
+
+Common Features
+- Construction :: Specifying Symbols, Values, Attributes, Inheritance
+- Lookup :: Bindings, Values, Attributes
+Optional Features - ideally available via /Mixins/ someday
+- Extension :: This =fame= extends 1 or more other =fame=s
+- Inheritance :: Bindings of this =fame= inherit attributes from a base =fame=
+- Monotonic bindings :: new bindings can be added, with or without values
+- Monotonic values :: value assignment of bindings can be delayed
+- Monotonic attributes :: attribute =fame=s monotonically mutable until binding has a value
+
+When a /Functional/ (non-mutable) =fame= is created, inheriting from a
+/Monotonically Mutable/ =fame=, the new =fame= inherits an effective copy of the
+established values of the old =fame=(s).
+
+** What are =fame=s good for?
+
+=fame=s can be used instead of /parameters/ and other /dynamic bindings/. They
+are great for program parameters.
+
+Functional and relational programming purists suggest that arbitrary mutability
+is rarely needed and undermines reliability. =fame=s would be a good alternative
+to arbitrary environments in a future Lisp or other programming language.
+
+** Example =fame= code
+
+This code is just an idea, do not take it very seriously yet!
+
+Will /Unification/ make this work properly??
+
+Bindings:
+| symbolic expression     | notes                                                  |
+| symbol                  | unbound symbol, no individual features                 |
+| (symbol value features) | features s-exp is unified with any inherited features  |
+| (symbol value fame)     | fame supplies immediate features, before any inherited |
+
+A value can be wrapped in a list. A list value must be wrapped as a singleton
+list. A bare symbol means no value or individual features. Otherwise a missing
+value is indicated by an empty list.
+
+#+begin_src racket
+  (require racket/fame)
+  (define temperature-dimension (make-fame '( (dimension temperature) ) ))
+  (define temperature-units (make-fame :inherit temperature-dimension `( (K ,x->x) (C ,c->k)  (F ,f->k) ) ))
+  (define length-dimension (make-fame '( (dimension (length)) ) ))
+  (define length-units (make-fame :inherit length-dimension `( (pt 1)  (in 72) (cm ,(* 2.54 72)) ) ))
+  (define dimension-fame (make-fame `( unit ) ))
+  (define parameters (make-fame :inherit dimension-fame `( (#f length (unit ) width font-size ) ))
+#+end_src
