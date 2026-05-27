@@ -1,0 +1,40 @@
+#    -*- mode: org -*-
+
+
+Archived entries from file /home/greg/Gits/On-Lisp/Articles/2024/lisp-simplicity.org
+
+
+* Language vs. Libraries vs. Tools
+:PROPERTIES:
+:ARCHIVE_TIME: 2025-09-26 Fri 17:00
+:ARCHIVE_FILE: ~/Gits/On-Lisp/Articles/2024/lisp-simplicity.org
+:ARCHIVE_OLPATH: Understanding Lisp in Very Little Time/Lisp is a Family of Programming Languages
+:ARCHIVE_CATEGORY: lisp-simplicity
+:END:
+
+A Lisp implementations generally include
+
+A Compiler
+- a program which translates Lisp to machine language
+  - Machine language is the language built into a particular model of computer.
+  - Machine language is typically 10-50 times faster than direct
+    (interpreted) implementations of high-level languages.
+  - Extensive libraries which provide ready-solutions for common
+    problems.
+    -  Often there will be multiple libraries providing different
+      solutions to the same problem.
+  - Programmers have to evaluate Libraries for quality and suitability
+    for their needs
+  - It's always possible to solve any problem without the help of
+    Libraries OR to create new alternative libraries.
+
+  include more than the language implementation.
+NOTE: This claim to simplicity applies only to /the language itself/. In
+practice, you'll be using various libraries which extend the base language with
+special types and procedures. You'll need to study the details of any such
+features your program is using. While this is true with /any/ programming
+language, Lisp allows such libraries to significantly extend Lisp's syntax and
+semantics: For this reason, Lisp is often called /the programmable, programming
+language!/
+
+
