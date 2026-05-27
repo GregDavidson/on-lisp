@@ -1,0 +1,52 @@
+* Why Use Orgmode Markup
+
+As of 2025, [[https://orgmode.org/][Org Mode]] is the best [[https://en.wikipedia.org/wiki/Markup_language][Document Markup Language]] which
+- is [[https://en.wikipedia.org/wiki/Text_file][Plain Text]]
+  - readable by humans without any fancy software
+  - editable with any simple [[https://en.wikipedia.org/wiki/Text_editor][Text Editor]]
+- is Concise and Pleasant To Read
+- supports *extremely powerful features*
+  - beyond any other markup language!
+- has all features optional, thus supporting
+  - Unstructured text
+  - Structured text
+  - Any mixture of the two!
+
+** FAQ
+
+*** Does OrgMode require [[https://www.gnu.org/software/emacs/][Gnu Emacs]]
+
+Not for simple editing
+- Use any Text Editor to work with Org Mode
+- Including online editors at [[https://github.com/][GitHub]], [[https://about.gitlab.com/][GitLab]], et al.
+
+Not for simple OrgMode Power Features
+- Several editors plugins to support some advanced OrgMode features
+
+Yes for *all the OrgMode Power Features*
+- So consider learning Emacs and OrgMode together!
+- try our guide to [[https://github.com/GregDavidson/computing-magic/blob/main/Software-Tools/Emacs/emacs-readme.org][Learning Emacs and OrgMode]]
+
+*** How Can I Learn OrgMode
+
+Try our guide to [[https://github.com/GregDavidson/computing-magic/blob/main/Software-Tools/Emacs/emacs-readme.org][Learning Emacs and OrgMode]]
+
+Otherwise, you'll find lots of tutorials at
+- [[https://orgmode.org/worg][Worg: the Org-Mode Community Site]]
+
+*** Why Don't You Use ...?
+
+Note: OrgMode documents can be automatically converted into these
+other formats!
+
+- [[https://en.wikipedia.org/wiki/Markdown][Markdown]] :: inconsistent dialects, less powerful
+  - The CommonMark "standard" is not always followed in practice.
+  - Lacks the kind of powerful features that OrgMode has
+- [[https://en.wikipedia.org/wiki/XML][XML]] :: super general, more complete syntax yet less powerful
+  - Verbose
+  - Hard to Read, Hard to Edit
+  - Lacks the kind of powerful features that OrgMode has
+
+** TODO ROADMAP For This Document
+
+- Move to LOEL
