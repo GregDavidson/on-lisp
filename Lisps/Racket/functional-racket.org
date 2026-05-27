@@ -1,0 +1,20 @@
+* Functional Programming in Racket Lisp
+
+** Resources
+
+These are not yet curated - would you like to help?
+
+[[https://medium.com/@alexandragrosu03/racket-exploring-the-world-of-functional-programming-d20f1b9ad558][Racket: Exploring the World of Functional Programming]]
+- Author :: [[https://medium.com/@alexandragrosu03][Alexandra Grosu]]
+- Requires a Medium Account
+
+[[https://www.cs.drexel.edu/~johnsojr/2017-18/fall/CS270/Lectures/1/racket.pdf][1 Introduction to Functional Programming in Racket]]
+- PDF of Slides
+- Author :: Jeremy Johnson
+- Institution :: Drexel University
+- Course :: CS 270 Math Foundations of CS
+
+[[https://www.arm64.ca/post/functional-programming-in-racket][Functional Programming in Racket]]
+- short blog post
+- Author :: [[https://www.adammelnyk.ca/][Adam Melnyk]]
+
