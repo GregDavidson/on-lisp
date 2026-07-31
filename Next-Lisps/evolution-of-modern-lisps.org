@@ -1,0 +1,98 @@
+* Evolution of Modern Lisps
+
+** General Purpose Awesomeness
+
+Computer Programming techniques are generally grouped into various
+- [[https://en.wikipedia.org/wiki/Programming_paradigm][Programming Paradigms]]
+
+Most Computer Programming Languages are oriented towards only a few
+programming paradigms, e.g. numeric/iterative or object-oriented and
+are awkward to use for other programming paradigns.
+
+Thanks to its general design and extensibility (e.g. Lisp Macros) Lisp
+can be conveniently and efficiently used to program using all known
+programming paradigms, from the most familiar, e.g.
+- Imperative Programming
+- Object-Oriented Programming
+- Functional Programming
+to the most sophisticated, e.g.
+- Delarative Metaprogramming
+- Declarative Constraint Logic Programming
+
+Lisp invented
+- Nested Control Structures
+  - Code can be understood as a composition of modular pieces
+- First-Class Procedures (aka Functions)
+  - Inspired by the Lambda Calculus
+  - Can perform ALL known forms of control!
+- General Metaprogramming
+  - Symbolic Expressions representing both Code and Data
+  - Lisp Macros for easy syntax extention
+    - Domain-Specific Notations and Languages
+    - Elimination of "Boiler Plate"
+- and Much More!
+
+Symbolic Computing
+- Metaprogramming
+  - Lisp Code can easily Analyze, Transform and Write Lisp Code!
+- All forms of Artificial Intelligence
+  - Lisp code can fairly easily Analyze and Generate Human Language
+  - Lisp code can easily perform general Logic and Reasoning
+  - Lisp code can implement all known AI Pattern Matching techniques
+    - including LLMs
+
+Numeric Computing
+- Rich Numeric Types
+  - Infinite-Precision Integer and Rational Arithmetic
+  - Floating Point "Real" and Complex Numbers
+  - and many more
+- Array Programming with Map, Reduce and flexible iteration
+- Matrices of arbitrary shape and dimension
+Data Structures
+- Lists, Vectors, Sets, Maps, Streams, etc.
+Object-Oriented Computing
+- Most featureful and Flexible
+
+** Key Evolutions of Lisp
+
+Variable Binding
+- Early Lisps used Dynamic Binding for everything
+- Most modern Lisps default to Lexical Binding
+  - Provide Dynamic Binding for special cases
+
+Procedure (Function) Calls
+- Originally more expensive than Iteration
+- With Modern Tail-Call and other Optimizationss
+  - Procedure Calls can replace all Iteration
+- With Delimited Continuations
+  - Procedure Calls can replace ALL forms of control flow!
+
+Type and Contract Checking
+- Originally Lisp only providing Dynamic Typing
+  - Types resolved at Run-time
+  - Errors discovered by testing
+- Many Modern Lisps have
+  - State-of-the-Art Compile-Time Type Checking
+  - Contracts going beyond what Types can achieve
+
+** Lisp Doesn't Require A Lower-Level Implementation Language
+
+Modern Lisps can easily and efficiently implement all known Algorithms
+and Data Structures
+- Lisp Programmers are not limited to provided Libraries in order to
+  get efficient code
+- And Libraries typically provide all popular (and many exotic)
+  Algorithms and Data Structures - written in regular Lisp which can
+  be studied and modified!
+  
+Composite Data Structures
+- Originally only Lists + Symbols for Character Strings
+
+Modern Lisps have Rich Composite Data Structures (CDS)
+- Fundamental Types: Lists, Vectors, Records, Strings
+  - All other CDSs can be implemented from these
+- Abstract Types: Streams, Sequences, Maps, Sets, etc.
+- Object-Oriented Programming (OOP) with Objects and Classes
+  - Can be implemented with regular Lisp records and procedures
+    - Commonly provided as a standard library for convenience
+  - More flexible and featureful than non-Lisp OOP languages!
