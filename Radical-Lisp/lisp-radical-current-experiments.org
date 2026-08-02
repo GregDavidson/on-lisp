@@ -1,0 +1,41 @@
+
+* Lisp Radical Current Experiments
+
+** Multi-Language Ecosystem
+
+- Racket
+- Clojure with JVM Languages
+
+** Modern Lexical Typing
+
+- Typed Racket
+- [[https://github.com/coalton-lang/coalton][Coalton]]
+
+** Immutable By Default
+
+- [[https://clojure.org/][Clojure]]
+
+** De-Emphasizing Linked Lists
+
+- [[https://clojure.org/][Clojure]]
+- [[https://janet-lang.org/][Janet]]
+- Racket
+  - [[https://docs.racket-lang.org/reference/sequences_streams.html][Racket Library for Sequences, Streams, Generators]]
+  - [[https://docs.racket-lang.org/rebellion/][Racket Rebellion Libraries]]
+  - I think there's another Racket Language or Library with this orientation?
+  
+** Logic Programming
+
+Lots of Lisps have libraries and such for Logic Programming!
+
+- Racket
+  - [[https://docs.racket-lang.org/minikanren/][Racket Mini-Kanren]]
+  - [[https://docs.racket-lang.org/racklog/][Racket RackLog]]
+  - [[https://docs.racket-lang.org/parenlog/Embedded_Parenlog.html][Racket Parenlog]]
+
+I keep thinking that Chicken could do this best since their CHENEY
+implementation is close to the way that compiled Prolog works.
+
+** Constraint Programming
+
+** 

@@ -1,0 +1,100 @@
+
+** The Radical History Of Lisp
+
+The first Lisp was a bold experiment
+
+- 1600s - 1970s :: *A Computer is a Human Being* who does (primarily
+  numerical) mathematical work.  *Various devices are invented to
+  assist these computers*, e.g. abacuses, sliderules, early mechanical
+  calculators and eventually electromechanical calculators.
+- 1820s :: The [[https://en.wikipedia.org/wiki/Polymath][Polymath]] [[https://en.wikipedia.org/wiki/Charles_Babbage][Charles Babbage]] invents [[https://en.wikipedia.org/wiki/Difference_engine][The Difference Engine]],
+  an enormously powerful mechanical calculator for its time.
+- 1837 :: [[https://en.wikipedia.org/wiki/Charles_Babbage][Charles Babbage]] describes and tries to create [[https://en.wikipedia.org/wiki/Analytical_engine][The Analytical
+  Engine]] - the first (awkwardly) programmable digital computer.
+  Despite being heavily funded by the British Government, this effort
+  fails - its Base-10 mechanisms are too complex for the mechanical
+  arts of the time.
+- Late 1830s :: The mathemamatician [[https://en.wikipedia.org/wiki/Ada_Lovelace][Ada Lovelace]] (oh what a colorful
+  history she had!) realized that Babbage's Analytical Engine could do
+  more than just calculate numbers: It could calculate with symbols,
+  and one of the things it could represent with symbols could be its
+  own programs!  She wrote the world's first computer program - before
+  any computers existed!
+- mid-1930s :: [[https://en.wikipedia.org/wiki/Konrad_Zuse][Konrad Zuse]] invents the world's first programmable
+  computer in Berlin during World War II.  He was insprired by
+  Babbage's Analytical Engine but realized it could be greatly
+  simplified by using the Binary Number System instead of Decimal.
+  Binary was invented by Leibniz who the English were still hating
+  because the great Isaac Newton accused Leibniz of plagiarizing
+  Newton's Calculus.  Using Leibniz's Binary system, Zuse succeeded
+  where Babbage had failed.  Zuze went on to invent an early (possibly
+  the first) high-level programming language and computer operating
+  system.  Alas, Zuse's work was ignored in the UK and America and did
+  not influence the development of modern computers.
+- 1936 :: The mathematician [[https://en.wikipedia.org/wiki/Alonzo_Church][Alonzo Church]] invents the [[https://en.wikipedia.org/wiki/Lambda_calculus][The Lambda
+  Calculus]] to describe the general idea of *Procedures: Sequences of
+  operations which transform inputs into desired outputs.* A procedure
+  is like a recipe, but working with abstract mathematical objects.
+  When a procedure can be mathematically proven to produce a desired
+  result, it is called [[https://en.wikipedia.org/wiki/Algorithm][an Algorthm - aka an Effective Procedure]].  A
+  special part of the Alonzo Church's Lambda Calculus was *Lambda: The
+  Procedure which Creates procedures!* The Lambda Calculus was
+  invented to be used by Mathematicans to prove theorems about what
+  computability in the abstract, e.g. by human computers.  It was not
+  designed to be understood by machines!
+- late-1930s :: Under World War II military secrecy, the English
+  mathematician (and more) [[https://en.wikipedia.org/wiki/Alan_Turing][Alan Turing]] helps invent the first
+  stored-program general-purpose computer.  That work remained secret
+  and instead of the British Government recognizing him as a hero and
+  a genius, Turing was persecuted for being homosexual.  Even though
+  he'd gotten his doctorate under Alonzo Church, Turing didn't use the
+  Lambda Calculus, instead inventing a system much more like a
+  physical machine, now called a [[https://en.wikipedia.org/wiki/Turing_machine][Turing Machine.]]  Despite his
+  persecution and lack of full recognition interrupting his direct
+  involvement in the development of computing in Britain (oh boy did
+  that cost them!), Turing is now considered the "Father of Computer
+  Science."  His mathematical work on the theory of computing was
+  hugely influential and his Turing Machine influenced the design of
+  all modern computers.
+- Mid-1940s :: Programmable electronic general-purpose electronic
+  (vacuum tube!) computers using the binary number systems are
+  develped in Britain and the United States, gradually developing the
+  architecture of the computers we use today.
+- Mid-1940s to early 1950s :: Programmers vs. Coders.  The programs of
+  early electronic computers were written in the low-level binary
+  language they directly understood.  Writing such programs was
+  extremely tedious, so high-status computing profesionals called
+  "Programmers" described computer programs in loose [[https://en.wikipedia.org/wiki/Pseudocode][Pseudocode
+  Notations]], mixtures of English, mathematical notation, diagrams or
+  whatever they felt made clear what they wanted the computer to do.
+  These "Programmers" would then give these pseudocode descriptions of
+  what they wanted to "Coders" who had lower status and pay to turn
+  into binary programs.  Some of these "coders" invented [[https://en.wikipedia.org/wiki/Assembly_language][low-level
+  Assembly Languages]] and programs called [[https://en.wikipedia.org/wiki/Assembly_language#Assembler][Assemblers]] which would
+  automatically translate programs written in Assembly Language into
+  programs written in the computer's built-in binary language.  Thus
+  Ada Lovelace's prophetic dream was first achieved by "Coders"
+  (including many women) rather than "Programmers" (always men)!.
+  Programming in Assembly Language was easier, but still tedious.
+  Also, every model of computer had a different binary machine
+  language paired with its own Assembly Languuage, so programs written
+  for one model of computer could not be transferred to a different
+  model.
+- Mid 1950s ::  [[https://en.wikipedia.org/wiki/John_McCarthy_(computer_scientist)][John McCarthy]], a prestigious computer scientist,
+  invented [[https://en.wikipedia.org/wiki/M-expression][M-Expressions]] based on the Lambda Calculus as a [[https://en.wikipedia.org/wiki/Pseudocode][Pseudocode
+  Notation]] for describing the procecdures composing Computer Programs.
+- 1956 :: [[https://en.wikipedia.org/wiki/Fortran][FORTRAN]], the "Formula Translator" is invented and celebrated
+  as the first "compiled" computer programming language.  FORTRAN could only 
+
+  Alas, the
+  only thing it can do which is "high-level"
+
+  in turning the [[https://en.wikipedia.org/wiki/Lambda_calculus][The Lambda
+Calculus]] - a tool invented by the mathematician [[https://en.wikipedia.org/wiki/Alonzo_Church][Alonzo Church]] in the
+1930s for describing the idea of procedures.  Procedures are the
+essence of computation, but general purpose computers didn't exist
+yet.  When they did,Lambda 
+
+** Features
+
+*** Repl-Based Programming

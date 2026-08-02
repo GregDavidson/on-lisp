@@ -1,0 +1,107 @@
+* Lisp Power
+
+The various dialects of Lisp have generally been the most powerful and
+expressive of the thousands of computer programming languages that
+have been invented.
+
+The objectives of this document
+- Show you the sources of Lisp's Power
+- Get you out of the pit of mainstream  languages
+
+The original LISP of 1960 would be considered a [[https://en.wikipedia.org/wiki/High-level_programming_language][High-Level Programming
+Language]] even today, similar or greater in expressiveness to any
+modern mainstream language, e.g. C, Java, JavaScript or Python.
+
+Later Lisps are even more powerful.
+
+*** So why doesn't everyone use Lisp?
+
+**** Early Computers Were Too Limited
+
+Although all of today's computers can run Lisp efficiently, many early
+computers and all of the early Personal Computers were not powerful
+enough to run Lisp well.
+
+Lisp prefers a larger address space.
+- Old 16-bit computers struggled with Lisp.
+- Yesterday's 32-bit computers are great for Lisp.
+- Today's 64-bit computers are fantastic for Lisp!
+
+**** Lisp Is Different
+
+Let's call most well-known programming languages "Mainstream Languages".
+
+Lisp is very different from "Mainstream Languages".
+
+Mainstream languages typically have
+- A large, complex, irregular syntax using lots of special characters.
+- A large, complex, irregular semantics: Loops, Methods, etc.
+- Writing a Compiler or an Interpreter for a Mainstream Language is
+  considered a Heroic Programming Accomplishment
+
+Lisp family languages have
+- A small, simple, regular syntax: Symbolic Expresions
+  - There are only five reserved characters: ' " # ( )
+- a small, simple, regular semantics: Procedure Application
+- Writing a Compiler or an Interpreter for a Lisp is considered an
+  ordinary, approachable task.
+
+Wow, that sounds great!  Doesn't that mean that learning Lisp is super easy?
+- Yes and No!
+
+People who've never done any kind of programming before
+- usually find Lisp very easy to learn!
+  - Much easier than mainstream languages!
+- Originally most people were in this category!
+- Many top schools, e.g. MIT, started all students with Lisp.
+
+People who've learned programming with mainstream languages
+- often find Lisp initially confusing and hard to learn!
+- Alas, most learners are now in this category!
+- MIT has switched to Python - and dumbed everything down!
+
+**** Let's Compare!
+
+*** Lisps Were Always Dynamically Typed Until Recently
+
+Programmers who like to develop their programs
+- bottom-up
+- incrementally
+- experimenting
+- pasting things together
+tend to prefer Dynamically Typed languages
+- like Python, JavaScript and most Lisps.
+
+Programmers who like to develop their programs
+- top-down from a specification
+- doing analysis and design before writing any code
+tend to prefer Statically Typed Languages.
+
+Exploratory programming is a great way to discover a way to solve new,
+interesting and possibly challenging problems - problems no one knows
+how to solve yet until you explore different approaches.
+
+Formal programming with Static Types is the best way to create
+programs which are highly efficient and reliable.
+
+Many people like to first develop a prototype solution to a hard problem using a Dynamic Language.  Once they have a prototype that they like, they will then write a specification, do formal analysis and design, then re-implement the solution using a Statically-Typed programming language.
+
+Until recently all Lisps were Dynamically Typed.  Now several Lisps
+allow you to use either Dyanmic Typing, Static Typing or a
+combination, and to incrementally move sections of a program from
+Dynamic to Static Typing.
+
+Let's get the word out!
+
+
+** Misc
+
+
+     - See Paul Graham'ss essay [[https://paulgraham.com/avg.html][Beating The Averages]].
+  3. Nested Parentheses look confusing at first!
+     - Many programmers got stuck HERE!
+     - They never discovered Metaprogramming!
+  4. Some of the alternative languages, while less expressive, provide
+     [[https://en.wikipedia.org/wiki/Type_system#Static_typing][compile-time type checking]], which help detect programming errors.
+
+*** Lisp Is Blessed

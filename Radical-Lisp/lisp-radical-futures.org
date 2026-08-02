@@ -1,0 +1,33 @@
+* Lisp Radical Future Possibilities
+
+Making Lisp SIMPLER!
+
+
+** Possible New Capabilities
+
+*** Transactions
+*** Versioned Persistence
+*** Immutable & Monotonic & State-Transition Single-Assignments
+
+*** First-Class Environments
+*** Constraint Logic Programming
+*** Relational Programming
+*** Program Components Live & Potential Living In Object Databases
+
+*** Array-Language Features
+
+- Create functions which work like the operators in BQN, Apl, J, K, etc.
+- Use smart compilation
+  - Terrence Miller did based on analyzing on what parts will be used
+  - Leverage Vector Instructions and GPUs
+- Keep it Lisp-like!
+*** Syntax
+
+Browser on Code Database
+- Smart Dynamic Focused Syntax
+- Prefix, Infix, whatever is a personal preference
+- Multiple alternatives for identifiers and keywords
+  - Abbreviated
+  - Internationalized
+  - Tool-tip-like additions
+- Types, contracts, etc. shown when useful

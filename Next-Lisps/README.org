@@ -1,0 +1,5 @@
+* Designing The Future Of Lisp
+
+- [[file:~/Gits/On-Lisp/Radical-Lisp/lisp-radical-origin-story.org][Lisp Radical Origin Story]]
+- [[file:~/Gits/On-Lisp/Radical-Lisp/lisp-radical-current-experiments.org][Current Radical Experiments]]
+- 
