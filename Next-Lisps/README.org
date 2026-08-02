@@ -1,5 +1,31 @@
 * Designing The Future Of Lisp
 
 - [[file:~/Gits/On-Lisp/Radical-Lisp/lisp-radical-origin-story.org][Lisp Radical Origin Story]]
+  - What key features characterize a classic Lisp.
+  - What powerful features have been lost?
 - [[file:~/Gits/On-Lisp/Radical-Lisp/lisp-radical-current-experiments.org][Current Radical Experiments]]
+  - What experimental features take Lisp to new places.
+  - Some of these cause people in the community to argue that a
+    language with these features is not a real lisp!
 - [[file:~/Gits/On-Lisp/Radical-Lisp/lisp-radical-futures.org][Lisp Radical Future Possibilities]]
+  - At various times Lisp has been the most expressive language, often
+    supported by an extraordinary development environment.
+  - What is missing that would let Lisp and its development and
+    deployment platforms reclaim such glory?
+    - What features that some newer systems have that Lisp does not?
+    - What features that no current production system has?
+  - What would fulfil the /spirit of lisp/ even if many or most Lisp
+    programmers considered that it was no longer a Lisp?
+    - Especially by being true to the R5RS inspiring introduction!
+  
+** The material in this directory is under reconstruction!
+
+The material had gotten too wordy, redundant and confused.
+
+New ideas:
+
+- Organize the three files above around features.
+- Keep any explanations in other documents!
+  - Try to find or create those documents elsewhere.
+  - Documents explaining radical ideas might go here, though.
+
