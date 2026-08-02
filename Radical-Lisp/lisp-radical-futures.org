@@ -1,3 +1,4 @@
+
 * Lisp Radical Future Possibilities
 
 Making Lisp SIMPLER!

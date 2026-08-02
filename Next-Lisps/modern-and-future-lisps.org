@@ -1,0 +1,292 @@
+* Modern and Future Lisps
+
+Lisp was the first truly General-Purpose Computer Programming Language
+when it was conceived in the late 1950s.  Lisp was both more powerful
+and also simpler than the other languages of its time, e.g. Fortran
+and Cobol.
+
+Lisp was easier to implement and experiment with than most other
+languages, so it quickly evolved into many different versions.
+
+Lisp is now a large family of languages which are continuing to evolve
+to meet special needs as well as to grow in general expressive power
+and efficiency.  Most Lisps continue to be remarkably simple, with the
+quality which Mathematicians call "elegance".
+
+- The original Lisp was remarkably powerful.
+- Modern Lisps are better in all ways without being more complex.
+  - See [[evolution-of-modern-lisps.org][The Evolution of Modern Lisps]]
+
+So how might Lisp-inspired Languages become even better?
+
+** Lisp Could be Simplified to Become More Powerful!
+
+After slowly growing in power and complexity over twenty years, the
+Scheme dialect of Lisp achieved something remarkable
+- Scheme was one of the simplest programming languages ever specified!
+- Scheme was the most expressive Lisp (and arguably the most
+  expressive programming language) ever designed!
+
+How this is possible is explained in the
+- [[https://conservatory.scheme.org/schemers/Documents/Standards/R5RS/HTML/][Introduction to the 5th Edition of the Scheme Programming Language (R5RS)]]
+
+#+begin_quote
+Programming languages should be designed not by piling feature on top
+of feature, but by removing the weaknesses and restrictions that make
+additional features appear necessary. Scheme demonstrates that a very
+small number of rules for forming expressions, with no restrictions on
+how they are composed, suffice to form a practical and efficient
+programming language that is flexible enough to support most of the
+major programming paradigms in use today.
+#+end_quote
+
+Each successive edition of Scheme has added convenience for
+programming, but at the cost of increased complexity.
+
+The most popular Scheme-based Lisp, Racket, has added enormous
+complexity.
+
+How can we strategically improve Future Lisps through strategic
+simplifications and generalizations?
+
+** Lists and Symbolic Expressions
+
+The original Lisp took the radical step of representing all code and
+all data with a single data structure: The Symbolic Expression.
+
+A Symbolic Expression is
+- either an Atom
+- or a List of Symbolic Expressions
+
+Since Symbolic Expressions can contain Symbolic Expressions they are a
+nested data structure.  Another way of saying this is that you can
+freely make a list of some existing values without worrying about
+whether some of them were already Lists.  If they were, you've nested
+them.
+
+In the computer Lists are efficiently implemented with pairs of memory
+addresses called "Cons Cells".  That's great, but we don't really want
+to see that!
+
+In Lisp notation simply we write a List by (enclosing its elements in
+parentheses).
+
+(this is (a single list) consisting of 7 elements)
+- the third element is a nested list
+- the sixth element is the number 7
+- the rest are symbols
+
+In the original Lisp an Atom was either a Number or a Symbol.
+
+Numbers
+- Fixed-Precision Integer and Floating-Point Numbers
+- Infinite-Precision Integers were provided too!
+  - implemented as Lists under the hood, but you didn't see them
+- Programmers can extend Lisp numerics to include any other kind of
+  numbers desired, e.g. complex numbers, matrices, etc.
+
+Symbols are unique values
+- they look like single-word Strings
+- but can actually contain any String if enclosed in Atom Quotes
+  - different Lisps use different Atom-Quote syntaxes
+
+In early Lisps
+- Lists were the only composite data structure
+- Symbols were used as identifiers, symbolic-values and strings
+- Symbols could be "bound" to any value.
+  - (set 'colors '(red green blue))
+- Symbol bindings could be changed at any time.
+  - (set 'colors (append '(black white) colors))
+  - colors is now bound to '(black white red green blue)
+  - Quote (') marks the next Symbolic Expression as Literal Data
+  
+Lists were mutable:
+- You could replace any element of a List with a new value.
+- You could replace the REST of a List (starting anywhere) with a new value!
+
+Lists can share structure (sublists).
+- Mutation will then show up in all lists sharing the mutated part!
+- i.e. if Lists B and C were constructed from parts of List A
+  - a mutation operation on some part of List A
+  - Might (or might not) modify the value of List B or C
+- List mutation came to be discouraged as it often introduced
+  difficult-to-debug errors.
+- List mutation remained possible at the discretion of programmers.
+  
+** Symbolic Expressions with multiple Container Types in Modern Lisp
+
+Modern Lisps continue to define Symbolic Expressions exclusively in
+terms of Lists.
+
+Anything not a List is still called an Atom.  One of the ways Lisps
+grow is by adding new Atom Types (new kinds of Atoms), e.g. adding
+Strings, Bitmaps, Vectors, Records, etc.
+
+But using the term Atom for a general composite datatype such as a
+Vector or a Record just seems wrong!  Let's therefore define the
+(non-standard term) Extended Expression as follows:
+
+A Extended Expression is
+- either an Atom
+- or a Collection of Extended Expressions
+
+A collection is a Composite Datatype which can hold 0 or more
+Elements which can be any Extended Expression.  Datatypes
+such as
+- Lists, Vectors, Records, etc.
+
+All Composite Datatypes will have operations for
+- Selecting Desired Elements
+- Addition of New Elements
+- Deletion of Elements
+But how those operations work, and their efficiency, will differ for
+different Composite Datatypes!
+
+Some Composite Datatypes may have additional operations, e.g.
+- Replacing Elements more conveniently or efficiently than
+  separately Deleting and Adding Elements.
+- Reserving additional storage for adding later New Elements cheaply
+- etc.
+    
+Composite Datatypes may Associate Elements with Keys or Indexes, e.g.
+- Records associate their Elements (called Fields) with Keys
+- Vectors associate their Elements with Sequential Integers
+
+Atoms can be Numbers, Symbols, Strings, or any other type which cannot
+store arbitrary Extended Expressions as elements.  Each Atom Type will
+have a set of Operations particular to that Type.  Strings are still
+considered Atoms because their elements can only be characters, not
+Extended Expressions.
+
+It seems that the semantic complexity of having many different Atom
+Types is at least partially inherent.  Numbers behave differently than
+Strings which behave differently from Geometric Shapes, etc.
+
+But it seems that the different ways the various kinds of Composite
+Datatypes work is going to make programming much more complex.  A
+procedure expecting a List of values won't work if it's passed a
+Collection using something other than a List to hold the values.
+
+As Alan Perlis famously said:
+- "It is better to have 100 functions operate on one data structure
+  than to have 10 functions operate on 10 data structures."
+
+So should Modern Lisps go back to having just Lists?
+
+** Functional Operations on Streams and Sequences
+
+Most Modern Lisps allow the programmer to ignore the particular
+Container-Type of a Composite Data Structure by instead taking a more
+abstract view.  We'll invent the term FDE:
+
+An Functional Data Expression (FDE) is either
+- an Atom (an immutable value of an Atom Type)
+- a transitory Stream of FDEs
+- a persistent, ordered Sequence of FDEs
+
+Streams
+- Can be finite or infinite.
+- Can only be processed once.
+
+Sequences
+- The elements of a Sequence can be processed as many times as desired.  
+- A Sequence can be processed AS IF it were a Stream.
+- Either Sequences cannot be mutated at all
+- or they can only be mutated Monotonically, i.e.
+  - You can add new elements, but not remove or modify existing elements.
+
+Procedures which are written to process Streams can process either
+Streams or Sequences.
+
+Procedures which are written to process Sequences cannot be directly
+applied to Streams, but
+- A finite part of a Stream can be Copied to create a Sequence.
+- The procedure can then be applied to the sequence.
+
+In practice, we write our precedures to treat their parameters as
+Streams whenever possible.
+
+Underlyingly Sequences are traditional Lisp composite data structures
+- i.e. Lists, Vectors, etc.
+- but you pretend you don't know what they really are!
+
+Streams might actually be Sequences, or they might be
+- An Input Stream coming from outside the program
+- Data being generated by a Procedure
+
+So how do we efficiently operate on Streams (or Sequences, when we
+need persistence) without knowing "what they really are"?
+
+We use Generic Function Operations!
+
+*** Generic Function Operations!
+
+Functional Programming is a Paradigm which simplifies programming by
+making some restrictions:
+- You can't change things!
+  - A Symbol can only be bound to a value ONCE in a particular scope.
+  - You can't change (mutate or modify) any part of a value.
+- You can only create new values
+
+Any time you imagine you want to change something, e.g. you want to
+delete some of the values in a Sequence
+- Just create a new Sequence which doesn't have the unwanted values.
+
+General Automatic Garbage Collection (GC) automatically recycling any
+storage which is no longer accessible.  GC was invented by the first
+Lisp and is now used by most modern programming languages.
+
+In Modern Lisp, bindings between symbols and values occur inside of
+scopes created by Lambda [possibly concealed by macros such as DEFINE
+or LET].  As soon as computation leaves a scope, those bindings no
+longer exist.  Any old or intermediate data not returned from the
+expression becomes garbage.  The trick is to allocate new storage and
+recycle inaccessible storage so efficiently so that a Functional
+Algorithm is as efficient as an Imperative Algorithm which Mutates
+Data in place.  Modern GC implementations generally comes very close
+to this ideal.
+
+A nice benefit of this approach is that the Functional Algorithms are
+usually simpller and easier to understand!
+
+Newer Lisps such as Clojure and Coalton force or strongly encourage
+this more generic and functional programming style.
+
+With older Lisp family languages and implementations, the massive
+amounts of existing code and the ingrained practices of existing
+programmers slow the adoption of better practices.  And since
+implementations are highly optimized for existing practices, the more
+"enlightened" programmers who adopt "better" practices may be
+penalized by having their programs run less efficiently.
+
+We should remember the advice of Donald Knuth
+- "Premature optimization is the root of all evil."
+
+It turns out that if one strives primarily for clarity when developing
+a challenging software system, rather than striving for the most
+efficient algorithm, at the end of the development process
+1. The system will tend to be more efficient
+2. It will be easier to make it ore efficient with a few strategic
+   changes.
+
+As an example in this section
+1. Writing the system in a Functional Style
+   - with no mutation
+   - using general Functional Operators such as Map, Fold, Filter,
+     etc. which create new Streams from existing Streams
+2. At the end, if the system is slow, one can optimize it by
+   strategically choosing which composite datatype to use (List
+   vs. Vector vs. Hash, etc.) at each point where a collection is
+   being created, since the Functional Code subsequently processing
+   those collections is indifferent to such choices.  Profiler tools
+   can assist the programmer in making these choices optimally.  If
+   instead the code was written in a traditional style, with every
+   procedure specialized for a particular collection datatype, e.g.
+   Lists, such optimizations would be very difficult.
+
+** Use the Relational Model
+
+The Relational Model of Data which is used in most modern Database
+Systems provides a way to simplify and unify the different kinds of
+container types beyond the Functional Model with a gain in flexibility
+and efficiency.
