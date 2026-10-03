@@ -1,5 +1,10 @@
 * On Lisp
 
+** NOTICE OF GitHub FAILURE
+  - As of 2026-10-01 GitHub is failing to correctly display this document!
+  - See the section below titled: ** Availability Of This Document
+
+
 #+begin_quote
 LISP has jokingly been described as "the most intelligent way to
 misuse a computer." I think that description is a great compliment
@@ -133,3 +138,21 @@ At the same time, many of the most popular current Lisps
 Please see our related articles
 - [[file:Play/Next-Lisps/lisp-design.org][Lisp Design Issues]]
 - Designing a [[file:Play/Next-Lisps/simpler-better-lisp.org][Simpler, Better Lisp]]
+** Availability Of This Document
+
+This document is normally available at all the following urls:
+- Codeberg :: 
+- GitLab :: 
+- GitHub ::
+  - GitHub is currently failing to correctly process OrgMode documents.
+  - as of 2026-10-01
+
+Please consult the LICENCE or LICENSE.org or LICENSE.md file at the
+top of this repository for freedoms and restrictions in your use of
+the contents of this repository, including this document.
+
+Even when not required, we would appreciate
+- attribution with a reference to our respository,
+- your sending us any improvements you make to these materials,
+- information about any significant usage of these materials in your projects,
+- and thank you!
